@@ -1,0 +1,3 @@
+export const FORM_UNIFIED_VARIANT = {
+  TEXT_INPUT: "TEXT_INPUT",
+};

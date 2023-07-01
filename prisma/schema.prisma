@@ -1,0 +1,218 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Product {
+  id                String            @id @default(cuid()) @db.Uuid
+  productName       String
+  slug              String            @unique
+  SKU               String            @unique
+  price             Int               @default(0)
+  quantity          Int               @default(0)
+  stockAvailability Boolean?          @default(true)
+  media             String[]
+  thumbnail         String?
+  description       String?
+  content           String?
+  status            Status            @default(Enabled)
+  visibility        ProductVisibility @default(Visible)
+
+  metadata   ProductMetadata? @relation(fields: [metadataId], references: [id])
+  metadataId String?          @db.Uuid
+
+  productCategories ProductCategory[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  orders OrderProduct[]
+
+  @@index([id])
+  @@map("products")
+}
+
+model ProductMetadata {
+  id String @id @default(cuid()) @db.Uuid
+
+  metaSeoTitle    String?
+  metaSeoKeyWord  String?
+  metaDescription String?
+
+  Product Product[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  @@index([id])
+  @@map("product_metadatas")
+}
+
+model ProductCategory {
+  id String @id @default(cuid()) @db.Uuid
+
+  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId String   @db.Uuid
+
+  product   Product @relation(fields: [productId], references: [id])
+  productId String  @db.Uuid
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  @@map("products_categories")
+}
+
+enum Status {
+  Enabled
+  Disabled
+}
+
+enum ProductVisibility {
+  Visible
+  NotVisible
+}
+
+model Category {
+  id       String            @id @default(cuid()) @db.Uuid
+  name     String
+  banner   String?
+  status   Status            @default(Enabled)
+  products ProductCategory[]
+
+  metadata   CatagoryMetadata @relation(fields: [metadataId], references: [id])
+  metadataId String           @db.Uuid
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  @@index([id])
+  @@map("categories")
+}
+
+model CatagoryMetadata {
+  id String @id @default(cuid()) @db.Uuid
+
+  metaSeoTitle    String?
+  metaSeoKeyWord  String?
+  metaDescription String?
+
+  Category Category[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  @@index([id])
+  @@map("category_metadatas")
+}
+
+model Collection {
+  id          Int     @id @default(autoincrement()) @db.Integer
+  name        String
+  code        String
+  description String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  @@map("collections")
+}
+
+model User {
+  id   Int    @id @unique @default(autoincrement()) @db.Integer
+  code String @unique @db.Char(16)
+
+  firstName      String
+  lastName       String
+  email          String @unique
+  passwordHashed String
+
+  role Role
+
+  @@index([id, code])
+  @@map("users")
+}
+
+enum Role {
+  Admin
+  Employee
+  Customer
+}
+
+model Coupon {
+  id             Int          @id @default(autoincrement()) @db.Integer
+  code           String       @db.Char(24)
+  discountType   DiscountType
+  discountAmount Int          @db.Integer
+  description    String?
+  startDate      DateTime     @default(now())
+  endDate        DateTime     @default(now())
+  status         Status
+
+  isFreeshipping Boolean? @default(false)
+  usedTimes      Int?     @default(0)
+
+  @@map("coupons")
+}
+
+enum DiscountType {
+  Percent
+  Price
+}
+
+model Order {
+  id          Int    @id @unique @default(autoincrement()) @db.Integer
+  orderNumber String @unique @db.Char(16)
+
+  customerId    String  @unique
+  customerEmail String
+  customerPhone String?
+  customerNote  String?
+
+  shipmentStatus OrderShipmentStatus @default(Unfullfilled)
+  paymentStatus  OrderPaymentStatus  @default(Unpaid)
+
+  orderCouponCode     String
+  orderDiscount       Int    @default(0)
+  orderTotalAmount    Int    @default(0)
+  orderSubTotalAmount Int    @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  products OrderProduct[]
+
+  @@map("orders")
+}
+
+enum OrderShipmentStatus {
+  Unfullfilled
+  Fullfilled
+}
+
+enum OrderPaymentStatus {
+  Unpaid
+  Paid
+  Refunded
+}
+
+model OrderProduct {
+  id Int @id @default(autoincrement()) @db.Integer
+
+  product   Product @relation(fields: [productId], references: [id])
+  productId String  @db.Uuid
+
+  order   Order @relation(fields: [orderId], references: [id])
+  orderId Int
+
+  productAmount Int @default(1)
+
+  @@map("order_products")
+}
