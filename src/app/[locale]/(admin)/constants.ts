@@ -1,3 +1,4 @@
+import { ADMIN_URL } from "@/constant/urls"
 import {
   Box,
   Gift,
@@ -18,6 +19,7 @@ export const ADMIN_SIDEBARS = [
         type: "item",
         id: "products",
         title: "Products",
+        link: ADMIN_URL.PRODUCT.LIST,
         Icon: Box,
       },
       {

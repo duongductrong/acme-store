@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import clsx from "clsx"
 import { Menu } from "lucide-react"
+import Link from "next/link"
 import BranchSwitcher from "./components/brand-switcher"
 import { ADMIN_SIDEBARS } from "./constants"
 
@@ -44,9 +45,12 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
                   key={`${sidebarItem.id}_${sidebarChildrenItem.id}`}
                   variant="ghost"
                   className="justify-start"
+                  asChild
                 >
-                  <sidebarChildrenItem.Icon className="w-4 h-4 mr-4" />
-                  {sidebarChildrenItem.title}
+                  <Link href={sidebarChildrenItem.link ?? "/"}>
+                    <sidebarChildrenItem.Icon className="w-4 h-4 mr-4" />
+                    {sidebarChildrenItem.title}
+                  </Link>
                 </Button>
               ))}
             </div>

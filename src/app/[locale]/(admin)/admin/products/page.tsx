@@ -21,98 +21,117 @@ import Link from "next/link"
 
 export interface ProductListProps {}
 
-export const columns: ColumnDef<Product>[] = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={table.getIsAllPageRowsSelected()}
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    id: "productName",
-    accessorKey: "productName",
-    header: () => "Product Name",
-    cell: ({ getValue }) => getValue(),
-  },
-  {
-    id: "price",
-    accessorKey: "price",
-    header: () => "Price",
-    cell: ({ getValue }) => {
-      return getValue()
-    },
-  },
-  {
-    id: "sku",
-    accessorKey: "SKU",
-    header: () => "SKU",
-    cell: ({ getValue }) => {
-      return getValue()
-    },
-  },
-  {
-    id: "quantity",
-    accessorKey: "quantity",
-    header: () => "Quantity",
-    cell: ({ getValue }) => {
-      return getValue()
-    },
-  },
-  {
-    id: "status",
-    accessorKey: "status",
-    header: () => "Status",
-    cell: ({ getValue }) => {
-      return getValue()
-    },
-  },
-  {
-    id: "actions",
-    enableHiding: false,
-    cell: ({ row }) => {
-      const payment = row.original
-
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(payment.id)}
-            >
-              Copy payment ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )
-    },
-  },
-]
-
 const ProductList = (props: ProductListProps) => {
   const { data: products } = trpc.product.list.useQuery()
-  console.log(products)
+  const { mutateAsync } = trpc.product.permanentlyDelete.useMutation()
+
+  const handlePermanentlyDelete = (id: string) => {
+    mutateAsync(id)
+      .then(() => {})
+      .finally(() => {})
+  }
+
+  const columns: ColumnDef<Product>[] = [
+    {
+      id: "select",
+      header: ({ table }) => (
+        <Checkbox
+          checked={table.getIsAllPageRowsSelected()}
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
+    {
+      id: "productName",
+      accessorKey: "productName",
+      header: () => "Product Name",
+      cell: ({ getValue, row }) => (
+        <Link
+          href={ADMIN_URL.PRODUCT.EDIT.replace(/{id}/, row.original.id)}
+          className="hover:underline underline-offset-2 font-semibold"
+        >
+          {getValue<string>()}
+        </Link>
+      ),
+    },
+    {
+      id: "price",
+      accessorKey: "price",
+      header: () => "Price",
+      cell: ({ getValue }) => {
+        return getValue()
+      },
+    },
+    {
+      id: "sku",
+      accessorKey: "SKU",
+      header: () => "SKU",
+      cell: ({ getValue }) => {
+        return getValue()
+      },
+    },
+    {
+      id: "quantity",
+      accessorKey: "quantity",
+      header: () => "Quantity",
+      cell: ({ getValue }) => {
+        return getValue()
+      },
+    },
+    {
+      id: "status",
+      accessorKey: "status",
+      header: () => "Status",
+      cell: ({ getValue }) => {
+        return getValue()
+      },
+    },
+    {
+      id: "actions",
+      enableHiding: false,
+      cell: ({ row }) => {
+        const product = row.original
+
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuItem asChild>
+                <Link
+                  href={ADMIN_URL.PRODUCT.EDIT.replace(/{id}/g, product.id)}
+                >
+                  Edit product
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => handlePermanentlyDelete(product.id)}
+              >
+                Delete product
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>View payment details</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )
+      },
+    },
+  ]
 
   return (
     <SectionView
