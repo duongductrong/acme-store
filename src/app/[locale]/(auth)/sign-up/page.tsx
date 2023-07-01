@@ -3,13 +3,13 @@ import { useTranslations } from "next-intl"
 import Link from "next/link"
 import SignUpForm from "./components/sign-up-form"
 
-export const meta: Metadata = {
+export interface SignUpProps extends CommonLayoutProps {}
+
+export const metadata: Metadata = {
   title: "Sign up account | Shadcn",
 }
 
-export interface SignUpProps extends CommonLayoutProps {}
-
-const SignUp = (props: SignUpProps) => {
+const SignUp = () => {
   const t = useTranslations("SIGN_UP")
 
   return (

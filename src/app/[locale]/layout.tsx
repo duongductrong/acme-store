@@ -23,9 +23,9 @@ export async function getDirectories(locale: string) {
   }
 }
 
-export async function generateStaticParams() {
-  return Object.values(LOCALES).map((locale) => ({ locale }))
-}
+// export async function generateStaticParams() {
+//   return Object.values(LOCALES).map((locale) => ({ locale }))
+// }
 
 export async function generateMetadata({
   params: { locale },
