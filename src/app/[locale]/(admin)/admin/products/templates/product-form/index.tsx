@@ -6,18 +6,20 @@ import { Button } from "@/components/ui/button"
 import Form from "@/components/ui/form"
 import FormUnified from "@/components/ui/form/form-unified"
 import { Separator } from "@/components/ui/separator"
+import { ADMIN_URL } from "@/constant/urls"
 import { ProductSchemaType, productSchema } from "@/schemas/product"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { ProductVisibility, Status } from "@prisma/client"
 import { useForm } from "react-hook-form"
 
 export interface ProductFormProps {
+  title: string
   defaultValues?: Partial<ProductSchemaType>
 
   onSubmit: (values: ProductSchemaType) => void
 }
 
-const ProductForm = ({ defaultValues, onSubmit }: ProductFormProps) => {
+const ProductForm = ({ title, defaultValues, onSubmit }: ProductFormProps) => {
   const methods = useForm<ProductSchemaType>({
     resolver: zodResolver(productSchema),
     defaultValues: {
@@ -36,7 +38,8 @@ const ProductForm = ({ defaultValues, onSubmit }: ProductFormProps) => {
     <Form {...methods}>
       <form onSubmit={handleSubmit}>
         <SectionDetail
-          title="Create A New Product"
+          title={title}
+          backTo={ADMIN_URL.PRODUCT.LIST}
           whereTopRight={
             <>
               <Button variant="secondary">Cancel</Button>

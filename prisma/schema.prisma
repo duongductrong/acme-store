@@ -32,7 +32,7 @@ model Product {
   updatedAt DateTime @default(now())
 
   category   Category? @relation(fields: [categoryId], references: [id])
-  categoryId String?   @db.Uuid
+  categoryId String?   @db.Text
 
   orders OrderProduct[]
 
@@ -72,13 +72,14 @@ enum ProductStockAvailability {
 }
 
 model Category {
-  id     String  @id @default(cuid()) @db.Uuid
-  name   String
-  banner String?
-  status Status  @default(Enabled)
+  id          String  @id @default(cuid()) @db.Text
+  name        String
+  banner      String?
+  description String?
+  status      Status  @default(Enabled)
 
-  metadata   CatagoryMetadata @relation(fields: [metadataId], references: [id])
-  metadataId String           @db.Uuid
+  metadata   CatagoryMetadata? @relation(fields: [metadataId], references: [id])
+  metadataId String?           @db.Text
 
   products Product[]
 
@@ -90,7 +91,7 @@ model Category {
 }
 
 model CatagoryMetadata {
-  id String @id @default(cuid()) @db.Uuid
+  id String @id @default(cuid()) @db.Text
 
   metaSeoTitle    String?
   metaSeoKeyword  String?

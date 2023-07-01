@@ -1,4 +1,5 @@
 import { HTMLAttributes, ReactNode, forwardRef } from "react"
+import SectionPaper from "../section-paper"
 
 export interface SectionViewProps extends HTMLAttributes<HTMLDivElement> {
   title: string
@@ -17,9 +18,7 @@ const SectionView = forwardRef<HTMLDivElement, SectionViewProps>(
           ) : null}
         </div>
 
-        <div className="p-4 bg-white rounded-lg border border-neutral-200 shadow-sm">
-          {children}
-        </div>
+        <SectionPaper>{children}</SectionPaper>
       </div>
     )
   }

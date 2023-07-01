@@ -6,6 +6,9 @@ import { Menu } from "lucide-react"
 import Link from "next/link"
 import BranchSwitcher from "./components/brand-switcher"
 import { ADMIN_SIDEBARS } from "./constants"
+import DynamicLink from "@/components/navigations/dynamic-link"
+
+export const revalidate = false
 
 export interface AdminLayoutProps extends CommonLayoutProps {}
 
@@ -47,16 +50,16 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
                   className="justify-start"
                   asChild
                 >
-                  <Link href={sidebarChildrenItem.link ?? "/"}>
+                  <DynamicLink href={sidebarChildrenItem.link ?? "/"}>
                     <sidebarChildrenItem.Icon className="w-4 h-4 mr-4" />
                     {sidebarChildrenItem.title}
-                  </Link>
+                  </DynamicLink>
                 </Button>
               ))}
             </div>
           ))}
         </div>
-        <div className="w-full ml-[240px] px-4 py-8 bg-neutral-50">
+        <div className="w-full ml-[240px] px-4 py-8 bg-neutral-50 min-h-[calc(100vh-64px)]">
           {children}
         </div>
       </div>

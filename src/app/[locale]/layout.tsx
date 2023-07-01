@@ -1,5 +1,6 @@
 import NextThemeProvider from "@/components/theme-provider"
 import TrpcProvider from "@/components/trpc-provider"
+import { Toaster } from "@/components/ui/toaster"
 import { LOCALES } from "@/constant/locales"
 import { NextIntlClientProvider, createTranslator } from "next-intl"
 import { Inter } from "next/font/google"
@@ -54,6 +55,7 @@ export default async function RootLayout({
           <NextThemeProvider>
             <NextIntlClientProvider locale={locale} messages={directories}>
               {children}
+              <Toaster />
             </NextIntlClientProvider>
           </NextThemeProvider>
         </TrpcProvider>

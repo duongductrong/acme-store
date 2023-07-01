@@ -1,0 +1,41 @@
+"use client"
+
+import { useToast } from "@/components/ui/use-toast"
+import { ADMIN_URL } from "@/constant/urls"
+import trpc from "@/lib/trpc-client"
+import { useRouter } from "next/navigation"
+import CategoryForm from "../templates/category-form"
+
+export interface NewCategoryProps {}
+
+function NewCategory({}: NewCategoryProps) {
+  const router = useRouter()
+  const t = useToast()
+
+  const { mutate: categoryMutate } = trpc.category.create.useMutation({
+    onSuccess() {
+      t.toast({
+        title: "Success",
+        description: "Create new category successfully",
+      })
+
+      router.push(ADMIN_URL.CATEGORY.LIST)
+    },
+    onError() {
+      t.toast({
+        title: "Error",
+        description: "Has an error when create new category",
+        variant: "destructive",
+      })
+    },
+  })
+
+  return (
+    <CategoryForm
+      title="Create a category"
+      onSubmit={(values) => categoryMutate(values)}
+    />
+  )
+}
+
+export default NewCategory

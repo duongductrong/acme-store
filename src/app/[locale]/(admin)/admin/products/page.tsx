@@ -1,5 +1,6 @@
 "use client"
 
+import DynamicLink from "@/components/navigations/dynamic-link"
 import SectionView from "@/components/sections/section-view"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -12,24 +13,35 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { useToast } from "@/components/ui/use-toast"
 import { ADMIN_URL } from "@/constant/urls"
 import trpc from "@/lib/trpc-client"
 import { Product } from "@prisma/client"
 import { ColumnDef } from "@tanstack/react-table"
 import { MoreHorizontal, Plus } from "lucide-react"
-import Link from "next/link"
 
 export interface ProductListProps {}
 
 const ProductList = (props: ProductListProps) => {
+  const t = useToast()
   const { data: products } = trpc.product.list.useQuery()
-  const { mutateAsync } = trpc.product.permanentlyDelete.useMutation()
+  const { mutate } = trpc.product.permanentlyDelete.useMutation({
+    onSuccess() {
+      t.toast({
+        title: "Success",
+        description: "Deleted a product successfully",
+      })
+    },
+    onError() {
+      t.toast({
+        title: "Error",
+        description: "Has an error when delete a product",
+        variant: "destructive",
+      })
+    },
+  })
 
-  const handlePermanentlyDelete = (id: string) => {
-    mutateAsync(id)
-      .then(() => {})
-      .finally(() => {})
-  }
+  const handlePermanentlyDelete = (id: string) => mutate(id)
 
   const columns: ColumnDef<Product>[] = [
     {
@@ -56,12 +68,12 @@ const ProductList = (props: ProductListProps) => {
       accessorKey: "productName",
       header: () => "Product Name",
       cell: ({ getValue, row }) => (
-        <Link
+        <DynamicLink
           href={ADMIN_URL.PRODUCT.EDIT.replace(/{id}/, row.original.id)}
           className="hover:underline underline-offset-2 font-semibold"
         >
           {getValue<string>()}
-        </Link>
+        </DynamicLink>
       ),
     },
     {
@@ -113,11 +125,11 @@ const ProductList = (props: ProductListProps) => {
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem asChild>
-                <Link
+                <DynamicLink
                   href={ADMIN_URL.PRODUCT.EDIT.replace(/{id}/g, product.id)}
                 >
                   Edit product
-                </Link>
+                </DynamicLink>
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => handlePermanentlyDelete(product.id)}
@@ -138,10 +150,10 @@ const ProductList = (props: ProductListProps) => {
       title="Products"
       whereTopRight={
         <Button asChild>
-          <Link href={ADMIN_URL.PRODUCT.NEW}>
+          <DynamicLink href={ADMIN_URL.PRODUCT.NEW}>
             <Plus className="w-4 h-4 mr-2" />
             New Product
-          </Link>
+          </DynamicLink>
         </Button>
       }
     >
