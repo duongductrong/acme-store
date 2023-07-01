@@ -11,16 +11,16 @@ datasource db {
 }
 
 model Product {
-  id                String            @id @default(cuid()) @db.Uuid
+  id                String            @id @default(cuid()) @db.Text()
   productName       String
   slug              String            @unique
   SKU               String            @unique
-  price             Int               @default(0)
-  quantity          Int               @default(0)
+  price             Int
+  quantity          Int
   stockAvailability Boolean?          @default(true)
   media             String[]
-  thumbnail         String?
-  description       String?
+  thumbnail         String
+  description       String
   content           String?
   status            Status            @default(Enabled)
   visibility        ProductVisibility @default(Visible)
@@ -28,10 +28,11 @@ model Product {
   metadata   ProductMetadata? @relation(fields: [metadataId], references: [id])
   metadataId String?          @db.Uuid
 
-  productCategories ProductCategory[]
-
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
+
+  category   Category? @relation(fields: [categoryId], references: [id])
+  categoryId String?   @db.Uuid
 
   orders OrderProduct[]
 
@@ -43,7 +44,7 @@ model ProductMetadata {
   id String @id @default(cuid()) @db.Uuid
 
   metaSeoTitle    String?
-  metaSeoKeyWord  String?
+  metaSeoKeyword  String?
   metaDescription String?
 
   Product Product[]
@@ -53,21 +54,6 @@ model ProductMetadata {
 
   @@index([id])
   @@map("product_metadatas")
-}
-
-model ProductCategory {
-  id String @id @default(cuid()) @db.Uuid
-
-  category   Category @relation(fields: [categoryId], references: [id])
-  categoryId String   @db.Uuid
-
-  product   Product @relation(fields: [productId], references: [id])
-  productId String  @db.Uuid
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
-
-  @@map("products_categories")
 }
 
 enum Status {
@@ -80,15 +66,21 @@ enum ProductVisibility {
   NotVisible
 }
 
+enum ProductStockAvailability {
+  Yes
+  No
+}
+
 model Category {
-  id       String            @id @default(cuid()) @db.Uuid
-  name     String
-  banner   String?
-  status   Status            @default(Enabled)
-  products ProductCategory[]
+  id     String  @id @default(cuid()) @db.Uuid
+  name   String
+  banner String?
+  status Status  @default(Enabled)
 
   metadata   CatagoryMetadata @relation(fields: [metadataId], references: [id])
   metadataId String           @db.Uuid
+
+  products Product[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
@@ -101,7 +93,7 @@ model CatagoryMetadata {
   id String @id @default(cuid()) @db.Uuid
 
   metaSeoTitle    String?
-  metaSeoKeyWord  String?
+  metaSeoKeyword  String?
   metaDescription String?
 
   Category Category[]
@@ -168,7 +160,7 @@ enum DiscountType {
 }
 
 model Order {
-  id          Int    @id @unique @default(autoincrement()) @db.Integer
+  id          Int    @id @default(autoincrement()) @db.Integer
   orderNumber String @unique @db.Char(16)
 
   customerId    String  @unique
@@ -207,10 +199,10 @@ model OrderProduct {
   id Int @id @default(autoincrement()) @db.Integer
 
   product   Product @relation(fields: [productId], references: [id])
-  productId String  @db.Uuid
+  productId String  @db.Text()
 
   order   Order @relation(fields: [orderId], references: [id])
-  orderId Int
+  orderId Int   @db.Integer
 
   productAmount Int @default(1)
 

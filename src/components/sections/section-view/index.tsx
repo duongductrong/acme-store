@@ -2,7 +2,7 @@ import { HTMLAttributes, ReactNode, forwardRef } from "react"
 
 export interface SectionViewProps extends HTMLAttributes<HTMLDivElement> {
   title: string
-  whereTopRight: ReactNode
+  whereTopRight?: ReactNode
   children: ReactNode
 }
 

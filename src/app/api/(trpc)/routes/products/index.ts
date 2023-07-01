@@ -1,16 +1,13 @@
 import prisma from "@/lib/prisma"
 import { publicProcedure, router } from "@/lib/trpc"
+import { z } from "zod"
 
 export const productRouter = router({
   list: publicProcedure.query(() => {
-    return prisma.product.create({
-      data: {
-        id: "",
-        productName: "Product A",
-        SKU: "ProducTasd",
-        slug: "productasd",
-      },
-    })
-    // return prisma.product.findMany()
+    return prisma.product.findMany()
+  }),
+  create: publicProcedure.input(z.object({})).mutation((inputs) => {
+    console.log(inputs.input)
+    return inputs
   }),
 })

@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
-import Input from "@/components/ui/input"
+import { Input } from "@/components/ui/input"
 import clsx from "clsx"
 import { Menu } from "lucide-react"
 import BranchSwitcher from "./components/brand-switcher"
@@ -52,7 +52,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
             </div>
           ))}
         </div>
-        <div className="w-full ml-[240px] min-h-[200vh] px-4 pt-8 bg-neutral-50">
+        <div className="w-full ml-[240px] px-4 py-8 bg-neutral-50">
           {children}
         </div>
       </div>

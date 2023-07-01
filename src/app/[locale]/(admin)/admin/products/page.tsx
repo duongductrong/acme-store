@@ -12,40 +12,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { ADMIN_URL } from "@/constant/urls"
 import trpc from "@/lib/trpc-client"
-import { Product, ProductVisibility, Status } from "@prisma/client"
+import { Product } from "@prisma/client"
 import { ColumnDef } from "@tanstack/react-table"
 import { MoreHorizontal, Plus } from "lucide-react"
+import Link from "next/link"
 
 export interface ProductListProps {}
-
-const data: Product[] = [
-  {
-    id: "m5gr84i9",
-    status: Status.Enabled,
-    content: "",
-    createdAt: new Date(),
-    description: "",
-    media: [],
-    metadataId: "",
-    price: 1999999,
-    productName: "Proudct am",
-    quantity: 10,
-    SKU: "xjjXNBi2323",
-    slug: "proudct-am",
-    stockAvailability: true,
-    thumbnail: "",
-    updatedAt: new Date(),
-    visibility: ProductVisibility.Visible,
-  },
-]
-
-export type Payment = {
-  id: string
-  amount: number
-  status: "pending" | "processing" | "success" | "failed"
-  email: string
-}
 
 export const columns: ColumnDef<Product>[] = [
   {
@@ -144,15 +118,17 @@ const ProductList = (props: ProductListProps) => {
     <SectionView
       title="Products"
       whereTopRight={
-        <Button>
-          <Plus className="w-4 h-4 mr-2" />
-          New Product
+        <Button asChild>
+          <Link href={ADMIN_URL.PRODUCT.NEW}>
+            <Plus className="w-4 h-4 mr-2" />
+            New Product
+          </Link>
         </Button>
       }
     >
       <DataTable
         columns={columns}
-        data={data}
+        data={products ?? []}
         searchable
         searchPlaceholder="Search product name..."
       />
