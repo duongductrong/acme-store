@@ -5,6 +5,7 @@ import { forwardRef } from "react"
 import { Label } from "../../label"
 import { RadioGroup, RadioGroupItem } from "../../radio-group"
 import FormLabel from "../form-label"
+import useFormField from "../hooks/use-form-field"
 
 export interface FormRadioGroupItem {
   label: string
@@ -19,24 +20,30 @@ export interface FormRadioGroupProps extends Omit<RadioGroupProps, "onChange"> {
 
 const FormRadioGroup = forwardRef<HTMLDivElement, FormRadioGroupProps>(
   ({ items, label, onChange, ...props }: FormRadioGroupProps, ref) => {
+    const { formItemId } = useFormField()
+
     return (
       <RadioGroup
         {...props}
-        onValueChange={onChange}
         ref={ref}
+        onValueChange={onChange}
         className="space-y-2"
       >
         {label ? <FormLabel>{label}</FormLabel> : null}
-        {items.map((item) => (
-          <div key={item.value} className="flex items-center space-x-2">
-            <RadioGroupItem
-              id={item.value}
-              key={item.value}
-              value={item.value}
-            />
-            <Label htmlFor={item.value}>{item.label}</Label>
-          </div>
-        ))}
+        {items.map((item) => {
+          const slugifyLabel = item.label
+          const inputId = `${formItemId}-${slugifyLabel}`
+          return (
+            <div key={item.value} className="flex items-center space-x-2">
+              <RadioGroupItem
+                id={inputId}
+                key={item.value}
+                value={item.value}
+              />
+              <Label htmlFor={inputId}>{item.label}</Label>
+            </div>
+          )
+        })}
       </RadioGroup>
     )
   }

@@ -6,8 +6,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider          = "postgresql"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
 model Product {
@@ -84,7 +85,7 @@ model Category {
   products Product[]
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([id])
   @@map("categories")
@@ -100,7 +101,7 @@ model CatagoryMetadata {
   Category Category[]
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([id])
   @@map("category_metadatas")
@@ -113,7 +114,7 @@ model Collection {
   description String?
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("collections")
 }
@@ -128,6 +129,9 @@ model User {
   passwordHashed String
 
   role Role
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([id, code])
   @@map("users")
@@ -151,6 +155,9 @@ model Coupon {
 
   isFreeshipping Boolean? @default(false)
   usedTimes      Int?     @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("coupons")
 }
@@ -178,7 +185,7 @@ model Order {
   orderSubTotalAmount Int    @default(0)
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   products OrderProduct[]
 
@@ -207,5 +214,62 @@ model OrderProduct {
 
   productAmount Int @default(1)
 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@map("order_products")
+}
+
+model ProductAttribute {
+  id        String               @id @default(cuid()) @db.Text
+  name      String
+  code      String               @unique
+  type      ProductAttributeType @default(Select)
+  options   Json?                @db.Json
+  sortOrder Int                  @db.Integer
+
+  isRequired       Boolean @default(true)
+  isFilterable     Boolean @default(true)
+  isShowToCustomer Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  groups ProductAttributesOnGroups[]
+
+  @@map("product_attributes")
+}
+
+model ProductAttributeGroup {
+  id String @id @default(cuid()) @db.Text
+
+  name String @db.VarChar(50)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  attributes ProductAttributesOnGroups[]
+
+  @@map("product_attribute_groups")
+}
+
+model ProductAttributesOnGroups {
+  productAttribute   ProductAttribute @relation(fields: [productAttributeId], references: [id])
+  productAttributeId String           @db.Text
+
+  productAttributeGroup   ProductAttributeGroup @relation(fields: [productAttributeGroupId], references: [id])
+  productAttributeGroupId String                @db.Text
+
+  @@id([productAttributeId, productAttributeGroupId])
+  @@map("product_attributes_on_groups")
+}
+
+enum ProductAttributeType {
+  Text
+  Select
+  Multiselect
+}
+
+model ProductVariant {
+  id Int @id @default(autoincrement()) @db.Integer
 }

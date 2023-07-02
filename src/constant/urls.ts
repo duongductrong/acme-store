@@ -23,6 +23,14 @@ export const ADMIN_URL = {
     EDIT: "/admin/attributes/{id}",
   },
 
+  ORDER: {
+    LIST: "/admin/orders",
+  },
+
+  CUSTOMER: {
+    LIST: "/admin/customers",
+  },
+
   REVALIDATE: {
     INDEX: "/revalidate",
   },

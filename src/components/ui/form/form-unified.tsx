@@ -16,6 +16,7 @@ import FormItem from "./form-item"
 import FormLabel from "./form-label"
 import FormMessage from "./form-message"
 import { FormUnifiedVariantTypes } from "./types"
+import { FormSelectProps } from "./components/form-select"
 
 const FormInput = dynamic(() => import("./components/form-input"), {
   ssr: true,
@@ -27,6 +28,10 @@ const FormCheckbox = dynamic(() => import("./components/form-checkbox"), {
   ssr: true,
 })
 const RadioGroup = dynamic(() => import("./components/form-radio-group"), {
+  ssr: true,
+})
+
+const FormSelect = dynamic(() => import("./components/form-select"), {
   ssr: true,
 })
 
@@ -43,6 +48,8 @@ type ExtendTextareaProps = Omit<
 type ExtendCheckboxProps = CheckboxProps
 
 type ExtendRadioGroupProps = FormRadioGroupProps
+
+type ExtendSelectProps = FormSelectProps
 
 export interface FormUnifiedProps {
   variant: keyof FormUnifiedVariantTypes
@@ -61,6 +68,7 @@ export interface FormUnifiedProps {
   textareaProps?: ExtendTextareaProps
   checkboxProps?: ExtendCheckboxProps
   radioGroupProps?: ExtendRadioGroupProps
+  selectProps?: ExtendSelectProps
 }
 
 const FORM_UNIFIED_VARIANT_LOADER = {
@@ -68,6 +76,7 @@ const FORM_UNIFIED_VARIANT_LOADER = {
   [FORM_UNIFIED_VARIANT.TEXTAREA]: FormTextarea,
   [FORM_UNIFIED_VARIANT.CHECKBOX]: FormCheckbox,
   [FORM_UNIFIED_VARIANT.RADIO_GROUP]: RadioGroup,
+  [FORM_UNIFIED_VARIANT.SELECT]: FormSelect,
 }
 
 const FormUnified = forwardRef<HTMLDivElement, FormUnifiedProps>(
@@ -83,6 +92,7 @@ const FormUnified = forwardRef<HTMLDivElement, FormUnifiedProps>(
       textareaProps,
       checkboxProps,
       radioGroupProps,
+      selectProps,
       ...baseProps
     },
     ref
@@ -90,40 +100,36 @@ const FormUnified = forwardRef<HTMLDivElement, FormUnifiedProps>(
     const InputComp = FORM_UNIFIED_VARIANT_LOADER[variant] as any
 
     return (
-      <FormItem className={wrapperClassName} ref={ref}>
-        <FormControl>
-          <FormField
-            name={name}
-            render={({ field, formState: { errors } }) => {
-              const _error = get(errors, name)
+      <FormField
+        name={name}
+        render={({ field, formState: { errors } }) => {
+          const _error = get(errors, name)
 
-              return (
-                <>
-                  {label ? (
-                    <FormLabel className="mb-2">{label}</FormLabel>
-                  ) : null}
+          return (
+            <FormItem className={wrapperClassName} ref={ref}>
+              {label ? <FormLabel className="mb-2">{label}</FormLabel> : null}
+              <FormControl>
+                <InputComp
+                  {...field}
+                  {...baseProps}
+                  {...textInputProps}
+                  {...textareaProps}
+                  {...checkboxProps}
+                  {...radioGroupProps}
+                  {...selectProps}
+                  className={clsx(textInputProps?.className)}
+                />
+              </FormControl>
 
-                  <InputComp
-                    {...field}
-                    {...baseProps}
-                    {...textInputProps}
-                    {...textareaProps}
-                    {...checkboxProps}
-                    {...radioGroupProps}
-                    className={clsx(textInputProps?.className)}
-                  />
+              {_error?.message ? null : description ? (
+                <FormDescription />
+              ) : null}
 
-                  {_error?.message ? null : description ? (
-                    <FormDescription />
-                  ) : null}
-
-                  {_error && _error.message ? <FormMessage /> : null}
-                </>
-              )
-            }}
-          />
-        </FormControl>
-      </FormItem>
+              {_error && _error.message ? <FormMessage /> : null}
+            </FormItem>
+          )
+        }}
+      />
     )
   }
 )
