@@ -8,16 +8,9 @@ export const attributeGroupRouter = router({
     return prisma.productAttributeGroup.findMany()
   }),
 
-  detail: publicProcedure
-    .input(
-      z
-        .number()
-        .or(z.string())
-        .transform((value) => Number(value))
-    )
-    .query(({ input: id }) => {
-      return prisma.productAttributeGroup.findFirst({ where: { id } })
-    }),
+  detail: publicProcedure.input(z.string()).query(({ input: id }) => {
+    return prisma.productAttributeGroup.findFirst({ where: { id } })
+  }),
 
   create: publicProcedure
     .input(attributeGroupSchema)
@@ -25,11 +18,11 @@ export const attributeGroupRouter = router({
       return prisma.productAttributeGroup.create({ data: { name: input.name } })
     }),
   update: publicProcedure
-    .input(z.object({ id: z.number() }).extend(attributeGroupSchema.shape))
+    .input(z.object({ id: z.string() }).extend(attributeGroupSchema.shape))
     .mutation(({ input }) => {
       return prisma.productAttributeGroup.update({
         where: {
-          id: input.id as number,
+          id: input.id?.toString(),
         },
         data: {
           name: input.name,
@@ -37,12 +30,7 @@ export const attributeGroupRouter = router({
       })
     }),
   permanentlyDelete: publicProcedure
-    .input(
-      z
-        .number()
-        .or(z.string())
-        .transform((value) => Number(value))
-    )
+    .input(z.string())
     .mutation(({ input: id }) => {
       return prisma.productAttributeGroup.delete({ where: { id } })
     }),
