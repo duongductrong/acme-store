@@ -11,6 +11,7 @@ export interface NewCategoryProps {}
 function NewCategory({}: NewCategoryProps) {
   const router = useRouter()
   const t = useToast()
+  const trpcUtils = trpc.useContext()
 
   const { mutate: categoryMutate } = trpc.category.create.useMutation({
     onSuccess() {
@@ -20,6 +21,9 @@ function NewCategory({}: NewCategoryProps) {
       })
 
       router.push(ADMIN_URL.CATEGORY.LIST)
+
+      // Invalidate queries
+      trpcUtils.category.list.invalidate()
     },
     onError() {
       t.toast({

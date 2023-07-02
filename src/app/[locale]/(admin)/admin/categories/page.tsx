@@ -22,6 +22,8 @@ export interface CategoryListProps {}
 
 function CategoryList({}: CategoryListProps) {
   const t = useToast()
+  const trpcUtils = trpc.useContext()
+
   const { data: categories } = trpc.category.list.useQuery()
   const { mutate } = trpc.category.permanentlyDelete.useMutation({
     onSuccess() {
@@ -29,6 +31,9 @@ function CategoryList({}: CategoryListProps) {
         title: "Success",
         description: "Deleted a category successfully",
       })
+
+      // Invalidate queries
+      trpcUtils.category.list.invalidate()
     },
     onError() {
       t.toast({

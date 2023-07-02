@@ -11,11 +11,16 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 
 export interface CollectionFormProps {
+  title: string
   defaultValues?: Partial<CollectionSchemaType>
   onSubmit: (values: CollectionSchemaType) => void
 }
 
-const CollectionForm = ({ defaultValues, onSubmit }: CollectionFormProps) => {
+const CollectionForm = ({
+  title,
+  defaultValues,
+  onSubmit,
+}: CollectionFormProps) => {
   const methods = useForm<CollectionSchemaType>({
     resolver: zodResolver(collectionSchema),
     defaultValues: {
@@ -29,7 +34,7 @@ const CollectionForm = ({ defaultValues, onSubmit }: CollectionFormProps) => {
     <Form {...methods}>
       <form onSubmit={handleSubmit}>
         <SectionDetail
-          title="Create new collection"
+          title={title}
           backTo={ADMIN_URL.COLLECTION.LIST}
           whereTopRight={
             <>

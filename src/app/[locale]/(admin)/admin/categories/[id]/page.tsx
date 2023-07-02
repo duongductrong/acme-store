@@ -14,6 +14,8 @@ export const dynamic = "force-dynamic"
 
 const EditCategory = ({ params: { id } }: EditCategoryProps) => {
   const t = useToast()
+  const trpcUtils = trpc.useContext()
+
   const { data: category, error } = trpc.category.detail.useQuery(id)
   const { mutate: categoryMutate } = trpc.category.update.useMutation({
     onSuccess() {
@@ -21,6 +23,10 @@ const EditCategory = ({ params: { id } }: EditCategoryProps) => {
         title: "Success",
         description: "Updated category successfully",
       })
+
+      // Invalidate queries
+      trpcUtils.category.list.invalidate()
+      trpcUtils.category.detail.invalidate()
     },
     onError() {
       t.toast({

@@ -1,9 +1,9 @@
 import { z } from "zod"
 
 export const collectionSchema = z.object({
-  id: z.string().nullable().optional(),
-  name: z.string(),
-  code: z.string(),
+  id: z.number().nullable().optional(),
+  name: z.string().min(1),
+  code: z.string().min(1),
   description: z.string().nullable().optional(),
 })
 

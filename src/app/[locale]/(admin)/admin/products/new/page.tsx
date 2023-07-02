@@ -11,6 +11,7 @@ export interface NewProductProps {}
 const NewProduct = (props: NewProductProps) => {
   const router = useRouter()
   const t = useToast()
+  const trpcUtils = trpc.useContext()
 
   const { mutate: productMutate } = trpc.product.create.useMutation({
     onSuccess() {
@@ -20,6 +21,9 @@ const NewProduct = (props: NewProductProps) => {
       })
 
       router.push(ADMIN_URL.PRODUCT.LIST)
+
+      // Invalidate queries
+      trpcUtils.product.list.invalidate()
     },
     onError() {
       t.toast({

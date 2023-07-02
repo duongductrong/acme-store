@@ -15,6 +15,8 @@ export interface EditProductProps {
 const EditProduct = ({ params: { id } }: EditProductProps) => {
   const router = useRouter()
   const t = useToast()
+  const trpcUtils = trpc.useContext()
+
   const { data: product, error } = trpc.product.detail.useQuery(id)
   const { mutate } = trpc.product.update.useMutation({
     onSuccess() {
@@ -24,6 +26,10 @@ const EditProduct = ({ params: { id } }: EditProductProps) => {
       })
 
       router.push(ADMIN_URL.PRODUCT.LIST)
+
+      // Invalidate queries
+      trpcUtils.product.list.invalidate()
+      trpcUtils.product.detail.invalidate()
     },
     onError() {
       t.toast({

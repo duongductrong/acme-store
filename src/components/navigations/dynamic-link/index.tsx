@@ -1,15 +1,21 @@
 "use client"
 
-import { Loader2 } from "lucide-react"
 import Link, { LinkProps } from "next/link"
 import { AnchorHTMLAttributes, useTransition } from "react"
 import { revalidateByCookie } from "./actions"
 
 export interface DynamicLinkProps
   extends Omit<AnchorHTMLAttributes<HTMLAnchorElement>, keyof LinkProps>,
-    LinkProps {}
+    LinkProps {
+  dynamic?: boolean
+}
 
-const DynamicLink = ({ href, children, ...props }: DynamicLinkProps) => {
+const DynamicLink = ({
+  href,
+  children,
+  dynamic = false,
+  ...props
+}: DynamicLinkProps) => {
   const [isPending, startTransition] = useTransition()
 
   const handleRevalidate = () => {
@@ -18,10 +24,10 @@ const DynamicLink = ({ href, children, ...props }: DynamicLinkProps) => {
     })
   }
 
-  if (isPending) return <Loader2 className="w-4 h-4 animate-spin" />
+  // if (isPending) return <Loader2 className="w-4 h-4 animate-spin" />
 
   return (
-    <Link {...props} href={href} onClick={handleRevalidate}>
+    <Link {...props} href={href} onClick={dynamic ? handleRevalidate : () => null}>
       {children}
     </Link>
   )
