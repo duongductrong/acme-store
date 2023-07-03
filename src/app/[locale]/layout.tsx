@@ -7,6 +7,7 @@ import { Inter } from "next/font/google"
 import { notFound } from "next/navigation"
 import { ReactNode } from "react"
 import "../globals.css"
+import AuthProvider from "@/components/auth-provider/auth-provider"
 
 export interface RootLayoutProps {
   children: ReactNode
@@ -54,7 +55,7 @@ export default async function RootLayout({
         <TrpcProvider>
           <NextThemeProvider>
             <NextIntlClientProvider locale={locale} messages={directories}>
-              {children}
+              <AuthProvider>{children}</AuthProvider>
               <Toaster />
             </NextIntlClientProvider>
           </NextThemeProvider>

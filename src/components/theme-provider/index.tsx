@@ -11,7 +11,7 @@ const NextThemeProvider = ({ children, ...props }: NextThemeProviderProps) => {
   return (
     <ThemeProvider
       {...props}
-      defaultTheme="dark"
+      defaultTheme="light"
       enableSystem={false}
       attribute="class"
     >

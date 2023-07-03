@@ -4,7 +4,7 @@ import Form from "@/components/ui/form"
 import FormLabel from "@/components/ui/form/form-label"
 import FormUnified from "@/components/ui/form/form-unified"
 import { useToast } from "@/components/ui/use-toast"
-import trpc from "@/lib/trpc-client"
+import trpc from "@/lib/trpc/trpc-client"
 import {
   AttributeGroupSchemaType,
   attributeGroupSchema,

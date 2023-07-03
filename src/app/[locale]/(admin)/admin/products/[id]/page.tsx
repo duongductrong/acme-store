@@ -1,7 +1,7 @@
 "use client"
 
 import { useToast } from "@/components/ui/use-toast"
-import trpc from "@/lib/trpc-client"
+import trpc from "@/lib/trpc/trpc-client"
 import { ProductSchemaType } from "@/schemas/product"
 import { Loader2 } from "lucide-react"
 import ProductForm from "../templates/product-form"

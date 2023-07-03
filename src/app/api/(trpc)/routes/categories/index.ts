@@ -1,5 +1,5 @@
 import prisma from "@/lib/prisma"
-import { publicProcedure, router } from "@/lib/trpc"
+import { publicProcedure, router } from "@/lib/trpc/trpc"
 import { categorySchema } from "@/schemas/category"
 import { Status } from "@prisma/client"
 import { z } from "zod"

@@ -3,6 +3,10 @@ import SignInForm from "./components/sign-in-form"
 
 export interface SignInProps {}
 
+export const metadata = {
+  title: "Login",
+}
+
 const SignIn = (props: SignInProps) => {
   return (
     <>

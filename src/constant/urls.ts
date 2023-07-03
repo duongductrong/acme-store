@@ -35,3 +35,12 @@ export const ADMIN_URL = {
     INDEX: "/revalidate",
   },
 }
+
+export const STORE_FRONT_URL = {
+  AUTH: {
+    SIGN_IN: "/sign-in",
+    SIGN_UP: "/sign-up",
+  },
+
+  HOME: "/",
+}

@@ -1,6 +1,6 @@
 "use client"
 
-import trpc from "@/lib/trpc-client"
+import trpc from "@/lib/trpc/trpc-client"
 import { Loader2 } from "lucide-react"
 import CategoryForm from "../templates/category-form"
 import { useToast } from "@/components/ui/use-toast"

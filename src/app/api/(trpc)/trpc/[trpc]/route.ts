@@ -1,3 +1,4 @@
+import { createContext } from "@/lib/trpc/context"
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch"
 import { appRouter } from "../../trpc-router"
 
@@ -8,10 +9,10 @@ const handler = (req: Request) => {
     endpoint: "/api/trpc",
     req,
     router: appRouter,
-    createContext: () => ({}),
     batching: {
       enabled: true,
     },
+    createContext,
   })
 }
 

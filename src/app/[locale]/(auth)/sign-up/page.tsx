@@ -1,12 +1,13 @@
-import { Metadata } from "next"
+import { STORE_FRONT_URL } from "@/constant/urls"
 import { useTranslations } from "next-intl"
 import Link from "next/link"
 import SignUpForm from "./components/sign-up-form"
+import { Metadata } from "next"
 
 export interface SignUpProps extends CommonLayoutProps {}
 
 export const metadata: Metadata = {
-  title: "Sign up account | Shadcn",
+  title: "Sign up account",
 }
 
 const SignUp = () => {
@@ -20,7 +21,7 @@ const SignUp = () => {
           Enter your email below to create your account
         </p>
       </div>
-      <SignUpForm />
+      <SignUpForm redirectTo={STORE_FRONT_URL.AUTH.SIGN_IN} />
       <p className="px-8 text-center text-sm text-muted-foreground">
         By clicking continue, you agree to our{" "}
         <Link

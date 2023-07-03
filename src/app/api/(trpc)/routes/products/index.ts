@@ -1,11 +1,11 @@
 import prisma from "@/lib/prisma"
-import { publicProcedure, router } from "@/lib/trpc"
+import { protectedProcedure, publicProcedure, router } from "@/lib/trpc/trpc"
 import { productSchema } from "@/schemas/product"
 import { ProductVisibility, Status } from "@prisma/client"
 import { z } from "zod"
 
 export const productRouter = router({
-  list: publicProcedure.query(() => {
+  list: protectedProcedure.query(() => {
     return prisma.product.findMany()
   }),
 

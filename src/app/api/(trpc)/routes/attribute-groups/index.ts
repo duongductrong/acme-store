@@ -1,5 +1,5 @@
 import prisma from "@/lib/prisma"
-import { publicProcedure, router } from "@/lib/trpc"
+import { publicProcedure, router } from "@/lib/trpc/trpc"
 import { attributeGroupSchema } from "@/schemas/attribute-group"
 import { z } from "zod"
 

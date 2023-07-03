@@ -5,39 +5,55 @@ import * as React from "react"
 import { Button } from "@/components/ui/button"
 import Form from "@/components/ui/form"
 import FormUnified from "@/components/ui/form/form-unified"
+import { useToast } from "@/components/ui/use-toast"
+import { STORE_FRONT_URL } from "@/constant/urls"
+import trpc from "@/lib/trpc/trpc-client"
 import { cn } from "@/lib/utils"
-import { z } from "@/lib/zod"
+import { SignUpSchemaType, signUpSchema } from "@/schemas/auth"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useTranslations } from "next-intl"
+import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
 
-interface SignUpFormProps extends React.HTMLAttributes<HTMLDivElement> {}
+interface SignUpFormProps
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, "onSubmit"> {
+  redirectTo: string
+}
 
 const SignUpForm = ({ className, ...props }: SignUpFormProps) => {
-  const methods = useForm({
-    resolver: zodResolver(
-      z.object({
-        email: z.string().email().min(10),
-        password: z.string().min(8),
-        firstName: z.string(),
-        lastName: z.string(),
-      })
-    ),
+  const router = useRouter()
+  const { toast } = useToast()
+  const t = useTranslations("SIGN_UP")
+
+  const { mutate: createUser, isLoading: loading } =
+    trpc.auth.signUp.useMutation({
+      onSuccess() {
+        toast({
+          title: "Success",
+          description: "Sign up new account successfully",
+        })
+
+        router.push(STORE_FRONT_URL.AUTH.SIGN_IN)
+      },
+      onError() {
+        toast({
+          title: "Error",
+          description: "There is an error when signing up for an account.",
+          variant: "destructive",
+        })
+      },
+    })
+
+  const methods = useForm<SignUpSchemaType>({
+    resolver: zodResolver(signUpSchema),
   })
 
-  const [isLoading, setIsLoading] = React.useState<boolean>(false)
-
-  async function handleSubmit() {
-    setIsLoading(true)
-
-    setTimeout(() => {
-      setIsLoading(false)
-    }, 3000)
-  }
+  const handleSubmit = methods.handleSubmit((values) => createUser(values))
 
   return (
     <div className={cn("grid gap-6", className)} {...props}>
       <Form {...methods}>
-        <form onSubmit={methods.handleSubmit(handleSubmit)}>
+        <form onSubmit={handleSubmit}>
           <div className="grid gap-2">
             <div className="grid gap-2 mb-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -53,7 +69,7 @@ const SignUpForm = ({ className, ...props }: SignUpFormProps) => {
                     autoComplete: "email",
                     autoCorrect: "off",
                   }}
-                  disabled={isLoading}
+                  disabled={loading}
                 />
                 <FormUnified
                   id="lastName"
@@ -67,7 +83,7 @@ const SignUpForm = ({ className, ...props }: SignUpFormProps) => {
                     autoComplete: "email",
                     autoCorrect: "off",
                   }}
-                  disabled={isLoading}
+                  disabled={loading}
                 />
               </div>
               <FormUnified
@@ -82,7 +98,7 @@ const SignUpForm = ({ className, ...props }: SignUpFormProps) => {
                   autoComplete: "email",
                   autoCorrect: "off",
                 }}
-                disabled={isLoading}
+                disabled={loading}
               />
               <FormUnified
                 id="password"
@@ -96,10 +112,10 @@ const SignUpForm = ({ className, ...props }: SignUpFormProps) => {
                   autoComplete: "email",
                   autoCorrect: "off",
                 }}
-                disabled={isLoading}
+                disabled={loading}
               />
             </div>
-            <Button disabled={isLoading}>
+            <Button disabled={loading}>
               {/* {isLoading && (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
             )} */}
