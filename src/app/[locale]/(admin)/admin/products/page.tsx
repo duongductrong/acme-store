@@ -1,6 +1,6 @@
 "use client"
 
-import DynamicLink from "@/components/navigations/dynamic-link"
+import Link from "@/components/navigations/link"
 import SectionView from "@/components/sections/section-view"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -68,12 +68,12 @@ const ProductList = (props: ProductListProps) => {
       accessorKey: "productName",
       header: () => "Product Name",
       cell: ({ getValue, row }) => (
-        <DynamicLink
+        <Link
           href={ADMIN_URL.PRODUCT.EDIT.replace(/{id}/, row.original.id)}
           className="hover:underline underline-offset-2 font-semibold"
         >
           {getValue<string>()}
-        </DynamicLink>
+        </Link>
       ),
     },
     {
@@ -125,11 +125,11 @@ const ProductList = (props: ProductListProps) => {
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem asChild>
-                <DynamicLink
+                <Link
                   href={ADMIN_URL.PRODUCT.EDIT.replace(/{id}/g, product.id)}
                 >
                   Edit product
-                </DynamicLink>
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => handlePermanentlyDelete(product.id)}
@@ -150,10 +150,10 @@ const ProductList = (props: ProductListProps) => {
       title="Products"
       whereTopRight={
         <Button asChild>
-          <DynamicLink href={ADMIN_URL.PRODUCT.NEW}>
+          <Link href={ADMIN_URL.PRODUCT.NEW}>
             <Plus className="w-4 h-4 mr-2" />
             New Product
-          </DynamicLink>
+          </Link>
         </Button>
       }
     >

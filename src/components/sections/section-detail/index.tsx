@@ -1,4 +1,4 @@
-import DynamicLink from "@/components/navigations/dynamic-link"
+import Link from "@/components/navigations/link"
 import { Button } from "@/components/ui/button"
 import clsx from "clsx"
 import { ArrowLeft } from "lucide-react"
@@ -38,9 +38,9 @@ const SectionDetail = forwardRef<HTMLDivElement, SectionDetailProps>(
         <header className="flex items-center mb-4">
           <div className="flex items-center gap-2">
             <Button type="button" variant="outline" className="mr-4" asChild>
-              <DynamicLink href={backTo}>
+              <Link href={backTo}>
                 <ArrowLeft className="w-5 h-5" />
-              </DynamicLink>
+              </Link>
             </Button>
             <h2 className="text-xl font-semibold">{title}</h2>
           </div>

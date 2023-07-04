@@ -1,6 +1,6 @@
 "use client"
 
-import DynamicLink from "@/components/navigations/dynamic-link"
+import Link from "@/components/navigations/link"
 import SectionView from "@/components/sections/section-view"
 import { Button } from "@/components/ui/button"
 import { DataTable } from "@/components/ui/data-table"
@@ -50,7 +50,7 @@ const CollectionList = (props: CollectionListProps) => {
       accessorKey: "name",
       header: () => "Name",
       cell: ({ row: { original: collection } }) => (
-        <DynamicLink
+        <Link
           href={ADMIN_URL.COLLECTION.EDIT.replace(
             /{id}/,
             collection.id.toString()
@@ -58,7 +58,7 @@ const CollectionList = (props: CollectionListProps) => {
           className="hover:underline underline-offset-2 font-semibold"
         >
           {collection.name}
-        </DynamicLink>
+        </Link>
       ),
     },
     {
@@ -97,10 +97,10 @@ const CollectionList = (props: CollectionListProps) => {
       whereTopRight={
         <>
           <Button asChild>
-            <DynamicLink href={ADMIN_URL.COLLECTION.NEW}>
+            <Link href={ADMIN_URL.COLLECTION.NEW}>
               <Plus className="w-4 h-4 mr-2" />
               New collection
-            </DynamicLink>
+            </Link>
           </Button>
         </>
       }

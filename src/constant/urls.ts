@@ -31,8 +31,20 @@ export const ADMIN_URL = {
     LIST: "/admin/customers",
   },
 
-  REVALIDATE: {
-    INDEX: "/revalidate",
+  MEDIA_LIBRARY: {
+    LIST: "/admin/media-libraries",
+  },
+
+  SETTING: {
+    ROLE: {
+      LIST: "/admin/settings/roles",
+    },
+    PERMISSION: {
+      LIST: "/admin/settings/permissions",
+    },
+    STORE: {
+      INFORMATION: "/admin/settings/store",
+    },
   },
 }
 

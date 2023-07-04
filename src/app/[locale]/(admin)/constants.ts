@@ -2,7 +2,9 @@ import { ADMIN_URL } from "@/constant/urls"
 import {
   Box,
   Gift,
+  Image,
   Package,
+  Settings,
   Shapes,
   SquareStack,
   Users2,
@@ -84,6 +86,27 @@ export const ADMIN_SIDEBARS = [
         title: "Coupons",
         link: ADMIN_URL.ATTRIBUTE.LIST,
         Icon: Gift,
+      },
+    ],
+  },
+  {
+    type: "group",
+    id: "general",
+    title: "General",
+    children: [
+      {
+        type: "item",
+        id: "media-library",
+        title: "Media Library",
+        link: ADMIN_URL.MEDIA_LIBRARY.LIST,
+        Icon: Image,
+      },
+      {
+        type: "item",
+        id: "settings",
+        title: "Settings",
+        link: ADMIN_URL.SETTING.STORE.INFORMATION,
+        Icon: Settings,
       },
     ],
   },

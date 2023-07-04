@@ -4,7 +4,7 @@ import { useToast } from "@/components/ui/use-toast"
 import trpc from "@/lib/trpc/trpc-client"
 import { ProductSchemaType } from "@/schemas/product"
 import { Loader2 } from "lucide-react"
-import ProductForm from "../templates/product-form"
+import ProductForm from "../components/product-form"
 import { useRouter } from "next/navigation"
 import { ADMIN_URL } from "@/constant/urls"
 

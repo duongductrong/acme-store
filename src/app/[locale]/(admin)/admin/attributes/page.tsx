@@ -1,6 +1,6 @@
 "use client"
 
-import DynamicLink from "@/components/navigations/dynamic-link"
+import Link from "@/components/navigations/link"
 import SectionView from "@/components/sections/section-view"
 import { Button } from "@/components/ui/button"
 import { DataTable } from "@/components/ui/data-table"
@@ -61,12 +61,12 @@ const AttributeList = (props: AttributeListProps) => {
           attribute.id.toString()
         )
         return (
-          <DynamicLink
+          <Link
             href={url}
             className="hover:underline underline-offset-2 font-semibold"
           >
             {attribute.name}
-          </DynamicLink>
+          </Link>
         )
       },
     },
@@ -107,10 +107,10 @@ const AttributeList = (props: AttributeListProps) => {
       whereTopRight={
         <>
           <Button asChild>
-            <DynamicLink href={ADMIN_URL.ATTRIBUTE.NEW}>
+            <Link href={ADMIN_URL.ATTRIBUTE.NEW}>
               <Plus className="w-4 h-4 mr-2" />
               New attribute
-            </DynamicLink>
+            </Link>
           </Button>
         </>
       }

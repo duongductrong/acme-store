@@ -11,6 +11,7 @@ import { ProductSchemaType, productSchema } from "@/schemas/product"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { ProductVisibility, Status } from "@prisma/client"
 import { useForm } from "react-hook-form"
+import ProductCategoryField from "../product-category-field"
 
 export interface ProductFormProps {
   title: string
@@ -83,13 +84,7 @@ const ProductForm = ({ title, defaultValues, onSubmit }: ProductFormProps) => {
                     placeholder="Price"
                   />
 
-                  <FormUnified
-                    label="Category"
-                    name="categoryId"
-                    variant="TEXT_INPUT"
-                    wrapperClassName="col-span-4"
-                    placeholder="Category"
-                  />
+                  <ProductCategoryField />
 
                   <FormUnified
                     label="Description"

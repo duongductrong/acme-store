@@ -6,8 +6,11 @@ const t = initTRPC.context<Context>().create({
   transformer: SuperJSON,
 })
 
-// @middleware
-const ensureIsAuthenticated = t.middleware(({ next, ctx }) => {
+/**
+ * @middleware
+ * Contains many middleware to apply for procedure
+ */
+export const ensureIsAuthenticated = t.middleware(({ next, ctx }) => {
   if (!ctx.session) {
     throw new TRPCError({ code: "UNAUTHORIZED" })
   }
@@ -18,6 +21,8 @@ const ensureIsAuthenticated = t.middleware(({ next, ctx }) => {
     },
   })
 })
+
+// /@middleware
 
 // @exports
 export const router = t.router

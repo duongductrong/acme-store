@@ -117,7 +117,7 @@ const FormUnified = forwardRef<HTMLDivElement, FormUnifiedProps>(
                   {...checkboxProps}
                   {...radioGroupProps}
                   {...selectProps}
-                  className={clsx(textInputProps?.className)}
+                  className={clsx(className, textInputProps?.className)}
                 />
               </FormControl>
 

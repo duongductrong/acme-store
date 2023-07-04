@@ -1,6 +1,6 @@
 "use client"
 
-import DynamicLink from "@/components/navigations/dynamic-link"
+import Link from "@/components/navigations/link"
 import SectionView from "@/components/sections/section-view"
 import { Button } from "@/components/ui/button"
 import { DataTable } from "@/components/ui/data-table"
@@ -51,12 +51,12 @@ function CategoryList({}: CategoryListProps) {
       accessorKey: "name",
       header: () => "Name",
       cell: ({ getValue, row: { original: category } }) => (
-        <DynamicLink
+        <Link
           href={ADMIN_URL.CATEGORY.EDIT.replace(/{id}/, category.id)}
           className="hover:underline underline-offset-2"
         >
           {getValue<string>()}
-        </DynamicLink>
+        </Link>
       ),
     },
     {
@@ -99,10 +99,10 @@ function CategoryList({}: CategoryListProps) {
       whereTopRight={
         <>
           <Button asChild>
-            <DynamicLink href={ADMIN_URL.CATEGORY.NEW}>
+            <Link href={ADMIN_URL.CATEGORY.NEW}>
               <Plus className="w-4 h-4 mr-2" />
               New category
-            </DynamicLink>
+            </Link>
           </Button>
         </>
       }
