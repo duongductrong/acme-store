@@ -24,7 +24,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { Loader } from "lucide-react"
+import { Loader, LucideIcon, PackageSearch, Plus } from "lucide-react"
 
 export interface DataTableProps<TData = any, TValue = any> {
   columns: ColumnDef<TData, TValue>[]
@@ -34,6 +34,13 @@ export interface DataTableProps<TData = any, TValue = any> {
   searchPlaceholder?: string
 
   loading?: boolean
+
+  onCreateNewEntry?: () => void
+  createNewEntryEnable?: boolean
+  createNewEntryText?: string
+  emptyContent?: string
+  emptyIcon?: LucideIcon
+  emptyEnable?: boolean
 }
 
 export const DataTable = ({
@@ -42,6 +49,12 @@ export const DataTable = ({
   loading,
   searchable,
   searchPlaceholder,
+  emptyEnable = true,
+  emptyContent = "No results found.",
+  emptyIcon: EmptyIcon = PackageSearch,
+  createNewEntryEnable = true,
+  createNewEntryText = "Create new entry",
+  onCreateNewEntry,
 }: DataTableProps) => {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -147,25 +160,38 @@ export const DataTable = ({
                   ))}
                 </TableRow>
               ))
-            ) : (
+            ) : emptyEnable ? (
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className="h-24 text-center"
+                  className="h-24 text-center py-10"
                 >
-                  No results.
+                  <EmptyIcon className="w-10 h-10 block text-center mx-auto mb-4" />
+                  <p className="font-semibold mb-4">{emptyContent}</p>
+                  {createNewEntryEnable ? (
+                    <Button
+                      size="sm"
+                      className="text-xs"
+                      onClick={onCreateNewEntry}
+                    >
+                      <Plus className="w-4 h-4 mr-2" />
+                      {createNewEntryText}
+                    </Button>
+                  ) : null}
+                </TableCell>
+              </TableRow>
+            ) : null}
+
+            {loading && (
+              <TableRow className="absolute top-0 left-0 w-full h-full bg-neutral-100/50 dark:bg-neutral-900/50">
+                <TableCell
+                  colSpan={999}
+                  className="h-full w-full flex items-center justify-center"
+                >
+                  <Loader className="w-5 h-5 animate-spin mx-auto" />
                 </TableCell>
               </TableRow>
             )}
-
-            {loading && <TableRow className="absolute top-0 left-0 w-full h-full bg-neutral-100/50">
-              <TableCell
-                colSpan={999}
-                className="h-full w-full flex items-center justify-center"
-              >
-                <Loader className="w-5 h-5 animate-spin mx-auto" />
-              </TableCell>
-            </TableRow>}
           </TableBody>
         </Table>
       </div>
