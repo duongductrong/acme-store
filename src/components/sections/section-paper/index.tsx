@@ -13,11 +13,13 @@ const SectionPaper = forwardRef<HTMLDivElement, SectionPaperProps>(
         {...props}
         ref={ref}
         className={clsx(
-          "border border-neutral-200 bg-white p-5 rounded-lg",
+          "border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-950 p-5 rounded-lg",
           className
         )}
       >
-        {title ? <h3 className="text-base font-semibold mb-5">{title}</h3> : null}
+        {title ? (
+          <h3 className="text-base font-semibold mb-5">{title}</h3>
+        ) : null}
         {children}
       </div>
     )

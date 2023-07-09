@@ -1,7 +1,7 @@
 import SectionDetail from "@/components/sections/section-detail"
 import SectionPaper from "@/components/sections/section-paper"
 import Form from "@/components/ui/form"
-import FormUnified from "@/components/ui/form/form-unified"
+import FormField from "@/components/ui/form/form-field"
 import { Separator } from "@/components/ui/separator"
 import { ADMIN_URL } from "@/constant/urls"
 import { AttributeSchemaType, attributeSchema } from "@/schemas/attribute"
@@ -62,19 +62,19 @@ const AttributeForm = ({
             <div className="col-span-8">
               <SectionPaper title="General">
                 <div className="flex flex-col gap-4">
-                  <FormUnified
+                  <FormField
                     label="Name"
                     name="name"
-                    variant="TEXT_INPUT"
+                    variant="TEXT"
                     placeholder="Name"
                   />
-                  <FormUnified
+                  <FormField
                     label="Attribute code"
                     name="code"
-                    variant="TEXT_INPUT"
+                    variant="TEXT"
                     placeholder="Attribute code"
                   />
-                  <FormUnified
+                  <FormField
                     label="Type"
                     name="type"
                     variant="RADIO_GROUP"
@@ -93,7 +93,7 @@ const AttributeForm = ({
             </div>
             <div className="col-span-4">
               <SectionPaper title="Setting">
-                <FormUnified
+                <FormField
                   name="isRequired"
                   variant="RADIO_GROUP"
                   radioGroupProps={{
@@ -111,7 +111,7 @@ const AttributeForm = ({
                   }}
                 />
                 <Separator className="my-4" />
-                <FormUnified
+                <FormField
                   name="isFilterable"
                   variant="RADIO_GROUP"
                   radioGroupProps={{
@@ -129,7 +129,7 @@ const AttributeForm = ({
                   }}
                 />
                 <Separator className="my-4" />
-                <FormUnified
+                <FormField
                   name="isShowToCustomer"
                   variant="RADIO_GROUP"
                   radioGroupProps={{
@@ -147,10 +147,10 @@ const AttributeForm = ({
                   }}
                 />
                 <Separator className="my-4" />
-                <FormUnified
+                <FormField
                   type="number"
                   name="sortOrder"
-                  variant="TEXT_INPUT"
+                  variant="TEXT"
                   placeholder="Sort order"
                   textInputProps={{ min: 0 }}
                 />

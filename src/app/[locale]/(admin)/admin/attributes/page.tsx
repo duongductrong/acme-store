@@ -45,7 +45,7 @@ const AttributeList = (props: AttributeListProps) => {
       },
     })
 
-  const handleDeleteAttribute = (id: number) => permanentlyDeleteAttribute(id)
+  const handleDeleteAttribute = (id: string) => permanentlyDeleteAttribute(id)
 
   const columns: ColumnDef<ProductAttribute>[] = [
     {
@@ -91,7 +91,7 @@ const AttributeList = (props: AttributeListProps) => {
           <DropdownMenuContent>
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => handleDeleteAttribute(getValue<number>())}
+              onClick={() => handleDeleteAttribute(getValue<string>())}
             >
               Delete attribute
             </DropdownMenuItem>

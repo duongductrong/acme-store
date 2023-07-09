@@ -4,7 +4,7 @@ import SectionDetail from "@/components/sections/section-detail"
 import SectionPaper from "@/components/sections/section-paper"
 import { Button } from "@/components/ui/button"
 import Form from "@/components/ui/form"
-import FormUnified from "@/components/ui/form/form-unified"
+import FormField from "@/components/ui/form/form-field"
 import { ADMIN_URL } from "@/constant/urls"
 import { CollectionSchemaType, collectionSchema } from "@/schemas/collection"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -44,21 +44,21 @@ const CollectionForm = ({
         >
           <SectionPaper title="General">
             <div className="grid grid-cols-1 gap-4">
-              <FormUnified
+              <FormField
                 label="Name"
                 name="name"
                 placeholder="Name"
-                variant="TEXT_INPUT"
+                variant="TEXT"
               />
 
-              <FormUnified
+              <FormField
                 label="Code"
                 name="code"
                 placeholder="Code"
-                variant="TEXT_INPUT"
+                variant="TEXT"
               />
 
-              <FormUnified
+              <FormField
                 label="Description"
                 name="description"
                 placeholder="Description"

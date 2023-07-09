@@ -1,26 +1,35 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client"
 
 import SectionDetail from "@/components/sections/section-detail"
 import SectionPaper from "@/components/sections/section-paper"
 import { Button } from "@/components/ui/button"
 import Form from "@/components/ui/form"
-import FormUnified from "@/components/ui/form/form-unified"
+import FormField from "@/components/ui/form/form-field"
 import { Separator } from "@/components/ui/separator"
 import { ADMIN_URL } from "@/constant/urls"
+import { useTRPCTransformerFieldErrorsWithRHF } from "@/lib/trpc/hooks"
 import { ProductSchemaType, productSchema } from "@/schemas/product"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { ProductVisibility, Status } from "@prisma/client"
+import { TRPCClientErrorLike } from "@trpc/client"
 import { useForm } from "react-hook-form"
 import ProductCategoryField from "../product-category-field"
 
 export interface ProductFormProps {
   title: string
+  error: TRPCClientErrorLike<any> | null
   defaultValues?: Partial<ProductSchemaType>
 
   onSubmit: (values: ProductSchemaType) => void
 }
 
-const ProductForm = ({ title, defaultValues, onSubmit }: ProductFormProps) => {
+const ProductForm = ({
+  title,
+  error,
+  defaultValues,
+  onSubmit,
+}: ProductFormProps) => {
   const methods = useForm<ProductSchemaType>({
     resolver: zodResolver(productSchema),
     defaultValues: {
@@ -30,6 +39,8 @@ const ProductForm = ({ title, defaultValues, onSubmit }: ProductFormProps) => {
       ...defaultValues,
     },
   })
+
+  useTRPCTransformerFieldErrorsWithRHF(error, methods)
 
   const handleSubmit = methods.handleSubmit((values) => {
     onSubmit(values)
@@ -52,52 +63,55 @@ const ProductForm = ({ title, defaultValues, onSubmit }: ProductFormProps) => {
             <div className="flex flex-col gap-4 col-span-8">
               <SectionPaper title="General">
                 <div className="grid grid-cols-4 gap-4">
-                  <FormUnified
+                  <FormField
+                    variant="TEXT"
                     label="Name"
                     name="productName"
-                    variant="TEXT_INPUT"
                     wrapperClassName="col-span-4"
                     placeholder="Name"
                   />
 
-                  <FormUnified
+                  <FormField
+                    variant="UID"
                     label="Slug"
                     name="slug"
-                    variant="TEXT_INPUT"
                     wrapperClassName="col-span-4"
                     placeholder="Slug"
+                    fieldProps={{
+                      fromName: "productName",
+                    }}
                   />
 
-                  <FormUnified
+                  <FormField
+                    variant="TEXT"
                     label="SKU"
                     name="SKU"
-                    variant="TEXT_INPUT"
                     wrapperClassName="col-span-2"
                     placeholder="SKU"
                   />
 
-                  <FormUnified
+                  <FormField
+                    variant="NUMBER"
                     label="Price"
                     name="price"
-                    variant="TEXT_INPUT"
                     wrapperClassName="col-span-2"
                     placeholder="Price"
                   />
 
                   <ProductCategoryField />
 
-                  <FormUnified
+                  <FormField
+                    variant="TEXTAREA"
                     label="Description"
                     name="description"
-                    variant="TEXTAREA"
                     wrapperClassName="col-span-4"
                     placeholder="Description"
                   />
 
-                  <FormUnified
+                  <FormField
+                    variant="TEXTAREA"
                     label="Content"
                     name="content"
-                    variant="TEXTAREA"
                     wrapperClassName="col-span-4"
                     placeholder="Content"
                   />
@@ -106,21 +120,21 @@ const ProductForm = ({ title, defaultValues, onSubmit }: ProductFormProps) => {
               <SectionPaper title="Media">Drop image here</SectionPaper>
               <SectionPaper title="Search engine optimize">
                 <div className="flex flex-col gap-4">
-                  <FormUnified
+                  <FormField
                     label="Meta Title"
                     name="metadata.metaSeoTitle"
-                    variant="TEXT_INPUT"
+                    variant="TEXT"
                     placeholder="Title"
                   />
 
-                  <FormUnified
+                  <FormField
                     label="Meta Keywords"
                     name="metadata.metaSeoKeyword"
-                    variant="TEXT_INPUT"
+                    variant="TEXT"
                     placeholder="Keywords"
                   />
 
-                  <FormUnified
+                  <FormField
                     label="Meta Description"
                     name="metadata.metaSeoDescription"
                     variant="TEXTAREA"
@@ -131,7 +145,7 @@ const ProductForm = ({ title, defaultValues, onSubmit }: ProductFormProps) => {
             </div>
             <div className="flex flex-col gap-4 col-span-4">
               <SectionPaper title="Product status">
-                <FormUnified
+                <FormField
                   name="status"
                   variant="RADIO_GROUP"
                   radioGroupProps={{
@@ -149,7 +163,7 @@ const ProductForm = ({ title, defaultValues, onSubmit }: ProductFormProps) => {
                   }}
                 />
                 <Separator className="my-4" />
-                <FormUnified
+                <FormField
                   name="visibility"
                   variant="RADIO_GROUP"
                   radioGroupProps={{
@@ -168,7 +182,7 @@ const ProductForm = ({ title, defaultValues, onSubmit }: ProductFormProps) => {
                 />
               </SectionPaper>
               <SectionPaper title="Inventory">
-                <FormUnified
+                <FormField
                   name="stockAvailability"
                   variant="RADIO_GROUP"
                   radioGroupProps={{
@@ -186,19 +200,18 @@ const ProductForm = ({ title, defaultValues, onSubmit }: ProductFormProps) => {
                   }}
                 />
                 <Separator className="my-4" />
-                <FormUnified
-                  type="number"
+                <FormField
                   label="Quantity"
                   name="quantity"
-                  variant="TEXT_INPUT"
+                  variant="NUMBER"
                   placeholder="Quantity"
-                  textInputProps={{ min: 0 }}
+                  fieldProps={{ min: 0 }}
                 />
               </SectionPaper>
               <SectionPaper title="Thumbnail">
-                <FormUnified
+                <FormField
                   name="thumbnail"
-                  variant="TEXT_INPUT"
+                  variant="TEXT"
                   placeholder="Thumbnail"
                 />
               </SectionPaper>

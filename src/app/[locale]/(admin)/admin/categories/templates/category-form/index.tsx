@@ -4,7 +4,7 @@ import SectionDetail from "@/components/sections/section-detail"
 import SectionPaper from "@/components/sections/section-paper"
 import { Button } from "@/components/ui/button"
 import Form from "@/components/ui/form"
-import FormUnified from "@/components/ui/form/form-unified"
+import FormField from "@/components/ui/form/form-field"
 import { ADMIN_URL } from "@/constant/urls"
 import { CategorySchemaType, categorySchema } from "@/schemas/category"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -49,13 +49,13 @@ const CategoryForm = ({
             <div className="col-span-8 flex flex-col gap-4">
               <SectionPaper title="General">
                 <div className="flex flex-col gap-4">
-                  <FormUnified
+                  <FormField
                     label="Name"
                     name="name"
-                    variant="TEXT_INPUT"
+                    variant="TEXT"
                     placeholder="Name"
                   />
-                  <FormUnified
+                  <FormField
                     label="Description"
                     name="description"
                     variant="TEXTAREA"
@@ -66,21 +66,21 @@ const CategoryForm = ({
 
               <SectionPaper title="Search engine optimize">
                 <div className="flex flex-col gap-4">
-                  <FormUnified
+                  <FormField
                     label="Meta Title"
                     name="metadata.metaSeoTitle"
-                    variant="TEXT_INPUT"
+                    variant="TEXT"
                     placeholder="Title"
                   />
 
-                  <FormUnified
+                  <FormField
                     label="Meta Keywords"
                     name="metadata.metaSeoKeyword"
-                    variant="TEXT_INPUT"
+                    variant="TEXT"
                     placeholder="Keywords"
                   />
 
-                  <FormUnified
+                  <FormField
                     label="Meta Description"
                     name="metadata.metaSeoDescription"
                     variant="TEXTAREA"
@@ -91,15 +91,15 @@ const CategoryForm = ({
             </div>
             <div className="col-span-4 flex flex-col gap-4">
               <SectionPaper title="Thumbnail">
-                <FormUnified
+                <FormField
                   name="thumbnail"
-                  variant="TEXT_INPUT"
+                  variant="TEXT"
                   placeholder="Thumbnail"
                 />
               </SectionPaper>
 
               <SectionPaper title="Product status">
-                <FormUnified
+                <FormField
                   name="status"
                   variant="RADIO_GROUP"
                   radioGroupProps={{

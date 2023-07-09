@@ -1,5 +1,10 @@
 import { AppRouter } from "@/app/api/(trpc)/trpc-router"
-import { createTRPCReact } from "@trpc/react-query"
+import {
+  createTRPCProxyClient,
+  createTRPCReact,
+  httpBatchLink,
+} from "@trpc/react-query"
+import SuperJSON from "superjson"
 
 // function getBaseUrl() {
 //   if (typeof window !== "undefined")
@@ -16,6 +21,15 @@ import { createTRPCReact } from "@trpc/react-query"
 // }
 
 const trpc = createTRPCReact<AppRouter>()
+
+const trpcServer = createTRPCProxyClient<AppRouter>({
+  links: [
+    httpBatchLink({
+      url: "/api/trpc",
+    }),
+  ],
+  transformer: SuperJSON,
+})
 
 // const trpc = createTRPCNext<AppRouter>({
 //   ssr: false,
@@ -40,5 +54,7 @@ const trpc = createTRPCReact<AppRouter>()
 //     }
 //   },
 // })
+
+export { trpcServer }
 
 export default trpc

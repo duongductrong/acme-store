@@ -1,10 +1,10 @@
 import { useContext } from "react";
 import { useFormContext } from "react-hook-form";
-import FormFieldContext from "../context/form-field-context";
+import FormFieldInternalContext from "../context/form-field-internal-context";
 import FormItemContext from "../context/form-item-context";
 
 const useFormField = () => {
-  const fieldContext = useContext(FormFieldContext);
+  const fieldContext = useContext(FormFieldInternalContext);
   const itemContext = useContext(FormItemContext);
   const { getFieldState, formState } = useFormContext();
 

@@ -4,7 +4,7 @@ import * as React from "react"
 
 import { Button } from "@/components/ui/button"
 import Form from "@/components/ui/form"
-import FormUnified from "@/components/ui/form/form-unified"
+import FormField from "@/components/ui/form/form-field"
 import { useToast } from "@/components/ui/use-toast"
 import { STORE_FRONT_URL } from "@/constant/urls"
 import { cn } from "@/lib/utils"
@@ -70,12 +70,12 @@ const SignInForm = ({ className, ...props }: SignInFormProps) => {
         <form onSubmit={handleSubmit}>
           <div className="grid gap-2">
             <div className="grid gap-2 mb-4">
-              <FormUnified
+              <FormField
                 id="email"
                 label="Email"
                 type="email"
                 name="email"
-                variant="TEXT_INPUT"
+                variant="TEXT"
                 placeholder="name@example.com"
                 textInputProps={{
                   autoCapitalize: "none",
@@ -84,12 +84,12 @@ const SignInForm = ({ className, ...props }: SignInFormProps) => {
                 }}
                 disabled={isLoading}
               />
-              <FormUnified
+              <FormField
                 id="password"
                 label="Password"
                 type="password"
                 name="password"
-                variant="TEXT_INPUT"
+                variant="TEXT"
                 placeholder="Enter your password"
                 textInputProps={{
                   autoCapitalize: "none",

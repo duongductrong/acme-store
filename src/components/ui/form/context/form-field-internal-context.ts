@@ -1,15 +1,15 @@
 import { createContext } from "react";
 import { FieldPath, FieldValues } from "react-hook-form";
 
-type FormFieldContextValue<
+type FormFieldInternalContextValue<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
 > = {
   name: TName;
 };
 
-const FormFieldContext = createContext<FormFieldContextValue>(
-  {} as FormFieldContextValue
+const FormFieldInternalContext = createContext<FormFieldInternalContextValue>(
+  {} as FormFieldInternalContextValue
 );
 
-export default FormFieldContext;
+export default FormFieldInternalContext;

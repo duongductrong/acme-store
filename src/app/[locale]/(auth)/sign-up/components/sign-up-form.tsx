@@ -4,7 +4,7 @@ import * as React from "react"
 
 import { Button } from "@/components/ui/button"
 import Form from "@/components/ui/form"
-import FormUnified from "@/components/ui/form/form-unified"
+import FormField from "@/components/ui/form/form-field"
 import { useToast } from "@/components/ui/use-toast"
 import { STORE_FRONT_URL } from "@/constant/urls"
 import trpc from "@/lib/trpc/trpc-client"
@@ -57,12 +57,12 @@ const SignUpForm = ({ className, ...props }: SignUpFormProps) => {
           <div className="grid gap-2">
             <div className="grid gap-2 mb-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormUnified
+                <FormField
                   id="firstName"
                   label="First Name"
                   type="text"
                   name="firstName"
-                  variant="TEXT_INPUT"
+                  variant="TEXT"
                   placeholder="Enter first name."
                   textInputProps={{
                     autoCapitalize: "none",
@@ -71,12 +71,12 @@ const SignUpForm = ({ className, ...props }: SignUpFormProps) => {
                   }}
                   disabled={loading}
                 />
-                <FormUnified
+                <FormField
                   id="lastName"
                   label="Last Name"
                   type="text"
                   name="lastName"
-                  variant="TEXT_INPUT"
+                  variant="TEXT"
                   placeholder="Enter last name."
                   textInputProps={{
                     autoCapitalize: "none",
@@ -86,12 +86,12 @@ const SignUpForm = ({ className, ...props }: SignUpFormProps) => {
                   disabled={loading}
                 />
               </div>
-              <FormUnified
+              <FormField
                 id="email"
                 label="Email"
                 type="email"
                 name="email"
-                variant="TEXT_INPUT"
+                variant="TEXT"
                 placeholder="name@example.com"
                 textInputProps={{
                   autoCapitalize: "none",
@@ -100,12 +100,12 @@ const SignUpForm = ({ className, ...props }: SignUpFormProps) => {
                 }}
                 disabled={loading}
               />
-              <FormUnified
+              <FormField
                 id="password"
                 label="Password"
                 type="password"
                 name="password"
-                variant="TEXT_INPUT"
+                variant="TEXT"
                 placeholder="Enter your password"
                 textInputProps={{
                   autoCapitalize: "none",

@@ -1,12 +1,12 @@
 "use client"
 
 import { useToast } from "@/components/ui/use-toast"
+import { ADMIN_URL } from "@/constant/urls"
 import trpc from "@/lib/trpc/trpc-client"
 import { ProductSchemaType } from "@/schemas/product"
 import { Loader2 } from "lucide-react"
-import ProductForm from "../components/product-form"
 import { useRouter } from "next/navigation"
-import { ADMIN_URL } from "@/constant/urls"
+import ProductForm from "../components/product-form"
 
 export interface EditProductProps {
   params: { id: string }
@@ -17,8 +17,8 @@ const EditProduct = ({ params: { id } }: EditProductProps) => {
   const t = useToast()
   const trpcUtils = trpc.useContext()
 
-  const { data: product, error } = trpc.product.detail.useQuery(id)
-  const { mutate } = trpc.product.update.useMutation({
+  const { data: product } = trpc.product.detail.useQuery(id)
+  const { mutate: updateProduct, error } = trpc.product.update.useMutation({
     onSuccess() {
       t.toast({
         title: "Success",
@@ -41,15 +41,13 @@ const EditProduct = ({ params: { id } }: EditProductProps) => {
   })
 
   if (!product) return <Loader2 className="w-4 h-4 animate-spin" />
-  if (error) return "Error"
-
-  console.log(product)
 
   return (
     <ProductForm
       title="Edit a product"
       defaultValues={product as any as ProductSchemaType}
-      onSubmit={(data) => mutate(data)}
+      onSubmit={(data) => updateProduct(data as Required<ProductSchemaType>)}
+      error={error}
     />
   )
 }

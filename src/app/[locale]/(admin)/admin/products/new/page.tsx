@@ -13,7 +13,7 @@ const NewProduct = (props: NewProductProps) => {
   const t = useToast()
   const trpcUtils = trpc.useContext()
 
-  const { mutate: productMutate } = trpc.product.create.useMutation({
+  const { mutate: createProduct, error } = trpc.product.create.useMutation({
     onSuccess() {
       t.toast({
         title: "Success",
@@ -25,19 +25,13 @@ const NewProduct = (props: NewProductProps) => {
       // Invalidate queries
       trpcUtils.product.list.invalidate()
     },
-    onError() {
-      t.toast({
-        title: "Error",
-        description: "Has an error when creating new product",
-        variant: "destructive",
-      })
-    },
   })
 
   return (
     <ProductForm
       title="Create a product"
-      onSubmit={(values) => productMutate(values)}
+      onSubmit={(values) => createProduct(values)}
+      error={error}
     />
   )
 }

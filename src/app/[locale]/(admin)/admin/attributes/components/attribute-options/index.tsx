@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button"
-import FormUnified from "@/components/ui/form/form-unified"
+import FormField from "@/components/ui/form/form-field"
 import { Label } from "@/components/ui/label"
 import { AttributeSchemaType } from "@/schemas/attribute"
 import { Plus } from "lucide-react"
@@ -40,9 +40,9 @@ const AttributeOptions = (props: AttributeOptionsProps) => {
         {options.map((option, index) => {
           return (
             <div key={option.id} className="flex items-center w-full">
-              <FormUnified
+              <FormField
                 name={`options.${index}.name`}
-                variant="TEXT_INPUT"
+                variant="TEXT"
                 wrapperClassName="flex-1 max-w-[200px]"
               />
               <span

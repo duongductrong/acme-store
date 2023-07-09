@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button"
 import { ComboboxOption } from "@/components/ui/combobox"
 import Form from "@/components/ui/form"
 import FormLabel from "@/components/ui/form/form-label"
-import FormUnified from "@/components/ui/form/form-unified"
+import FormField from "@/components/ui/form/form-field"
 import { useToast } from "@/components/ui/use-toast"
 import trpc from "@/lib/trpc/trpc-client"
 import {
@@ -48,7 +48,7 @@ const AttributeGroup = (props: AttributeGroupProps) => {
       <FormLabel className="mb-2 block uppercase">Attribute group</FormLabel>
       <p className="text-sm mb-4">Select groups the attribute belongs to</p>
       <div className="grid grid-cols-2 gap-4">
-        <FormUnified
+        <FormField
           name="groupIds"
           variant="SELECT"
           placeholder="Select groups"
@@ -60,8 +60,8 @@ const AttributeGroup = (props: AttributeGroupProps) => {
 
         <Form {...internalMethods}>
           <div className="flex gap-1">
-            <FormUnified
-              variant="TEXT_INPUT"
+            <FormField
+              variant="TEXT"
               name="name"
               placeholder="Add new group"
               wrapperClassName="w-full"

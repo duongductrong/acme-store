@@ -1,5 +1,5 @@
 import { ComboboxOption } from "@/components/ui/combobox"
-import FormUnified from "@/components/ui/form/form-unified"
+import FormField from "@/components/ui/form/form-field"
 import trpc from "@/lib/trpc/trpc-client"
 
 export interface ProductCategoryFieldProps {}
@@ -13,7 +13,7 @@ const ProductCategoryField = (props: ProductCategoryFieldProps) => {
   }))
 
   return (
-    <FormUnified
+    <FormField
       label="Category"
       name="categoryId"
       variant="SELECT"

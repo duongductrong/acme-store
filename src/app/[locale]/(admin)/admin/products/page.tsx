@@ -24,22 +24,27 @@ export interface ProductListProps {}
 
 const ProductList = (props: ProductListProps) => {
   const t = useToast()
-  const { data: products } = trpc.product.list.useQuery()
-  const { mutate } = trpc.product.permanentlyDelete.useMutation({
-    onSuccess() {
-      t.toast({
-        title: "Success",
-        description: "Deleted a product successfully",
-      })
-    },
-    onError() {
-      t.toast({
-        title: "Error",
-        description: "Has an error when delete a product",
-        variant: "destructive",
-      })
-    },
-  })
+  const trpcUitls = trpc.useContext()
+  const { data: products, isLoading: isProductQuerying } =
+    trpc.product.list.useQuery()
+  const { mutate, isLoading: isProductMutating } =
+    trpc.product.permanentlyDelete.useMutation({
+      onSuccess() {
+        t.toast({
+          title: "Success",
+          description: "Deleted a product successfully",
+        })
+
+        trpcUitls.product.list.invalidate()
+      },
+      onError() {
+        t.toast({
+          title: "Error",
+          description: "Has an error when delete a product",
+          variant: "destructive",
+        })
+      },
+    })
 
   const handlePermanentlyDelete = (id: string) => mutate(id)
 
@@ -162,6 +167,7 @@ const ProductList = (props: ProductListProps) => {
         data={products ?? []}
         searchable
         searchPlaceholder="Search product name..."
+        loading={isProductMutating || isProductQuerying}
       />
     </SectionView>
   )

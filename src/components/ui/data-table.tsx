@@ -24,6 +24,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { Loader } from "lucide-react"
 
 export interface DataTableProps<TData = any, TValue = any> {
   columns: ColumnDef<TData, TValue>[]
@@ -31,11 +32,14 @@ export interface DataTableProps<TData = any, TValue = any> {
 
   searchable?: boolean
   searchPlaceholder?: string
+
+  loading?: boolean
 }
 
 export const DataTable = ({
-  columns,
   data,
+  columns,
+  loading,
   searchable,
   searchPlaceholder,
 }: DataTableProps) => {
@@ -72,9 +76,9 @@ export const DataTable = ({
         {searchable ? (
           <Input
             placeholder={searchPlaceholder}
-            value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
+            value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
             onChange={(event) =>
-              table.getColumn("email")?.setFilterValue(event.target.value)
+              table.getColumn("name")?.setFilterValue(event.target.value)
             }
             className="max-w-sm"
           />
@@ -126,7 +130,7 @@ export const DataTable = ({
               </TableRow>
             ))}
           </TableHeader>
-          <TableBody>
+          <TableBody className="relative">
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
@@ -153,6 +157,15 @@ export const DataTable = ({
                 </TableCell>
               </TableRow>
             )}
+
+            {loading && <TableRow className="absolute top-0 left-0 w-full h-full bg-neutral-100/50">
+              <TableCell
+                colSpan={999}
+                className="h-full w-full flex items-center justify-center"
+              >
+                <Loader className="w-5 h-5 animate-spin mx-auto" />
+              </TableCell>
+            </TableRow>}
           </TableBody>
         </Table>
       </div>

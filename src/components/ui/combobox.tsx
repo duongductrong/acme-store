@@ -73,10 +73,9 @@ export const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
 
     const comboboxTriggerRef = useRef<HTMLButtonElement>(null)
 
-    console.log(defaultValue, _value)
     const [open, setOpen] = useState(false)
     const [value, setValue] = useState<string[]>(() => {
-      return _value || []
+      return typeof _value === "string" ? [_value] : _value || []
     })
     const [comboboxContentWidth, setComboboxContentWidth] = useState(0)
 
