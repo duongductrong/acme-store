@@ -1,5 +1,5 @@
-import clsx from "clsx"
-import React, { HTMLAttributes, ReactNode, forwardRef } from "react"
+import { cn } from "@/lib/utils"
+import { HTMLAttributes, ReactNode, forwardRef } from "react"
 
 export interface SSPanelTitleProps extends HTMLAttributes<HTMLHeadingElement> {
   children: ReactNode
@@ -11,7 +11,7 @@ const SSPanelTitle = forwardRef<HTMLHeadingElement, SSPanelTitleProps>(
       <h2
         {...props}
         ref={ref}
-        className={clsx("mb-8 text-xl font-semibold", className)}
+        className={cn("mb-8 text-xl font-semibold", className)}
       >
         {children}
       </h2>

@@ -1,5 +1,5 @@
 import { Button, ButtonProps } from "@/components/ui/button"
-import clsx from "clsx"
+import { cn } from "@/lib/utils"
 import { Dot } from "lucide-react"
 import { forwardRef } from "react"
 
@@ -13,11 +13,12 @@ const SSPanelGroupItem = forwardRef<HTMLButtonElement, SSPanelGroupItemProps>(
       <Button
         {...props}
         ref={ref}
-        className={clsx(
+        className={cn(
           className,
           "w-full justify-start border-r-2 rounded-r-none px-2",
           {
-            "border-transparent text-neutral-700 dark:text-neutral-300": !active,
+            "border-transparent text-neutral-700 dark:text-neutral-300":
+              !active,
             "border-neutral-950 dark:border-neutral-50 font-bold": active,
           }
         )}

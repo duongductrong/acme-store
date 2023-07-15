@@ -1,4 +1,4 @@
-import clsx from "clsx"
+import { cn } from "@/lib/utils"
 import { HTMLAttributes, ReactNode, forwardRef } from "react"
 
 export interface SectionPaperProps extends HTMLAttributes<HTMLDivElement> {
@@ -12,7 +12,7 @@ const SectionPaper = forwardRef<HTMLDivElement, SectionPaperProps>(
       <div
         {...props}
         ref={ref}
-        className={clsx(
+        className={cn(
           "border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-950 p-5 rounded-lg",
           className
         )}

@@ -1,5 +1,5 @@
-import clsx from "clsx"
-import React, { HTMLAttributes, forwardRef } from "react"
+import { cn } from "@/lib/utils"
+import { HTMLAttributes, forwardRef } from "react"
 
 export interface SSPanelGroupProps extends HTMLAttributes<HTMLDivElement> {}
 
@@ -9,7 +9,7 @@ const SSPanelGroup = forwardRef<HTMLDivElement, SSPanelGroupProps>(
       <div
         {...props}
         ref={ref}
-        className={clsx("flex flex-col gap-base", className)}
+        className={cn("flex flex-col gap-base", className)}
       >
         {children}
       </div>

@@ -1,4 +1,4 @@
-import clsx from "clsx"
+import { cn } from "@/lib/utils"
 import { forwardRef } from "react"
 import Text, { TextProps } from "./text"
 
@@ -12,7 +12,7 @@ const TextLegend = forwardRef<HTMLElement, TextLegendProps>(
         size="xs"
         weight="bold"
         transform="uppercase"
-        className={clsx(className)}
+        className={cn(className)}
       />
     )
   }

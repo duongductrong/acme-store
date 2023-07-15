@@ -21,7 +21,7 @@ import {
   UseTRPCInfiniteQueryOptions,
   UseTRPCInfiniteQueryResult,
 } from "@trpc/react-query/shared"
-import clsx from "clsx"
+import { CommandLoading } from "cmdk"
 import {
   FC,
   forwardRef,
@@ -31,11 +31,10 @@ import {
   useRef,
   useState,
 } from "react"
+import { useDebounce } from "react-use"
 import { FixedSizeList, ListChildComponentProps } from "react-window"
 import InfiniteLoader from "react-window-infinite-loader"
 import { ComboboxOption } from "./combobox"
-import { useDebounce } from "react-use"
-import { CommandLoading } from "cmdk"
 
 export interface ComboboxInfiniteProps {
   value?: any
@@ -228,7 +227,7 @@ export const ComboboxInfinite = forwardRef<
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className={clsx(className, "w-full !gap-2 flex-wrap font-normal")}
+            className={cn(className, "w-full !gap-2 flex-wrap font-normal")}
             ref={comboboxTriggerRef}
           >
             {Placeholder}
@@ -236,7 +235,7 @@ export const ComboboxInfinite = forwardRef<
           </Button>
         </PopoverTrigger>
         <PopoverContent
-          className={clsx(contentClassName, "w-full p-0")}
+          className={cn(contentClassName, "w-full p-0")}
           style={{ width: comboboxContentWidth }}
         >
           <Command shouldFilter={false}>

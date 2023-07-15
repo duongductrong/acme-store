@@ -1,6 +1,6 @@
 import Link from "@/components/navigations/link"
 import { Button } from "@/components/ui/button"
-import clsx from "clsx"
+import { cn } from "@/lib/utils"
 import { ArrowLeft } from "lucide-react"
 import { ReactNode, forwardRef } from "react"
 
@@ -33,7 +33,7 @@ const SectionDetail = forwardRef<HTMLDivElement, SectionDetailProps>(
       <section
         {...props}
         ref={ref}
-        className={clsx("max-w-[940px] mx-auto", wrapperClassName)}
+        className={cn("max-w-[940px] mx-auto", wrapperClassName)}
       >
         <header className="flex items-center mb-base">
           <div className="flex items-center gap-2">
@@ -46,12 +46,12 @@ const SectionDetail = forwardRef<HTMLDivElement, SectionDetailProps>(
           </div>
 
           {whereTopRight && (
-            <div className={clsx("ml-auto flex gap-2", whereTopRightClassName)}>
+            <div className={cn("ml-auto flex gap-2", whereTopRightClassName)}>
               {whereTopRight}
             </div>
           )}
         </header>
-        <main className={clsx("w-full h-full", mainClassName)}>{children}</main>
+        <main className={cn("w-full h-full", mainClassName)}>{children}</main>
       </section>
     )
   }

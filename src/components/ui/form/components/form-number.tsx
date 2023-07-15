@@ -1,12 +1,12 @@
 "use client"
 
-import clsx from "clsx"
 import { forwardRef } from "react"
 import { Input, InputProps } from "../../input"
 
+import { cn } from "@/lib/utils"
+import isNil from "lodash/isNil"
 import { ChevronDown, ChevronUp } from "lucide-react"
 import "./form-number.scss"
-import isNil from "lodash/isNil"
 
 export interface FormNumberProps extends InputProps {
   toFixed: number
@@ -51,10 +51,10 @@ const FormNumber = forwardRef<HTMLInputElement, FormNumberProps>(
           {...props}
           ref={ref}
           type="number"
-          className={clsx(props.className, "form-number")}
+          className={cn(props.className, "form-number")}
         />
         <div
-          className={clsx(
+          className={cn(
             "w-8",
             "flex flex-col items-center justify-center",
             "absolute top-1/2 transform -translate-y-1/2 right-0 h-full"
@@ -62,7 +62,7 @@ const FormNumber = forwardRef<HTMLInputElement, FormNumberProps>(
         >
           <span
             role="button"
-            className={clsx(
+            className={cn(
               "w-full flex items-center justify-center flex-1",
               "border border-b-0 border-solid border-neutral-200 dark:border-neutral-800",
               "rounded-tr-[7px] cursor-pointer"
@@ -73,7 +73,7 @@ const FormNumber = forwardRef<HTMLInputElement, FormNumberProps>(
           </span>
           <span
             role="button"
-            className={clsx(
+            className={cn(
               "w-full flex items-center justify-center flex-1",
               "border border-solid border-neutral-200 dark:border-neutral-800",
               "rounded-br-[7px] cursor-pointer"

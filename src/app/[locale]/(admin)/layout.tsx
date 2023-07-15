@@ -3,7 +3,7 @@ import TextLegend from "@/components/typography/text-legend"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import clsx from "clsx"
+import { cn } from "@/lib/utils"
 import { Menu } from "lucide-react"
 import dynamic from "next/dynamic"
 import BranchSwitcher from "./components/brand-switcher"
@@ -40,7 +40,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       </div>
       <div className="flex">
         <div
-          className={clsx(
+          className={cn(
             "fixed top-[64px] left-0 min-w-[240px] h-[calc(100vh-64px)] border-r border-neutral-200 dark:border-neutral-800",
             "flex flex-col p-base gap-base"
           )}

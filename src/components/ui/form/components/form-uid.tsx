@@ -1,6 +1,6 @@
 "use client"
 
-import clsx from "clsx"
+import { cn } from "@/lib/utils"
 import { Loader, RotateCw } from "lucide-react"
 import { forwardRef, useState } from "react"
 import { useFormContext } from "react-hook-form"
@@ -40,7 +40,7 @@ const FormUID = forwardRef<HTMLInputElement, FormUIDProps>(
         <FormInput {...props} ref={ref} />
 
         <div
-          className={clsx(
+          className={cn(
             "group",
             "absolute top-1/2 right-3 transform -translate-y-1/2",
             "flex gap-2"
@@ -57,7 +57,7 @@ const FormUID = forwardRef<HTMLInputElement, FormUIDProps>(
             <Loader className="w-4 h-4 animate-spin" />
           ) : (
             <RotateCw
-              className={clsx("w-4 h-4 cursor-pointer", "text-neutral-500")}
+              className={cn("w-4 h-4 cursor-pointer", "text-neutral-500")}
               onClick={handleGenerateUID}
             />
           )}

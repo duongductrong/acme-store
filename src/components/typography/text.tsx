@@ -1,6 +1,5 @@
 import { Slot } from "@radix-ui/react-slot"
 import { VariantProps, cva } from "class-variance-authority"
-import clsx from "clsx"
 import { HTMLAttributes, forwardRef } from "react"
 
 export const textVariants = cva("text-neutral-700 dark:text-neutral-300", {

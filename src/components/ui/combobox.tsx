@@ -17,7 +17,6 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { cn } from "@/lib/utils"
-import clsx from "clsx"
 import {
   forwardRef,
   useEffect,
@@ -152,7 +151,7 @@ export const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className={clsx(className, "w-full !gap-2 flex-wrap font-normal")}
+            className={cn(className, "w-full !gap-2 flex-wrap font-normal")}
             ref={comboboxTriggerRef}
           >
             {Placeholder}
@@ -160,7 +159,7 @@ export const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
           </Button>
         </PopoverTrigger>
         <PopoverContent
-          className={clsx(contentClassName, "w-full p-0")}
+          className={cn(contentClassName, "w-full p-0")}
           style={{ width: comboboxContentWidth }}
         >
           <Command>
@@ -170,7 +169,7 @@ export const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
             </CommandEmpty>
             <CommandGroup>
               <ScrollArea
-                className={clsx(options.length > 10 ? "h-[300px]" : "")}
+                className={cn(options.length > 10 ? "h-[300px]" : "")}
               >
                 {options.map((option) => (
                   <CommandItem

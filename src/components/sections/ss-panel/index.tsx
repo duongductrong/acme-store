@@ -1,6 +1,6 @@
-import clsx from "clsx"
+import { cn } from "@/lib/utils"
 import dynamic from "next/dynamic"
-import { FC, HTMLAttributes, ReactNode, forwardRef } from "react"
+import { HTMLAttributes, forwardRef } from "react"
 
 const SSPanelContent = dynamic(() => import("./components/ss-panel-content"), {
   ssr: true,
@@ -38,7 +38,7 @@ export interface SSPanelItem {
 const SSPanel = forwardRef<HTMLDivElement, SSPanelProps>(
   ({ children, className, ...props }, ref) => {
     return (
-      <div {...props} ref={ref} className={clsx(className, "flex gap-6")}>
+      <div {...props} ref={ref} className={cn(className, "flex gap-6")}>
         {children}
       </div>
     )
@@ -54,7 +54,7 @@ export {
   SSPanelGroupItem,
   SSPanelGroupLegend,
   SSPanelSidebar,
-  SSPanelTitle,
+  SSPanelTitle
 }
 
 export default SSPanel

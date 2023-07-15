@@ -1,11 +1,11 @@
 "use client"
 
+import { cn } from "@/lib/utils"
 import { RadioGroupProps } from "@radix-ui/react-radio-group"
 import { forwardRef } from "react"
 import { Label } from "../../label"
 import { RadioGroup, RadioGroupItem } from "../../radio-group"
 import useFormField from "../hooks/use-form-field"
-import clsx from "clsx"
 
 export interface FormRadioGroupItem {
   label: string
@@ -26,7 +26,7 @@ const FormRadioGroup = forwardRef<HTMLDivElement, FormRadioGroupProps>(
         {...props}
         ref={ref}
         onValueChange={onChange}
-        className={clsx("space-y-2",)}
+        className={cn("space-y-2")}
       >
         {items.map((item) => {
           const slugifyLabel = item.label

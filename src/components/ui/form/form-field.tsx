@@ -1,7 +1,7 @@
 "use client"
 
+import { cn } from "@/lib/utils"
 import { CheckboxProps } from "@radix-ui/react-checkbox"
-import clsx from "clsx"
 import get from "lodash/get"
 import dynamic from "next/dynamic"
 import { HTMLInputTypeAttribute, forwardRef } from "react"
@@ -155,7 +155,7 @@ const FormField = forwardRef<
                 <InputComp
                   {...field}
                   {...baseProps}
-                  className={clsx(className)}
+                  className={cn(className)}
                 />
               </FormControl>
 

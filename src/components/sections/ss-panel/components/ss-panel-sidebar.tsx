@@ -1,5 +1,5 @@
-import clsx from "clsx"
-import React, { HTMLAttributes, forwardRef } from "react"
+import { cn } from "@/lib/utils"
+import { HTMLAttributes, forwardRef } from "react"
 
 export interface SSPanelSidebarProps extends HTMLAttributes<HTMLDivElement> {}
 
@@ -9,7 +9,7 @@ const SSPanelSidebar = forwardRef<HTMLDivElement, SSPanelSidebarProps>(
       <div
         {...props}
         ref={ref}
-        className={clsx(
+        className={cn(
           className,
           "w-[230px] border-r border-neutral-200 dark:border-neutral-800"
         )}
