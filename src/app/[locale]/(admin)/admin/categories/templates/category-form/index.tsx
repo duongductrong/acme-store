@@ -82,7 +82,7 @@ const CategoryForm = ({
 
                   <FormField
                     label="Meta Description"
-                    name="metadata.metaSeoDescription"
+                    name="metadata.metaDescription"
                     variant="TEXTAREA"
                     placeholder="Description"
                   />

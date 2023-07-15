@@ -81,9 +81,6 @@ const ProductForm = ({
                     fromName="title"
                     wrapperClassName="col-span-4"
                     placeholder="Slug"
-                    // fieldProps={{
-                    //   fromName: "title",
-                    // }}
                   />
 
                   <FormField
@@ -100,6 +97,7 @@ const ProductForm = ({
                     name="price"
                     wrapperClassName="col-span-2"
                     placeholder="Price"
+                    min={0}
                   />
 
                   <ProductCategoryField />
@@ -142,7 +140,7 @@ const ProductForm = ({
 
                   <FormField
                     label="Meta Description"
-                    name="metadata.metaSeoDescription"
+                    name="metadata.metaDescription"
                     variant="TEXTAREA"
                     placeholder="Description"
                   />

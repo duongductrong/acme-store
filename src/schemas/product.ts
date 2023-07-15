@@ -50,7 +50,7 @@ export const productSchema = z.object({
     metaKeyword: z
       .string({ required_error: VALIDATION_MESSAGES.REQUIRED("Keywords") })
       .optional(),
-    metaSeoDescription: z
+    metaDescription: z
       .string({ required_error: VALIDATION_MESSAGES.REQUIRED("Description") })
       .optional(),
   }),

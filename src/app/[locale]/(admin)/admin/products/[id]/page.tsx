@@ -17,7 +17,13 @@ const EditProduct = ({ params: { id } }: EditProductProps) => {
   const t = useToast()
   const trpcUtils = trpc.useContext()
 
-  const { data: product } = trpc.product.detail.useQuery(id)
+  const { data: product } = trpc.product.detail.useQuery({
+    id: id,
+    includes: {
+      metadata: true,
+    },
+  })
+
   const { mutate: updateProduct, error } = trpc.product.update.useMutation({
     onSuccess() {
       t.toast({

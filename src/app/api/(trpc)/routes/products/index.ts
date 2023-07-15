@@ -14,9 +14,22 @@ export const productRouter = router({
     })
   }),
 
-  detail: publicProcedure.input(z.string()).query(({ input: id }) => {
-    return prisma.product.findFirst({ where: { id } })
-  }),
+  detail: publicProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        includes: z.record(
+          z.enum(["category", "media", "metadata"]),
+          z.boolean()
+        ),
+      })
+    )
+    .query(({ input }) => {
+      return prisma.product.findFirst({
+        where: { id: input.id },
+        include: input.includes,
+      })
+    }),
 
   create: publicProcedure
     .input(
@@ -47,6 +60,22 @@ export const productRouter = router({
           stockAvailability: input.stockAvailability,
           visibility: input.visibility as ProductVisibility,
         },
+      })
+
+      // run create product metadata in background
+      setTimeout(async () => {
+        await prisma.productMetadata.create({
+          data: {
+            metaTitle: input.metadata.metaTitle,
+            metaDescription: input.metadata.metaDescription,
+            metaKeyword: input.metadata.metaKeyword,
+            Product: {
+              connect: {
+                id: productCreated.id,
+              },
+            },
+          },
+        })
       })
 
       return productCreated
@@ -93,6 +122,19 @@ export const productRouter = router({
           visibility: input.visibility as ProductVisibility,
         },
         where: { id: input.id },
+      })
+
+      setTimeout(async () => {
+        await prisma.productMetadata.update({
+          where: {
+            id: productUpdated.metadataId as string,
+          },
+          data: {
+            metaTitle: input.metadata.metaTitle,
+            metaDescription: input.metadata.metaDescription,
+            metaKeyword: input.metadata.metaKeyword,
+          },
+        })
       })
 
       return productUpdated

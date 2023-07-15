@@ -15,7 +15,7 @@ export const categorySchema = z.object({
     .object({
       metaTitle: z.string().optional(),
       metaKeyword: z.string().optional(),
-      metaSeoDescription: z.string().optional(),
+      metaDescription: z.string().optional(),
     })
     .optional(),
 })
