@@ -69,7 +69,7 @@ const SignInForm = ({ className, ...props }: SignInFormProps) => {
       <Form {...methods}>
         <form onSubmit={handleSubmit}>
           <div className="grid gap-2">
-            <div className="grid gap-2 mb-4">
+            <div className="grid gap-2 mb-base">
               <FormField
                 id="email"
                 label="Email"
@@ -77,11 +77,9 @@ const SignInForm = ({ className, ...props }: SignInFormProps) => {
                 name="email"
                 variant="TEXT"
                 placeholder="name@example.com"
-                textInputProps={{
-                  autoCapitalize: "none",
-                  autoComplete: "email",
-                  autoCorrect: "off",
-                }}
+                autoCapitalize="none"
+                autoComplete="email"
+                autoCorrect="off"
                 disabled={isLoading}
               />
               <FormField
@@ -91,11 +89,9 @@ const SignInForm = ({ className, ...props }: SignInFormProps) => {
                 name="password"
                 variant="TEXT"
                 placeholder="Enter your password"
-                textInputProps={{
-                  autoCapitalize: "none",
-                  autoComplete: "email",
-                  autoCorrect: "off",
-                }}
+                autoCapitalize="none"
+                autoComplete="email"
+                autoCorrect="off"
                 disabled={isLoading}
               />
             </div>

@@ -62,10 +62,10 @@ const ProductForm = ({
             </>
           }
         >
-          <div className="grid grid-cols-12 gap-4">
-            <div className="flex flex-col gap-4 col-span-8">
+          <div className="grid grid-cols-12 gap-base">
+            <div className="flex flex-col gap-base col-span-8">
               <SectionPaper title="General">
-                <div className="grid grid-cols-4 gap-4">
+                <div className="grid grid-cols-4 gap-base">
                   <FormField
                     variant="TEXT"
                     label="Name"
@@ -121,9 +121,9 @@ const ProductForm = ({
                   />
                 </div>
               </SectionPaper>
-              <SectionPaper title="Media">Drop image here</SectionPaper>
+              <SectionPaper title="Media">Building....</SectionPaper>
               <SectionPaper title="Search engine optimize">
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-base">
                   <FormField
                     label="Meta Title"
                     name="metadata.metaTitle"
@@ -147,7 +147,7 @@ const ProductForm = ({
                 </div>
               </SectionPaper>
             </div>
-            <div className="flex flex-col gap-4 col-span-4">
+            <div className="flex flex-col gap-base col-span-4">
               <SectionPaper title="Product status">
                 <FormField
                   name="status"
@@ -163,21 +163,8 @@ const ProductForm = ({
                     },
                   ]}
                   variant="RADIO_GROUP"
-                  // radioGroupProps={{
-                  //   label: "Status",
-                  //   items: [
-                  //     {
-                  //       label: Status.Disabled,
-                  //       value: Status.Disabled,
-                  //     },
-                  //     {
-                  //       label: Status.Enabled,
-                  //       value: Status.Enabled,
-                  //     },
-                  //   ],
-                  // }}
                 />
-                <Separator className="my-4" />
+                <Separator className="my-base" />
                 <FormField
                   variant="RADIO_GROUP"
                   name="visibility"
@@ -192,19 +179,6 @@ const ProductForm = ({
                       value: ProductVisibility.Visible,
                     },
                   ]}
-                  // radioGroupProps={{
-                  //   label: "Visibility",
-                  //   items: [
-                  //     {
-                  //       label: ProductVisibility.NotVisible,
-                  //       value: ProductVisibility.NotVisible,
-                  //     },
-                  //     {
-                  //       label: ProductVisibility.Visible,
-                  //       value: ProductVisibility.Visible,
-                  //     },
-                  //   ],
-                  // }}
                 />
               </SectionPaper>
               <SectionPaper title="Inventory">
@@ -222,27 +196,14 @@ const ProductForm = ({
                       value: true,
                     },
                   ]}
-                  // radioGroupProps={{
-                  //   label: "Stock availability",
-                  //   items: [
-                  //     {
-                  //       label: "No",
-                  //       value: false,
-                  //     },
-                  //     {
-                  //       label: "Yes",
-                  //       value: true,
-                  //     },
-                  //   ],
-                  // }}
                 />
-                <Separator className="my-4" />
+                <Separator className="my-base" />
                 <FormField
                   variant="NUMBER"
                   label="Quantity"
                   name="quantity"
                   placeholder="Quantity"
-                  fieldProps={{ min: 0 }}
+                  min={0}
                 />
               </SectionPaper>
               <SectionPaper title="Thumbnail">

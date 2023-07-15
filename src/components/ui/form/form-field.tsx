@@ -22,12 +22,15 @@ import FormMessage from "./form-message"
 const FormInput = dynamic(() => import("./components/form-input"), {
   ssr: true,
 })
+
 const FormTextarea = dynamic(() => import("./components/form-textarea"), {
   ssr: true,
 })
+
 const FormCheckbox = dynamic(() => import("./components/form-checkbox"), {
   ssr: true,
 })
+
 const RadioGroup = dynamic(() => import("./components/form-radio-group"), {
   ssr: true,
 })
@@ -147,7 +150,7 @@ const FormField = forwardRef<
 
           return (
             <FormItem className={wrapperClassName} ref={ref}>
-              {label ? <FormLabel className="mb-1">{label}</FormLabel> : null}
+              {label ? <FormLabel className="block">{label}</FormLabel> : null}
               <FormControl>
                 <InputComp
                   {...field}

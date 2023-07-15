@@ -18,7 +18,7 @@ const SectionView = forwardRef<HTMLDivElement, SectionViewProps>(
     if (skeleton) {
       return (
         <div className="w-full h-full" ref={ref}>
-          <div className="mb-4 flex items-center justify-between">
+          <div className="mb-base flex items-center justify-between">
             <Skeleton className="text-xl font-semibold w-[150px] h-[35px]" />
             <Skeleton className="ml-auto w-[200px] h-[35px]" />
           </div>
@@ -32,7 +32,7 @@ const SectionView = forwardRef<HTMLDivElement, SectionViewProps>(
 
     return (
       <div className="w-full h-full" ref={ref}>
-        <div className="mb-4 flex items-center justify-between">
+        <div className="mb-base flex items-center justify-between">
           <h2 className="text-xl font-semibold">{title}</h2>
           {whereTopRight ? (
             <div className="ml-auto">{whereTopRight}</div>

@@ -55,8 +55,8 @@ const SignUpForm = ({ className, ...props }: SignUpFormProps) => {
       <Form {...methods}>
         <form onSubmit={handleSubmit}>
           <div className="grid gap-2">
-            <div className="grid gap-2 mb-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid gap-2 mb-base">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-base">
                 <FormField
                   id="firstName"
                   label="First Name"
@@ -64,11 +64,9 @@ const SignUpForm = ({ className, ...props }: SignUpFormProps) => {
                   name="firstName"
                   variant="TEXT"
                   placeholder="Enter first name."
-                  textInputProps={{
-                    autoCapitalize: "none",
-                    autoComplete: "email",
-                    autoCorrect: "off",
-                  }}
+                  autoCapitalize="none"
+                  autoComplete="email"
+                  autoCorrect="off"
                   disabled={loading}
                 />
                 <FormField
@@ -78,11 +76,9 @@ const SignUpForm = ({ className, ...props }: SignUpFormProps) => {
                   name="lastName"
                   variant="TEXT"
                   placeholder="Enter last name."
-                  textInputProps={{
-                    autoCapitalize: "none",
-                    autoComplete: "email",
-                    autoCorrect: "off",
-                  }}
+                  autoCapitalize="none"
+                  autoComplete="email"
+                  autoCorrect="off"
                   disabled={loading}
                 />
               </div>
@@ -93,11 +89,9 @@ const SignUpForm = ({ className, ...props }: SignUpFormProps) => {
                 name="email"
                 variant="TEXT"
                 placeholder="name@example.com"
-                textInputProps={{
-                  autoCapitalize: "none",
-                  autoComplete: "email",
-                  autoCorrect: "off",
-                }}
+                autoCapitalize="none"
+                autoComplete="email"
+                autoCorrect="off"
                 disabled={loading}
               />
               <FormField
@@ -107,11 +101,9 @@ const SignUpForm = ({ className, ...props }: SignUpFormProps) => {
                 name="password"
                 variant="TEXT"
                 placeholder="Enter your password"
-                textInputProps={{
-                  autoCapitalize: "none",
-                  autoComplete: "email",
-                  autoCorrect: "off",
-                }}
+                autoCapitalize="none"
+                autoComplete="email"
+                autoCorrect="off"
                 disabled={loading}
               />
             </div>

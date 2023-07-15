@@ -35,9 +35,9 @@ const SectionDetail = forwardRef<HTMLDivElement, SectionDetailProps>(
         ref={ref}
         className={clsx("max-w-[940px] mx-auto", wrapperClassName)}
       >
-        <header className="flex items-center mb-4">
+        <header className="flex items-center mb-base">
           <div className="flex items-center gap-2">
-            <Button type="button" variant="outline" className="mr-4" asChild>
+            <Button type="button" variant="outline" className="mr-base" asChild>
               <Link href={backTo}>
                 <ArrowLeft className="w-5 h-5" />
               </Link>

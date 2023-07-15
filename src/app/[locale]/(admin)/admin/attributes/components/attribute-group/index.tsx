@@ -46,8 +46,8 @@ const AttributeGroup = (props: AttributeGroupProps) => {
   return (
     <div>
       <FormLabel className="mb-2 block uppercase">Attribute group</FormLabel>
-      <p className="text-sm mb-4">Select groups the attribute belongs to</p>
-      <div className="grid grid-cols-2 gap-4">
+      <p className="text-sm mb-base">Select groups the attribute belongs to</p>
+      <div className="grid grid-cols-2 gap-base">
         <FormField
           name="groupIds"
           variant="SELECT"

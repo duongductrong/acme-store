@@ -9,7 +9,7 @@ const SSPanelGroup = forwardRef<HTMLDivElement, SSPanelGroupProps>(
       <div
         {...props}
         ref={ref}
-        className={clsx("flex flex-col gap-4", className)}
+        className={clsx("flex flex-col gap-base", className)}
       >
         {children}
       </div>

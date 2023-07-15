@@ -47,7 +47,7 @@ const AttributeOptions = (props: AttributeOptionsProps) => {
               />
               <span
                 role="button"
-                className="flex-1 text-sm text-destructive ml-4"
+                className="flex-1 text-sm text-destructive ml-base"
                 onClick={() => handleRemoveOption(index)}
               >
                 Remove option

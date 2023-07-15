@@ -22,7 +22,7 @@ import SuperJSON from "superjson"
 
 const trpc = createTRPCReact<AppRouter>()
 
-const trpcServer = createTRPCProxyClient<AppRouter>({
+const trpcProxy = createTRPCProxyClient<AppRouter>({
   links: [
     httpBatchLink({
       url: "/api/trpc",
@@ -55,6 +55,6 @@ const trpcServer = createTRPCProxyClient<AppRouter>({
 //   },
 // })
 
-export { trpcServer }
+export { trpcProxy }
 
 export default trpc

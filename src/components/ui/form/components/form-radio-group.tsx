@@ -4,8 +4,8 @@ import { RadioGroupProps } from "@radix-ui/react-radio-group"
 import { forwardRef } from "react"
 import { Label } from "../../label"
 import { RadioGroup, RadioGroupItem } from "../../radio-group"
-import FormLabel from "../form-label"
 import useFormField from "../hooks/use-form-field"
+import clsx from "clsx"
 
 export interface FormRadioGroupItem {
   label: string
@@ -13,13 +13,12 @@ export interface FormRadioGroupItem {
 }
 
 export interface FormRadioGroupProps extends Omit<RadioGroupProps, "onChange"> {
-  label?: string
   items: FormRadioGroupItem[]
   onChange?: (value: string) => void
 }
 
 const FormRadioGroup = forwardRef<HTMLDivElement, FormRadioGroupProps>(
-  ({ items, label, onChange, ...props }: FormRadioGroupProps, ref) => {
+  ({ items, onChange, className, ...props }: FormRadioGroupProps, ref) => {
     const { formItemId } = useFormField()
 
     return (
@@ -27,9 +26,8 @@ const FormRadioGroup = forwardRef<HTMLDivElement, FormRadioGroupProps>(
         {...props}
         ref={ref}
         onValueChange={onChange}
-        className="space-y-2"
+        className={clsx("space-y-2",)}
       >
-        {label ? <FormLabel>{label}</FormLabel> : null}
         {items.map((item) => {
           const slugifyLabel = item.label
           const inputId = `${formItemId}-${slugifyLabel}`

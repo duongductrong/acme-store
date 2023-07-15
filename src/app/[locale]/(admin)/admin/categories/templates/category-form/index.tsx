@@ -45,10 +45,10 @@ const CategoryForm = ({
             </>
           }
         >
-          <div className="grid grid-cols-12 gap-4">
-            <div className="col-span-8 flex flex-col gap-4">
+          <div className="grid grid-cols-12 gap-base">
+            <div className="col-span-8 flex flex-col gap-base">
               <SectionPaper title="General">
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-base">
                   <FormField
                     label="Name"
                     name="name"
@@ -65,7 +65,7 @@ const CategoryForm = ({
               </SectionPaper>
 
               <SectionPaper title="Search engine optimize">
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-base">
                   <FormField
                     label="Meta Title"
                     name="metadata.metaTitle"
@@ -89,7 +89,7 @@ const CategoryForm = ({
                 </div>
               </SectionPaper>
             </div>
-            <div className="col-span-4 flex flex-col gap-4">
+            <div className="col-span-4 flex flex-col gap-base">
               <SectionPaper title="Thumbnail">
                 <FormField
                   name="thumbnail"

@@ -58,10 +58,10 @@ const AttributeForm = ({
             </>
           }
         >
-          <div className="grid grid-cols-12 gap-4">
+          <div className="grid grid-cols-12 gap-base">
             <div className="col-span-8">
               <SectionPaper title="General">
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-base">
                   <FormField
                     label="Name"
                     name="name"
@@ -71,7 +71,8 @@ const AttributeForm = ({
                   <FormField
                     label="Attribute code"
                     name="code"
-                    variant="TEXT"
+                    fromName="name"
+                    variant="UID"
                     placeholder="Attribute code"
                   />
                   <FormField
@@ -82,10 +83,10 @@ const AttributeForm = ({
                   />
                 </div>
 
-                {isShowAttributeOptions && <Separator className="my-4" />}
+                {isShowAttributeOptions && <Separator className="my-base" />}
                 {isShowAttributeOptions && <AttributeOptions />}
 
-                <Separator className="my-4" />
+                <Separator className="my-base" />
                 <AttributeGroup />
               </SectionPaper>
             </div>
@@ -106,7 +107,7 @@ const AttributeForm = ({
                     },
                   ]}
                 />
-                <Separator className="my-4" />
+                <Separator className="my-base" />
                 <FormField
                   name="isFilterable"
                   variant="RADIO_GROUP"
@@ -122,7 +123,7 @@ const AttributeForm = ({
                     },
                   ]}
                 />
-                <Separator className="my-4" />
+                <Separator className="my-base" />
                 <FormField
                   name="isShowToCustomer"
                   variant="RADIO_GROUP"
@@ -138,13 +139,13 @@ const AttributeForm = ({
                     },
                   ]}
                 />
-                <Separator className="my-4" />
+                <Separator className="my-base" />
                 <FormField
                   type="number"
                   name="sortOrder"
                   variant="TEXT"
                   placeholder="Sort order"
-                  textInputProps={{ min: 0 }}
+                  min={0}
                 />
               </SectionPaper>
             </div>

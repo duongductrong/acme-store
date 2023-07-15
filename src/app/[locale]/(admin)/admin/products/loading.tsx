@@ -1,5 +1,4 @@
 import SectionView from "@/components/sections/section-view"
-import React from "react"
 
 export interface ProductListSkeletonProps {}
 

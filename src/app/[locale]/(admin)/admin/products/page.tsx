@@ -2,6 +2,7 @@
 
 import Link from "@/components/navigations/link"
 import SectionView from "@/components/sections/section-view"
+import StatusPoint from "@/components/status-point"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { DataTable } from "@/components/ui/data-table"
@@ -10,13 +11,14 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
+  DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu"
 import { useToast } from "@/components/ui/use-toast"
 import { ADMIN_URL } from "@/constant/urls"
+import { formatCurrency } from "@/lib/currency"
+import { decimalNumber } from "@/lib/number"
 import trpc from "@/lib/trpc/trpc-client"
-import { Product } from "@prisma/client"
+import { Product, Status } from "@prisma/client"
 import { ColumnDef } from "@tanstack/react-table"
 import { MoreHorizontal, Plus } from "lucide-react"
 import { useRouter } from "next/navigation"
@@ -88,7 +90,7 @@ const ProductList = (props: ProductListProps) => {
       accessorKey: "price",
       header: () => "Price",
       cell: ({ getValue }) => {
-        return getValue()
+        return formatCurrency(getValue<number>(), "en-US")
       },
     },
     {
@@ -96,7 +98,7 @@ const ProductList = (props: ProductListProps) => {
       accessorKey: "SKU",
       header: () => "SKU",
       cell: ({ getValue }) => {
-        return getValue()
+        return getValue<string>().toUpperCase()
       },
     },
     {
@@ -104,7 +106,7 @@ const ProductList = (props: ProductListProps) => {
       accessorKey: "quantity",
       header: () => "Quantity",
       cell: ({ getValue }) => {
-        return getValue()
+        return decimalNumber(getValue<number>())
       },
     },
     {
@@ -112,7 +114,7 @@ const ProductList = (props: ProductListProps) => {
       accessorKey: "status",
       header: () => "Status",
       cell: ({ getValue }) => {
-        return getValue()
+        return <StatusPoint variant={getValue<Status>()} />
       },
     },
     {
@@ -143,8 +145,6 @@ const ProductList = (props: ProductListProps) => {
               >
                 Delete product
               </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>View payment details</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         )

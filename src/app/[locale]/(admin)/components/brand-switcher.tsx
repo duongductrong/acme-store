@@ -165,7 +165,7 @@ export default function BranchSwitcher({ className }: BranchSwitcherProps) {
           </DialogDescription>
         </DialogHeader>
         <div>
-          <div className="space-y-4 py-2 pb-4">
+          <div className="space-y-4 py-2 pb-base">
             <div className="space-y-2">
               <Label htmlFor="name">Team name</Label>
               <Input id="name" placeholder="Acme Inc." />
