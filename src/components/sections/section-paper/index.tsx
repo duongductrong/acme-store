@@ -3,7 +3,7 @@ import { HTMLAttributes, ReactNode, forwardRef } from "react"
 
 export interface SectionPaperProps extends HTMLAttributes<HTMLDivElement> {
   title?: string
-  children: ReactNode
+  children?: ReactNode
 }
 
 const SectionPaper = forwardRef<HTMLDivElement, SectionPaperProps>(

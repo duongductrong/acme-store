@@ -6,13 +6,13 @@ export const productSchema = z.object({
   id: z
     .string({ required_error: VALIDATION_MESSAGES.REQUIRED("ID") })
     .optional(),
-  productName: z
+  title: z
     .string({ required_error: VALIDATION_MESSAGES.REQUIRED("Product name") })
     .min(1, VALIDATION_MESSAGES.REQUIRED("Product name")),
   slug: z
     .string({ required_error: VALIDATION_MESSAGES.REQUIRED("Slug") })
     .min(1, VALIDATION_MESSAGES.REQUIRED("Slug"))
-    .regex(UNIQUE_IDENTIFIED),
+    .regex(UNIQUE_IDENTIFIED, VALIDATION_MESSAGES.URL_INVALID("slug")),
   SKU: z
     .string({ required_error: VALIDATION_MESSAGES.REQUIRED("SKU") })
     .min(1, VALIDATION_MESSAGES.REQUIRED("SKU")),
@@ -44,10 +44,10 @@ export const productSchema = z.object({
   ),
   quantity: z.preprocess((v) => Number(v), z.number().positive()),
   metadata: z.object({
-    metaSeoTitle: z
+    metaTitle: z
       .string({ required_error: VALIDATION_MESSAGES.REQUIRED("Title") })
       .optional(),
-    metaSeoKeyword: z
+    metaKeyword: z
       .string({ required_error: VALIDATION_MESSAGES.REQUIRED("Keywords") })
       .optional(),
     metaSeoDescription: z

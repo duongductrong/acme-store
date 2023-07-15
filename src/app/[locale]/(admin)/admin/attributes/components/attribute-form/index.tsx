@@ -78,9 +78,7 @@ const AttributeForm = ({
                     label="Type"
                     name="type"
                     variant="RADIO_GROUP"
-                    radioGroupProps={{
-                      items: transformTypes,
-                    }}
+                    items={transformTypes}
                   />
                 </div>
 
@@ -96,55 +94,49 @@ const AttributeForm = ({
                 <FormField
                   name="isRequired"
                   variant="RADIO_GROUP"
-                  radioGroupProps={{
-                    label: "Is Required?",
-                    items: [
-                      {
-                        label: "Not required",
-                        value: false,
-                      },
-                      {
-                        label: "Required",
-                        value: true,
-                      },
-                    ],
-                  }}
+                  label="Is Required?"
+                  items={[
+                    {
+                      label: "Not required",
+                      value: false,
+                    },
+                    {
+                      label: "Required",
+                      value: true,
+                    },
+                  ]}
                 />
                 <Separator className="my-4" />
                 <FormField
                   name="isFilterable"
                   variant="RADIO_GROUP"
-                  radioGroupProps={{
-                    label: "Is Filterable?",
-                    items: [
-                      {
-                        label: "No",
-                        value: false,
-                      },
-                      {
-                        label: "Yes",
-                        value: true,
-                      },
-                    ],
-                  }}
+                  label="Is Filterable?"
+                  items={[
+                    {
+                      label: "No",
+                      value: false,
+                    },
+                    {
+                      label: "Yes",
+                      value: true,
+                    },
+                  ]}
                 />
                 <Separator className="my-4" />
                 <FormField
                   name="isShowToCustomer"
                   variant="RADIO_GROUP"
-                  radioGroupProps={{
-                    label: "Show to customer?",
-                    items: [
-                      {
-                        label: "No",
-                        value: false,
-                      },
-                      {
-                        label: "Yes",
-                        value: true,
-                      },
-                    ],
-                  }}
+                  label="Show to customer?"
+                  items={[
+                    {
+                      label: "No",
+                      value: false,
+                    },
+                    {
+                      label: "Yes",
+                      value: true,
+                    },
+                  ]}
                 />
                 <Separator className="my-4" />
                 <FormField

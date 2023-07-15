@@ -96,32 +96,6 @@ export const DataTable = ({
             className="max-w-sm"
           />
         ) : null}
-        {/* <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              Columns <ChevronDown className="ml-2 h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                )
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu> */}
       </div>
       <div className="rounded-md border">
         <Table>
@@ -166,18 +140,22 @@ export const DataTable = ({
                   colSpan={columns.length}
                   className="h-24 text-center py-10"
                 >
-                  <EmptyIcon className="w-10 h-10 block text-center mx-auto mb-4" />
-                  <p className="font-semibold mb-4">{emptyContent}</p>
-                  {createNewEntryEnable ? (
-                    <Button
-                      size="sm"
-                      className="text-xs"
-                      onClick={onCreateNewEntry}
-                    >
-                      <Plus className="w-4 h-4 mr-2" />
-                      {createNewEntryText}
-                    </Button>
-                  ) : null}
+                  {loading ? null : (
+                    <>
+                      <EmptyIcon className="w-10 h-10 block text-center mx-auto mb-4" />
+                      <p className="font-semibold mb-4">{emptyContent}</p>
+                      {createNewEntryEnable ? (
+                        <Button
+                          size="sm"
+                          className="text-xs"
+                          onClick={onCreateNewEntry}
+                        >
+                          <Plus className="w-4 h-4 mr-2" />
+                          {createNewEntryText}
+                        </Button>
+                      ) : null}
+                    </>
+                  )}
                 </TableCell>
               </TableRow>
             ) : null}

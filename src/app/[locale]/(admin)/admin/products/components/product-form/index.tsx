@@ -14,7 +14,8 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { ProductVisibility, Status } from "@prisma/client"
 import { TRPCClientErrorLike } from "@trpc/client"
 import { useForm } from "react-hook-form"
-import ProductCategoryField from "../product-category-field"
+import ProductCategoryField from "./product-category-field"
+import ProductCollectionField from "./product-collection-field"
 
 export interface ProductFormProps {
   title: string
@@ -54,7 +55,9 @@ const ProductForm = ({
           backTo={ADMIN_URL.PRODUCT.LIST}
           whereTopRight={
             <>
-              <Button variant="secondary">Cancel</Button>
+              <Button type="button" variant="secondary">
+                Cancel
+              </Button>
               <Button type="submit">Save</Button>
             </>
           }
@@ -66,7 +69,7 @@ const ProductForm = ({
                   <FormField
                     variant="TEXT"
                     label="Name"
-                    name="productName"
+                    name="title"
                     wrapperClassName="col-span-4"
                     placeholder="Name"
                   />
@@ -75,11 +78,12 @@ const ProductForm = ({
                     variant="UID"
                     label="Slug"
                     name="slug"
+                    fromName="title"
                     wrapperClassName="col-span-4"
                     placeholder="Slug"
-                    fieldProps={{
-                      fromName: "productName",
-                    }}
+                    // fieldProps={{
+                    //   fromName: "title",
+                    // }}
                   />
 
                   <FormField
@@ -99,6 +103,8 @@ const ProductForm = ({
                   />
 
                   <ProductCategoryField />
+
+                  <ProductCollectionField />
 
                   <FormField
                     variant="TEXTAREA"
@@ -122,14 +128,14 @@ const ProductForm = ({
                 <div className="flex flex-col gap-4">
                   <FormField
                     label="Meta Title"
-                    name="metadata.metaSeoTitle"
+                    name="metadata.metaTitle"
                     variant="TEXT"
                     placeholder="Title"
                   />
 
                   <FormField
                     label="Meta Keywords"
-                    name="metadata.metaSeoKeyword"
+                    name="metadata.metaKeyword"
                     variant="TEXT"
                     placeholder="Keywords"
                   />
@@ -147,63 +153,96 @@ const ProductForm = ({
               <SectionPaper title="Product status">
                 <FormField
                   name="status"
+                  label="Status"
+                  items={[
+                    {
+                      label: Status.Disabled,
+                      value: Status.Disabled,
+                    },
+                    {
+                      label: Status.Enabled,
+                      value: Status.Enabled,
+                    },
+                  ]}
                   variant="RADIO_GROUP"
-                  radioGroupProps={{
-                    label: "Status",
-                    items: [
-                      {
-                        label: Status.Disabled,
-                        value: Status.Disabled,
-                      },
-                      {
-                        label: Status.Enabled,
-                        value: Status.Enabled,
-                      },
-                    ],
-                  }}
+                  // radioGroupProps={{
+                  //   label: "Status",
+                  //   items: [
+                  //     {
+                  //       label: Status.Disabled,
+                  //       value: Status.Disabled,
+                  //     },
+                  //     {
+                  //       label: Status.Enabled,
+                  //       value: Status.Enabled,
+                  //     },
+                  //   ],
+                  // }}
                 />
                 <Separator className="my-4" />
                 <FormField
-                  name="visibility"
                   variant="RADIO_GROUP"
-                  radioGroupProps={{
-                    label: "Visibility",
-                    items: [
-                      {
-                        label: ProductVisibility.NotVisible,
-                        value: ProductVisibility.NotVisible,
-                      },
-                      {
-                        label: ProductVisibility.Visible,
-                        value: ProductVisibility.Visible,
-                      },
-                    ],
-                  }}
+                  name="visibility"
+                  label="Visibility"
+                  items={[
+                    {
+                      label: ProductVisibility.NotVisible,
+                      value: ProductVisibility.NotVisible,
+                    },
+                    {
+                      label: ProductVisibility.Visible,
+                      value: ProductVisibility.Visible,
+                    },
+                  ]}
+                  // radioGroupProps={{
+                  //   label: "Visibility",
+                  //   items: [
+                  //     {
+                  //       label: ProductVisibility.NotVisible,
+                  //       value: ProductVisibility.NotVisible,
+                  //     },
+                  //     {
+                  //       label: ProductVisibility.Visible,
+                  //       value: ProductVisibility.Visible,
+                  //     },
+                  //   ],
+                  // }}
                 />
               </SectionPaper>
               <SectionPaper title="Inventory">
                 <FormField
-                  name="stockAvailability"
                   variant="RADIO_GROUP"
-                  radioGroupProps={{
-                    label: "Stock availability",
-                    items: [
-                      {
-                        label: "No",
-                        value: false,
-                      },
-                      {
-                        label: "Yes",
-                        value: true,
-                      },
-                    ],
-                  }}
+                  name="stockAvailability"
+                  label="Stock availability"
+                  items={[
+                    {
+                      label: "No",
+                      value: false,
+                    },
+                    {
+                      label: "Yes",
+                      value: true,
+                    },
+                  ]}
+                  // radioGroupProps={{
+                  //   label: "Stock availability",
+                  //   items: [
+                  //     {
+                  //       label: "No",
+                  //       value: false,
+                  //     },
+                  //     {
+                  //       label: "Yes",
+                  //       value: true,
+                  //     },
+                  //   ],
+                  // }}
                 />
                 <Separator className="my-4" />
                 <FormField
+                  variant="NUMBER"
                   label="Quantity"
                   name="quantity"
-                  variant="NUMBER"
                   placeholder="Quantity"
                   fieldProps={{ min: 0 }}
                 />

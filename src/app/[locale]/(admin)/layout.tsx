@@ -21,7 +21,7 @@ export interface AdminLayoutProps extends CommonLayoutProps {}
 const AdminLayout = ({ children }: AdminLayoutProps) => {
   return (
     <div>
-      <div className="h-[64px] border-b dark:border-neutral-800 bg-white dark:bg-neutral-950 sticky top-0">
+      <div className="h-[64px] border-b dark:border-neutral-800 bg-white dark:bg-neutral-950 sticky top-0 z-10">
         <div className="flex items-center w-full h-full px-4">
           <div className="flex items-center h-full gap-4">
             <Menu className="w-5 h-5" />

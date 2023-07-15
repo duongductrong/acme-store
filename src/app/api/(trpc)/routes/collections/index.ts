@@ -1,12 +1,41 @@
 import prisma from "@/lib/prisma"
 import { publicProcedure, router } from "@/lib/trpc/trpc"
 import { collectionSchema } from "@/schemas/collection"
+import {
+  infiniteLoaderSchema,
+  outputInfiniteLoaderSchema,
+} from "@/schemas/infinite"
 import { z } from "zod"
 
 export const collectionRouter = router({
-  list: publicProcedure.query(() => {
-    return prisma.collection.findMany()
-  }),
+  list: publicProcedure
+    .input(infiniteLoaderSchema)
+    .output(outputInfiniteLoaderSchema)
+    .query(async ({ input }) => {
+      const { cursor, search } = input
+      const limit = Number(input.limit) ?? 10
+
+      const items = await prisma.collection.findMany({
+        take: Number(limit) + 1,
+        where: {
+          name: {
+            contains: search ?? "",
+          },
+        },
+        cursor: cursor ? { id: cursor } : undefined,
+      })
+
+      let nextCursor: typeof cursor | undefined = undefined
+      if (items.length > limit) {
+        const nextItem = items.pop()
+        nextCursor = nextItem!.id
+      }
+
+      return {
+        items,
+        nextCursor,
+      }
+    }),
 
   detail: publicProcedure
     .input(

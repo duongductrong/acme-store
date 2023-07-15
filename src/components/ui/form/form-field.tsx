@@ -9,6 +9,7 @@ import { InputProps } from "../input"
 import { TextareaProps } from "../textarea"
 import { FormRadioGroupProps } from "./components/form-radio-group"
 import { FormSelectProps } from "./components/form-select"
+import { FormSelectInfiniteProps } from "./components/form-select-infinite"
 import { FormUIDProps } from "./components/form-uid"
 import { FORM_UNIFIED_VARIANT } from "./constants"
 import FormControl from "./form-control"
@@ -17,7 +18,6 @@ import FormFieldInternal from "./form-field-internal"
 import FormItem from "./form-item"
 import FormLabel from "./form-label"
 import FormMessage from "./form-message"
-import { FormFieldVariantTypes } from "./types"
 
 const FormInput = dynamic(() => import("./components/form-input"), {
   ssr: true,
@@ -36,30 +36,68 @@ const FormSelect = dynamic(() => import("./components/form-select"), {
   ssr: true,
 })
 
+const FormSelectInfinite = dynamic(
+  () => import("./components/form-select-infinite"),
+  {
+    ssr: true,
+  }
+)
+
 const FormUID = dynamic(() => import("./components/form-uid"), { ssr: true })
 
-const FormNumber = dynamic(() => import("./components/form-number"), { ssr: true })
+const FormNumber = dynamic(() => import("./components/form-number"), {
+  ssr: true,
+})
 
-type ExtendTextInputProps = Omit<
-  InputProps & React.RefAttributes<HTMLInputElement>,
-  "type" | "id" | "placeholder" | "disabled" | "name"
->
+export interface FormFieldTextVariantProps
+  extends InputProps,
+    React.RefAttributes<HTMLInputElement> {
+  variant: "TEXT"
+}
 
-type ExtendTextareaProps = Omit<
-  TextareaProps & React.RefAttributes<HTMLTextAreaElement>,
-  keyof InputProps | "placeholder" | "disabled" | "name" | "type" | "id"
->
+export interface FormFieldTextareaVariantProps
+  extends TextareaProps,
+    React.RefAttributes<HTMLTextAreaElement> {
+  variant: "TEXTAREA"
+}
 
-type ExtendCheckboxProps = CheckboxProps
+export interface FormFieldCheckboxVariantProps extends CheckboxProps {
+  variant: "CHECKBOX"
+}
 
-type ExtendRadioGroupProps = FormRadioGroupProps
+export interface FormFieldRadioGroupVariantProps extends FormRadioGroupProps {
+  variant: "RADIO_GROUP"
+}
 
-type ExtendSelectProps = FormSelectProps
+export interface FormFieldSelectVariantProps extends FormSelectProps {
+  variant: "SELECT"
+}
 
-type ExtendUIDProps = FormUIDProps
+export interface FormFieldUIDVariantProps extends FormUIDProps {
+  variant: "UID"
+}
 
-export interface FormFieldProps {
-  variant: keyof FormFieldVariantTypes
+export interface FormFieldSelectInfiniteVariantProps
+  extends FormSelectInfiniteProps {
+  variant: "SELECT_INFINITE"
+}
+
+export interface FormFieldNumberVariantProps
+  extends Omit<FormFieldTextVariantProps, "variant"> {
+  variant: "NUMBER"
+}
+
+export type FormFieldVariantBaseProps =
+  | FormFieldTextVariantProps
+  | FormFieldTextareaVariantProps
+  | FormFieldCheckboxVariantProps
+  | FormFieldRadioGroupVariantProps
+  | FormFieldSelectVariantProps
+  | FormFieldUIDVariantProps
+  | FormFieldSelectInfiniteVariantProps
+  | FormFieldNumberVariantProps
+
+export interface FormFieldStandardBaseProps {
   type?: HTMLInputTypeAttribute
   name: string
   id?: string
@@ -70,21 +108,6 @@ export interface FormFieldProps {
 
   wrapperClassName?: string
   className?: string
-
-  fieldProps?:
-    | ExtendTextInputProps
-    | ExtendTextareaProps
-    | ExtendCheckboxProps
-    | ExtendRadioGroupProps
-    | ExtendSelectProps
-    | ExtendUIDProps
-
-  textInputProps?: ExtendTextInputProps
-  textareaProps?: ExtendTextareaProps
-  checkboxProps?: ExtendCheckboxProps
-  radioGroupProps?: ExtendRadioGroupProps
-  selectProps?: ExtendSelectProps
-  uidProps?: ExtendUIDProps
 }
 
 const FORM_UNIFIED_VARIANT_LOADER = {
@@ -94,10 +117,14 @@ const FORM_UNIFIED_VARIANT_LOADER = {
   [FORM_UNIFIED_VARIANT.RADIO_GROUP]: RadioGroup,
   [FORM_UNIFIED_VARIANT.SELECT]: FormSelect,
   [FORM_UNIFIED_VARIANT.UID]: FormUID,
-  [FORM_UNIFIED_VARIANT.NUMBER]: FormNumber
+  [FORM_UNIFIED_VARIANT.NUMBER]: FormNumber,
+  [FORM_UNIFIED_VARIANT.SELECT_INFINITE]: FormSelectInfinite,
 }
 
-const FormField = forwardRef<HTMLDivElement, FormFieldProps>(
+const FormField = forwardRef<
+  HTMLDivElement,
+  FormFieldStandardBaseProps & FormFieldVariantBaseProps
+>(
   (
     {
       name,
@@ -106,13 +133,6 @@ const FormField = forwardRef<HTMLDivElement, FormFieldProps>(
       label,
       wrapperClassName,
       className,
-      textInputProps,
-      textareaProps,
-      checkboxProps,
-      radioGroupProps,
-      selectProps,
-      uidProps,
-      fieldProps,
       ...baseProps
     },
     ref
@@ -132,14 +152,7 @@ const FormField = forwardRef<HTMLDivElement, FormFieldProps>(
                 <InputComp
                   {...field}
                   {...baseProps}
-                  {...textInputProps}
-                  {...textareaProps}
-                  {...checkboxProps}
-                  {...radioGroupProps}
-                  {...selectProps}
-                  {...uidProps}
-                  {...fieldProps}
-                  className={clsx(className, textInputProps?.className)}
+                  className={clsx(className)}
                 />
               </FormControl>
 

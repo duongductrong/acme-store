@@ -6,20 +6,19 @@ generator client {
 }
 
 datasource db {
-  provider          = "postgresql"
+  provider          = "mysql"
   url               = env("DATABASE_URL")
   shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
 model Product {
-  id                String            @id @default(cuid()) @db.Text()
-  productName       String
+  id                String            @id @default(cuid()) @db.VarChar(25)
+  title             String
   slug              String            @unique
   SKU               String            @unique
   price             Int
   quantity          Int
   stockAvailability Boolean?          @default(true)
-  media             String[]
   thumbnail         String
   description       String
   content           String?
@@ -27,25 +26,42 @@ model Product {
   visibility        ProductVisibility @default(Visible)
 
   metadata   ProductMetadata? @relation(fields: [metadataId], references: [id])
-  metadataId String?          @db.Uuid
+  metadataId String?          @db.VarChar(25)
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   category   Category? @relation(fields: [categoryId], references: [id])
-  categoryId String?   @db.Text
+  categoryId String?   @db.VarChar(25)
 
   orders OrderProduct[]
 
-  @@index([id])
+  media   ProductMedia? @relation(fields: [mediaId], references: [id])
+  mediaId Int?
+
   @@map("products")
 }
 
-model ProductMetadata {
-  id String @id @default(cuid()) @db.Uuid
+model ProductMedia {
+  id      Int       @id @default(autoincrement())
+  Product Product[]
 
-  metaSeoTitle    String?
-  metaSeoKeyword  String?
+  datatype String
+  path     String
+  width    Int
+  height   Int
+  size     Int?
+  caption  String?
+  keywords String?
+
+  @@map("product_medias")
+}
+
+model ProductMetadata {
+  id String @id @default(cuid()) @db.VarChar(25)
+
+  metaTitle       String?
+  metaKeyword     String?
   metaDescription String?
 
   Product Product[]
@@ -73,14 +89,14 @@ enum ProductStockAvailability {
 }
 
 model Category {
-  id          String  @id @default(cuid()) @db.Text
+  id          String  @id @default(cuid()) @db.VarChar(25)
   name        String
   banner      String?
   description String?
   status      Status  @default(Enabled)
 
   metadata   CatagoryMetadata? @relation(fields: [metadataId], references: [id])
-  metadataId String?           @db.Text
+  metadataId String?           @db.VarChar(25)
 
   products Product[]
 
@@ -92,10 +108,10 @@ model Category {
 }
 
 model CatagoryMetadata {
-  id String @id @default(cuid()) @db.Text
+  id String @id @default(cuid()) @db.VarChar(25)
 
-  metaSeoTitle    String?
-  metaSeoKeyword  String?
+  metaTitle       String?
+  metaKeyword     String?
   metaDescription String?
 
   Category Category[]
@@ -108,7 +124,7 @@ model CatagoryMetadata {
 }
 
 model Collection {
-  id          Int     @id @default(autoincrement()) @db.Integer
+  id          Int     @id @default(autoincrement()) @db.Int
   name        String
   code        String
   description String?
@@ -120,7 +136,7 @@ model Collection {
 }
 
 model User {
-  id   Int    @id @unique @default(autoincrement()) @db.Integer
+  id   Int    @id @unique @default(autoincrement()) @db.Int
   code String @unique @db.Char(16)
 
   firstName      String
@@ -144,10 +160,10 @@ enum Role {
 }
 
 model Coupon {
-  id             Int          @id @default(autoincrement()) @db.Integer
+  id             Int          @id @default(autoincrement()) @db.Int
   code           String       @db.Char(24)
   discountType   DiscountType
-  discountAmount Int          @db.Integer
+  discountAmount Int          @db.Int
   description    String?
   startDate      DateTime     @default(now())
   endDate        DateTime     @default(now())
@@ -168,7 +184,7 @@ enum DiscountType {
 }
 
 model Order {
-  id          Int    @id @default(autoincrement()) @db.Integer
+  id          Int    @id @default(autoincrement()) @db.Int
   orderNumber String @unique @db.Char(16)
 
   customerId    String  @unique
@@ -204,13 +220,13 @@ enum OrderPaymentStatus {
 }
 
 model OrderProduct {
-  id Int @id @default(autoincrement()) @db.Integer
+  id Int @id @default(autoincrement()) @db.Int
 
   product   Product @relation(fields: [productId], references: [id])
-  productId String  @db.Text()
+  productId String  @db.VarChar(25)
 
   order   Order @relation(fields: [orderId], references: [id])
-  orderId Int   @db.Integer
+  orderId Int   @db.Int
 
   productAmount Int @default(1)
 
@@ -221,12 +237,12 @@ model OrderProduct {
 }
 
 model ProductAttribute {
-  id        String               @id @default(cuid()) @db.Text
+  id        String               @id @default(cuid()) @db.VarChar(25)
   name      String
   code      String               @unique
   type      ProductAttributeType @default(Select)
   options   Json?                @db.Json
-  sortOrder Int                  @db.Integer
+  sortOrder Int                  @db.Int
 
   isRequired       Boolean @default(true)
   isFilterable     Boolean @default(true)
@@ -241,7 +257,7 @@ model ProductAttribute {
 }
 
 model ProductAttributeGroup {
-  id String @id @default(cuid()) @db.Text
+  id String @id @default(cuid()) @db.VarChar(25)
 
   name String @db.VarChar(50)
 
@@ -255,10 +271,10 @@ model ProductAttributeGroup {
 
 model ProductAttributesOnGroups {
   productAttribute   ProductAttribute @relation(fields: [productAttributeId], references: [id])
-  productAttributeId String           @db.Text
+  productAttributeId String           @db.VarChar(25)
 
   productAttributeGroup   ProductAttributeGroup @relation(fields: [productAttributeGroupId], references: [id])
-  productAttributeGroupId String                @db.Text
+  productAttributeGroupId String                @db.VarChar(25)
 
   @@id([productAttributeId, productAttributeGroupId])
   @@map("product_attributes_on_groups")
@@ -271,7 +287,7 @@ enum ProductAttributeType {
 }
 
 model ProductVariant {
-  id String @id @default(cuid()) @db.Text
+  id String @id @default(cuid()) @db.VarChar(25)
 
   @@map("product_variants")
 }

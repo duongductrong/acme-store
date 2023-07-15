@@ -13,8 +13,8 @@ export const categorySchema = z.object({
 
   metadata: z
     .object({
-      metaSeoTitle: z.string().optional(),
-      metaSeoKeyword: z.string().optional(),
+      metaTitle: z.string().optional(),
+      metaKeyword: z.string().optional(),
       metaSeoDescription: z.string().optional(),
     })
     .optional(),

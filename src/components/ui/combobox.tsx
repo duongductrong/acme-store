@@ -26,6 +26,7 @@ import {
   useRef,
   useState,
 } from "react"
+import { ScrollArea } from "./scroll-area"
 
 export interface ComboboxOption<TValue = any> {
   label: string
@@ -79,7 +80,7 @@ export const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
     })
     const [comboboxContentWidth, setComboboxContentWidth] = useState(0)
 
-    const collectionOptions = useMemo(() => {
+    const objectOptions = useMemo(() => {
       return options.reduce((optionObjector, option) => {
         optionObjector[option.value] = option
         return optionObjector
@@ -117,14 +118,9 @@ export const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [JSON.stringify(value)])
 
-    const renderPlaceholderOrValue = useMemo(() => {
+    const Placeholder = useMemo(() => {
       if (value.length) {
         if (isMulti) {
-          // Display with badges
-          // return value.map((key) => {
-          //   return <Badge key={key}>{collectionOptions?.[key]?.label}</Badge>
-          // })
-
           return `${value.length} selected`
         }
 
@@ -134,13 +130,7 @@ export const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
       }
 
       return <span className="w-full" />
-    }, [
-      value,
-      placeholder,
-      options,
-      isMulti,
-      JSON.stringify(collectionOptions),
-    ])
+    }, [value, placeholder, options, isMulti, JSON.stringify(objectOptions)])
 
     useEffect(() => {
       if (comboboxTriggerRef.current) {
@@ -165,7 +155,7 @@ export const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
             className={clsx(className, "w-full !gap-2 flex-wrap font-normal")}
             ref={comboboxTriggerRef}
           >
-            {renderPlaceholderOrValue}
+            {Placeholder}
             <ChevronsUpDown className="ml-auto h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
@@ -174,25 +164,31 @@ export const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
           style={{ width: comboboxContentWidth }}
         >
           <Command>
-            <CommandInput placeholder="Search framework..." />
+            <CommandInput placeholder="Search..." />
             <CommandEmpty>
               {notFound ? notFound : "No option found."}
             </CommandEmpty>
             <CommandGroup>
-              {options.map((option) => (
-                <CommandItem
-                  key={option.value}
-                  onSelect={() => handleSelectOption(option.value)}
-                >
-                  <Check
-                    className={cn(
-                      "mr-2 h-4 w-4",
-                      value.includes(option.value) ? "opacity-100" : "opacity-0"
-                    )}
-                  />
-                  {option.label}
-                </CommandItem>
-              ))}
+              <ScrollArea
+                className={clsx(options.length > 10 ? "h-[300px]" : "")}
+              >
+                {options.map((option) => (
+                  <CommandItem
+                    key={option.value}
+                    onSelect={() => handleSelectOption(option.value)}
+                  >
+                    <Check
+                      className={cn(
+                        "mr-2 h-4 w-4",
+                        value.includes(option.value)
+                          ? "opacity-100"
+                          : "opacity-0"
+                      )}
+                    />
+                    {option.label}
+                  </CommandItem>
+                ))}
+              </ScrollArea>
             </CommandGroup>
           </Command>
         </PopoverContent>

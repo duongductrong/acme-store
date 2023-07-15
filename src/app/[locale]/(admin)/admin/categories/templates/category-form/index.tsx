@@ -68,14 +68,14 @@ const CategoryForm = ({
                 <div className="flex flex-col gap-4">
                   <FormField
                     label="Meta Title"
-                    name="metadata.metaSeoTitle"
+                    name="metadata.metaTitle"
                     variant="TEXT"
                     placeholder="Title"
                   />
 
                   <FormField
                     label="Meta Keywords"
-                    name="metadata.metaSeoKeyword"
+                    name="metadata.metaKeyword"
                     variant="TEXT"
                     placeholder="Keywords"
                   />
@@ -102,19 +102,17 @@ const CategoryForm = ({
                 <FormField
                   name="status"
                   variant="RADIO_GROUP"
-                  radioGroupProps={{
-                    label: "Status",
-                    items: [
-                      {
-                        label: Status.Disabled,
-                        value: Status.Disabled,
-                      },
-                      {
-                        label: Status.Enabled,
-                        value: Status.Enabled,
-                      },
-                    ],
-                  }}
+                  label="Status"
+                  items={[
+                    {
+                      label: Status.Disabled,
+                      value: Status.Disabled,
+                    },
+                    {
+                      label: Status.Enabled,
+                      value: Status.Enabled,
+                    },
+                  ]}
                 />
               </SectionPaper>
             </div>

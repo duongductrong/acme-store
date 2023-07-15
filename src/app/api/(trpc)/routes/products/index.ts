@@ -34,7 +34,7 @@ export const productRouter = router({
     .mutation(async ({ input }) => {
       const productCreated = await prisma.product.create({
         data: {
-          productName: input.productName,
+          title: input.title,
           description: input.description,
           price: input.price,
           quantity: input.quantity,
@@ -43,7 +43,6 @@ export const productRouter = router({
           thumbnail: input.thumbnail,
           categoryId: input.categoryId,
           content: input.content,
-          media: input.media ?? [],
           status: input.status as Status,
           stockAvailability: input.stockAvailability,
           visibility: input.visibility as ProductVisibility,
@@ -80,7 +79,7 @@ export const productRouter = router({
     .mutation(async ({ input }) => {
       const productUpdated = await prisma.product.update({
         data: {
-          productName: input.productName,
+          title: input.title,
           description: input.description,
           price: input.price,
           quantity: input.quantity,
@@ -89,7 +88,6 @@ export const productRouter = router({
           thumbnail: input.thumbnail,
           categoryId: input.categoryId,
           content: input.content,
-          media: input.media ?? [],
           status: input.status as Status,
           stockAvailability: input.stockAvailability,
           visibility: input.visibility as ProductVisibility,

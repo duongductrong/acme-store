@@ -23,7 +23,7 @@ const CollectionList = (props: CollectionListProps) => {
   const t = useToast()
   const trpcUtils = trpc.useContext()
 
-  const { data: collections } = trpc.collection.list.useQuery()
+  const { data: collections } = trpc.collection.list.useQuery({})
 
   const { mutate: deleteCollectionMutate } =
     trpc.collection.permanentlyDelete.useMutation({
@@ -107,7 +107,7 @@ const CollectionList = (props: CollectionListProps) => {
     >
       <DataTable
         columns={columns}
-        data={collections ?? []}
+        data={collections?.items ?? []}
         searchPlaceholder="Search collections..."
         searchable
       />

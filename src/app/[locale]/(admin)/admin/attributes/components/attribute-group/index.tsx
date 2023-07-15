@@ -52,10 +52,8 @@ const AttributeGroup = (props: AttributeGroupProps) => {
           name="groupIds"
           variant="SELECT"
           placeholder="Select groups"
-          selectProps={{
-            options: transformAttrGroupOptions ?? [],
-            isMulti: true,
-          }}
+          options={transformAttrGroupOptions ?? []}
+          isMulti
         />
 
         <Form {...internalMethods}>

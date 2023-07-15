@@ -19,11 +19,13 @@ import trpc from "@/lib/trpc/trpc-client"
 import { Product } from "@prisma/client"
 import { ColumnDef } from "@tanstack/react-table"
 import { MoreHorizontal, Plus } from "lucide-react"
+import { useRouter } from "next/navigation"
 
 export interface ProductListProps {}
 
 const ProductList = (props: ProductListProps) => {
   const t = useToast()
+  const router = useRouter()
   const trpcUitls = trpc.useContext()
   const { data: products, isLoading: isProductQuerying } =
     trpc.product.list.useQuery()
@@ -69,8 +71,8 @@ const ProductList = (props: ProductListProps) => {
       enableHiding: false,
     },
     {
-      id: "productName",
-      accessorKey: "productName",
+      id: "title",
+      accessorKey: "title",
       header: () => "Product Name",
       cell: ({ getValue, row }) => (
         <Link
@@ -168,6 +170,7 @@ const ProductList = (props: ProductListProps) => {
         searchable
         searchPlaceholder="Search product name..."
         loading={isProductMutating || isProductQuerying}
+        onCreateNewEntry={() => router.push(ADMIN_URL.PRODUCT.NEW)}
       />
     </SectionView>
   )

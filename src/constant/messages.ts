@@ -51,7 +51,7 @@ export const VALIDATION_MESSAGES = {
   ONLY_ALPHA_NUMERIC: (fieldName: string = "This field") =>
     `${fieldName} requires alphanumeric characters without spaces and symbols.`,
   
-  ALREADY_EXISTS: (fieldName: string) => `That ${fieldName} already exists.`
+  ALREADY_EXISTS: (fieldName: string) => `${fieldName} already exists.`
 }
 
 export const SUCCESS_MESSAGES = {}
