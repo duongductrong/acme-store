@@ -2,6 +2,7 @@
 
 import Link from "@/components/navigations/link"
 import SectionView from "@/components/sections/section-view"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { DataTable } from "@/components/ui/data-table"
 import {
@@ -14,7 +15,13 @@ import {
 import { useToast } from "@/components/ui/use-toast"
 import { ADMIN_URL } from "@/constant/urls"
 import trpc from "@/lib/trpc/trpc-client"
-import { ProductAttribute } from "@prisma/client"
+import {
+  Prisma,
+  ProductAttribute,
+  ProductAttributeGroup,
+  ProductAttributesOnGroups,
+} from "@prisma/client"
+import { Args } from "@prisma/client/runtime"
 import { ColumnDef } from "@tanstack/react-table"
 import { MoreHorizontal, Plus } from "lucide-react"
 
@@ -24,7 +31,11 @@ const AttributeList = (props: AttributeListProps) => {
   const t = useToast()
   const trpcUtils = trpc.useContext()
 
-  const { data: attributes } = trpc.attribute.list.useQuery()
+  const { data: attributes } = trpc.attribute.list.useQuery({
+    includes: {
+      groups: true,
+    },
+  })
   const { mutate: permanentlyDeleteAttribute } =
     trpc.attribute.permanentlyDelete.useMutation({
       onSuccess() {
@@ -47,11 +58,11 @@ const AttributeList = (props: AttributeListProps) => {
 
   const handleDeleteAttribute = (id: string) => permanentlyDeleteAttribute(id)
 
-  const columns: ColumnDef<ProductAttribute>[] = [
-    {
-      accessorKey: "id",
-      header: "ID",
-    },
+  const columns: ColumnDef<
+    ProductAttribute & {
+      groups: Prisma.ProductAttributesOnGroupsInclude<any>[]
+    }
+  >[] = [
     {
       accessorKey: "name",
       header: "Name",
@@ -77,6 +88,24 @@ const AttributeList = (props: AttributeListProps) => {
     {
       accessorKey: "sortOrder",
       header: "Sort Order",
+    },
+    {
+      accessorKey: "groups",
+      header: "Groups",
+      cell: ({ row: { original } }) => {
+        return (
+          <div className="flex gap-2">
+            {original.groups.map((relatedBetweenAttrGroup) => {
+              const productAttrGroup =
+                relatedBetweenAttrGroup.productAttributeGroup as ProductAttributeGroup
+
+              return (
+                <Badge key={productAttrGroup.id}>{productAttrGroup.name}</Badge>
+              )
+            })}
+          </div>
+        )
+      },
     },
     {
       accessorKey: "id",

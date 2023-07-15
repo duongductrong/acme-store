@@ -6,6 +6,7 @@ import { forwardRef, useState } from "react"
 import { useFormContext } from "react-hook-form"
 import slugify from "slugify"
 import FormInput, { FormInputProps } from "./form-input"
+import get from "lodash/get"
 
 export interface FormUIDProps extends FormInputProps {
   fromName: string
@@ -21,7 +22,7 @@ const FormUID = forwardRef<HTMLInputElement, FormUIDProps>(
       setIsGenerating(true)
 
       const relatedInputValue =
-        methods.getValues()?.[fromName] || props?.value || ""
+        get(methods.getValues(), fromName) || props?.value || ""
       const value = slugify(relatedInputValue, {
         lower: true,
         strict: true,
@@ -37,7 +38,7 @@ const FormUID = forwardRef<HTMLInputElement, FormUIDProps>(
 
     return (
       <div className="relative">
-        <FormInput {...props} ref={ref} />
+        <FormInput {...props} ref={ref} className={cn("pr-8", props.className)} />
 
         <div
           className={cn(

@@ -6,9 +6,21 @@ import difference from "lodash/difference"
 import { z } from "zod"
 
 export const attributeRouter = router({
-  list: publicProcedure.query(() => {
-    return prisma.productAttribute.findMany()
-  }),
+  list: publicProcedure
+    .input(
+      z
+        .object({
+          includes: z.record(z.enum(["groups"]), z.boolean()).optional(),
+        })
+        .optional()
+    )
+    .query(({ input }) => {
+      return prisma.productAttribute.findMany({
+        include: {
+          groups: { include: { productAttributeGroup: true } },
+        },
+      })
+    }),
 
   detail: publicProcedure.input(z.string()).query(async ({ input: id }) => {
     const attribute = await prisma.productAttribute.findFirst({

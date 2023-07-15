@@ -28,6 +28,10 @@ export const productSchema = z.object({
     .string({ required_error: VALIDATION_MESSAGES.REQUIRED("Category") })
     .nullable()
     .optional(),
+  attributeGroupId: z
+    .string({ required_error: VALIDATION_MESSAGES.REQUIRED("Attribute Group") })
+    .nullable()
+    .optional(),
   content: z
     .string({ required_error: VALIDATION_MESSAGES.REQUIRED("Content") })
     .nullable()

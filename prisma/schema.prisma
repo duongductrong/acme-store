@@ -39,6 +39,9 @@ model Product {
   media   ProductMedia? @relation(fields: [mediaId], references: [id])
   mediaId Int?
 
+  attributeGroup   ProductAttributeGroup? @relation(fields: [attributeGroupId], references: [id])
+  attributeGroupId String?                @db.VarChar(25)
+
   @@map("products")
 }
 
@@ -91,6 +94,7 @@ enum ProductStockAvailability {
 model Category {
   id          String  @id @default(cuid()) @db.VarChar(25)
   name        String
+  slug        String  @db.Text
   banner      String?
   description String?
   status      Status  @default(Enabled)
@@ -265,6 +269,7 @@ model ProductAttributeGroup {
   updatedAt DateTime @updatedAt
 
   attributes ProductAttributesOnGroups[]
+  Product    Product[]
 
   @@map("product_attribute_groups")
 }

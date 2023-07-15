@@ -24,7 +24,7 @@ export const attributeSchema = z.object({
     .or(z.string())
     .transform((value) => Number(value)),
   options: z
-    .array(z.object({ name: z.string().optional() }).optional())
+    .array(z.object({ name: z.string().optional(), code: z.string().optional() }).optional())
     .optional()
     .default([]),
   isFilterable: z.boolean(),

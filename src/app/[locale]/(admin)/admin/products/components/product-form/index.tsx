@@ -16,6 +16,8 @@ import { TRPCClientErrorLike } from "@trpc/client"
 import { useForm } from "react-hook-form"
 import ProductCategoryField from "./product-category-field"
 import ProductCollectionField from "./product-collection-field"
+import ProductAttributeGroup from "./product-attribute-group"
+import { useRouter } from "next/navigation"
 
 export interface ProductFormProps {
   title: string
@@ -31,6 +33,8 @@ const ProductForm = ({
   defaultValues,
   onSubmit,
 }: ProductFormProps) => {
+  const router = useRouter()
+
   const methods = useForm<ProductSchemaType>({
     resolver: zodResolver(productSchema),
     defaultValues: {
@@ -47,6 +51,8 @@ const ProductForm = ({
     onSubmit(values)
   })
 
+  const handleBackPage = () => router.back()
+
   return (
     <Form {...methods}>
       <form onSubmit={handleSubmit}>
@@ -55,7 +61,11 @@ const ProductForm = ({
           backTo={ADMIN_URL.PRODUCT.LIST}
           whereTopRight={
             <>
-              <Button type="button" variant="secondary">
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={handleBackPage}
+              >
                 Cancel
               </Button>
               <Button type="submit">Save</Button>
@@ -212,6 +222,9 @@ const ProductForm = ({
                   variant="TEXT"
                   placeholder="Thumbnail"
                 />
+              </SectionPaper>
+              <SectionPaper title="Attributes">
+                <ProductAttributeGroup />
               </SectionPaper>
             </div>
           </div>

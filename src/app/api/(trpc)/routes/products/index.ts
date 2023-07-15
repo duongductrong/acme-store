@@ -66,6 +66,7 @@ export const productRouter = router({
           status: input.status as Status,
           stockAvailability: input.stockAvailability,
           visibility: input.visibility as ProductVisibility,
+          attributeGroupId: input.attributeGroupId,
         },
       })
 
@@ -96,10 +97,15 @@ export const productRouter = router({
           id: z.string(),
           slug: productSchema.shape.slug,
         })
-        .superRefine(async ({ slug, id }, ctx) => {
-          const product = await prisma.product.findFirst({
-            where: { slug, NOT: { id } },
-          })
+        .superRefine(async ({ slug, id, attributeGroupId }, ctx) => {
+          const [product, attributeGroup] = await prisma.$transaction([
+            prisma.product.findFirst({
+              where: { slug, NOT: { id } },
+            }),
+            prisma.productAttributeGroup.findFirst({
+              where: { id: attributeGroupId?.toString() },
+            }),
+          ])
 
           if (product) {
             ctx.addIssue({
@@ -109,10 +115,19 @@ export const productRouter = router({
             })
           }
 
+          if (!attributeGroup) {
+            ctx.addIssue({
+              message: VALIDATION_MESSAGES.NOT_EXISTS("Attribute Group"),
+              code: "custom",
+              path: ["attributeGroupId"],
+            })
+          }
+
           return ctx
         })
     )
     .mutation(async ({ input }) => {
+      console.log(input)
       const productUpdated = await prisma.product.update({
         data: {
           title: input.title,
@@ -127,6 +142,7 @@ export const productRouter = router({
           status: input.status as Status,
           stockAvailability: input.stockAvailability,
           visibility: input.visibility as ProductVisibility,
+          attributeGroupId: input.attributeGroupId,
         },
         where: { id: input.id },
       })

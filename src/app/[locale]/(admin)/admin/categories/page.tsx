@@ -2,6 +2,7 @@
 
 import Link from "@/components/navigations/link"
 import SectionView from "@/components/sections/section-view"
+import StatusPoint from "@/components/status-point"
 import { Button } from "@/components/ui/button"
 import { DataTable } from "@/components/ui/data-table"
 import {
@@ -14,7 +15,7 @@ import {
 import { useToast } from "@/components/ui/use-toast"
 import { ADMIN_URL } from "@/constant/urls"
 import trpc from "@/lib/trpc/trpc-client"
-import { Category } from "@prisma/client"
+import { Category, Status } from "@prisma/client"
 import { ColumnDef } from "@tanstack/react-table"
 import { MoreHorizontal, Plus } from "lucide-react"
 
@@ -53,7 +54,7 @@ function CategoryList({}: CategoryListProps) {
       cell: ({ getValue, row: { original: category } }) => (
         <Link
           href={ADMIN_URL.CATEGORY.EDIT.replace(/{id}/, category.id)}
-          className="hover:underline underline-offset-2"
+          className="hover:underline underline-offset-2 font-semibold"
         >
           {getValue<string>()}
         </Link>
@@ -66,10 +67,13 @@ function CategoryList({}: CategoryListProps) {
     {
       accessorKey: "status",
       header: () => "Status",
+      cell: ({ getValue }) => {
+        return <StatusPoint variant={getValue<Status>()} />
+      },
     },
     {
-      accessorKey: "id",
-      header: () => null,
+      id: "actions",
+      enableHiding: false,
       cell: ({ row: { original: category } }) => {
         return (
           <DropdownMenu>

@@ -23,7 +23,6 @@ const AttributeForm = ({
   defaultValues,
   onSubmit,
 }: AttributeFormProps) => {
-  console.log({ defaultValues })
   const methods = useForm<AttributeSchemaType>({
     resolver: zodResolver(attributeSchema),
     defaultValues: defaultValues,

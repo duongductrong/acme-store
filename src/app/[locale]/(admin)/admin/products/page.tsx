@@ -11,7 +11,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuTrigger
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useToast } from "@/components/ui/use-toast"
 import { ADMIN_URL } from "@/constant/urls"
@@ -77,12 +77,15 @@ const ProductList = (props: ProductListProps) => {
       accessorKey: "title",
       header: () => "Product Name",
       cell: ({ getValue, row }) => (
-        <Link
-          href={ADMIN_URL.PRODUCT.EDIT.replace(/{id}/, row.original.id)}
-          className="hover:underline underline-offset-2 font-semibold"
-        >
-          {getValue<string>()}
-        </Link>
+        <>
+          <Link
+            href={ADMIN_URL.PRODUCT.EDIT.replace(/{id}/, row.original.id)}
+            className="hover:underline underline-offset-2 font-semibold mb-3"
+          >
+            {getValue<string>()}
+          </Link>
+          <span className="text-xs block">path:({row.original.SKU})</span>
+        </>
       ),
     },
     {

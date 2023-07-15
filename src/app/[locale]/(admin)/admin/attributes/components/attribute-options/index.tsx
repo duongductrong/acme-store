@@ -39,11 +39,19 @@ const AttributeOptions = (props: AttributeOptionsProps) => {
       <div className="flex flex-col gap-2">
         {options.map((option, index) => {
           return (
-            <div key={option.id} className="flex items-center w-full">
+            <div key={option.id} className="flex items-center w-full gap-base">
               <FormField
-                name={`options.${index}.name`}
                 variant="TEXT"
+                name={`options.${index}.name`}
                 wrapperClassName="flex-1 max-w-[200px]"
+                placeholder="Name"
+              />
+              <FormField
+                variant="UID"
+                name={`options.${index}.code`}
+                fromName={`options.${index}.name`}
+                wrapperClassName="flex-1 max-w-[200px]"
+                placeholder="Code"
               />
               <span
                 role="button"

@@ -4,6 +4,7 @@ import trpc from "@/lib/trpc/trpc-client"
 import { Loader2 } from "lucide-react"
 import CategoryForm from "../templates/category-form"
 import { useToast } from "@/components/ui/use-toast"
+import { CategorySchemaType } from "@/schemas/category"
 
 export interface EditCategoryProps {
   params: { id: string }
@@ -16,7 +17,12 @@ const EditCategory = ({ params: { id } }: EditCategoryProps) => {
   const t = useToast()
   const trpcUtils = trpc.useContext()
 
-  const { data: category, error } = trpc.category.detail.useQuery(id)
+  const { data: category, error } = trpc.category.detail.useQuery({
+    id,
+    includes: {
+      metadata: true,
+    },
+  })
   const { mutate: categoryMutate } = trpc.category.update.useMutation({
     onSuccess() {
       t.toast({
@@ -43,7 +49,7 @@ const EditCategory = ({ params: { id } }: EditCategoryProps) => {
   return (
     <CategoryForm
       title="Edit a category"
-      defaultValues={category}
+      defaultValues={category as any as CategorySchemaType}
       onSubmit={(values) => categoryMutate(values)}
     />
   )

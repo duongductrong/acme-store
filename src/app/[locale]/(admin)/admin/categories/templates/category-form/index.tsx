@@ -56,6 +56,13 @@ const CategoryForm = ({
                     placeholder="Name"
                   />
                   <FormField
+                    variant="UID"
+                    label="Slug"
+                    name="slug"
+                    fromName="name"
+                    placeholder="Slug"
+                  />
+                  <FormField
                     label="Description"
                     name="description"
                     variant="TEXTAREA"

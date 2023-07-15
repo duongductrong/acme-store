@@ -46,18 +46,46 @@ export const categoryRouter = router({
       }
     }),
 
-  detail: publicProcedure.input(z.string()).query(({ input: id }) => {
-    return prisma.category.findFirst({ where: { id } })
-  }),
+  detail: publicProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        includes: z.record(z.enum(["metadata"]), z.boolean()).optional(),
+      })
+    )
+    .query(({ input }) => {
+      return prisma.category.findFirst({
+        where: { id: input.id },
+        include: {
+          metadata: input?.includes?.metadata,
+        },
+      })
+    }),
 
   create: publicProcedure.input(categorySchema).mutation(async ({ input }) => {
     const categoryCreated = await prisma.category.create({
       data: {
         name: input.name,
+        slug: input.slug,
         description: input.description,
         banner: input.banner,
         status: input.status as Status,
       },
+    })
+
+    setTimeout(async () => {
+      await prisma.catagoryMetadata.create({
+        data: {
+          metaTitle: input.metadata?.metaTitle,
+          metaDescription: input.metadata?.metaDescription,
+          metaKeyword: input.metadata?.metaKeyword,
+          Category: {
+            connect: {
+              id: categoryCreated.id,
+            },
+          },
+        },
+      })
     })
 
     return categoryCreated
@@ -72,10 +100,27 @@ export const categoryRouter = router({
         },
         data: {
           name: input.name,
+          slug: input.slug,
+
           description: input.description,
           banner: input.banner,
           status: input.status as Status,
         },
+      })
+
+      setTimeout(async () => {
+        if (categoryUpdated.metadataId) {
+          await prisma.catagoryMetadata.update({
+            where: {
+              id: categoryUpdated.metadataId,
+            },
+            data: {
+              metaTitle: input.metadata?.metaTitle,
+              metaDescription: input.metadata?.metaDescription,
+              metaKeyword: input.metadata?.metaKeyword,
+            },
+          })
+        }
       })
 
       return categoryUpdated
