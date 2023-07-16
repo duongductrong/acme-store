@@ -1,6 +1,44 @@
 # Nex ECommerce
 ![Image](public/ecommerce.png)
 
+## Tech Stack
+- [Next.js](https://nextjs.org)
+- [TRPC](https://trpc.io/)
+- [Tailwind CSS](https://tailwindcss.com)
+- [Next Auth](https://next-auth.js.org/)
+- [Prisma ORM](https://www.prisma.io/)
+- [Cloudinary](https://cloudinary.com/)
+- [React Email](https://react.email)
+
+## Features to be implemented
+
+- [x] Authentication with **Next-Auth**
+- [x] ORM using **Prisma ORM**
+- [x] Database on **Mysql**
+- [x] Caching query client on **@tanstack/react-query**
+- [x] Validation with **Zod**
+- [ ] Custom template email (reset password, forgot password, etc)
+- [ ] File uploads with **Cloudinary**
+- [~] Storefront with products, categories, and subcategories
+- [ ] Checkout with **Paypal, COD, Backend Transfer**
+- [ ] Admin dashboard with 
+  - [ ] store information
+  - [ ] products 
+  - [ ] orders 
+  - [ ] categories
+  - [ ] collections 
+  - [ ] attributes
+  - [ ] subscriptions 
+  - [ ] payments 
+  - [ ] emails 
+  - [ ] roles
+  - [ ] coupons
+  - [ ] Media Library
+<!-- - [x] User subscriptions with **Stripe** -->
+<!-- - [x] Seller and customer workflows -->
+<!-- - [x] Blog using **MDX** and **Contentlayer** -->
+<!-- - [x] Newsletter subscription with **React Email** and **Resend** -->
+
 ## Getting Started
 
 First, run the development server:
