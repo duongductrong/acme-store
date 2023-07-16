@@ -1,5 +1,5 @@
 import SectionView from "@/components/sections/section-view"
-import { DataTable } from "@/components/ui/data-table"
+import { DataTable } from "@/components/ui/data-table/data-table"
 
 export interface OrderListProps {}
 

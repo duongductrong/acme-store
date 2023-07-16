@@ -5,7 +5,7 @@ import { ADMIN_URL } from "@/constant/urls"
 import trpc from "@/lib/trpc/trpc-client"
 import { Loader2 } from "lucide-react"
 import { useRouter } from "next/navigation"
-import CollectionForm from "../templates/collection-form"
+import CollectionForm from "../_components/collection-form"
 
 export interface EditCollectionProps {
   params: { id: string }

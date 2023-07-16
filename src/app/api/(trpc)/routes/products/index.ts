@@ -1,18 +1,52 @@
 import { VALIDATION_MESSAGES } from "@/constant/messages"
 import prisma from "@/lib/prisma"
+import { inputQueryFilterSchema } from "@/lib/trpc/schemas"
 import { publicProcedure, router } from "@/lib/trpc/trpc"
+import {
+  trpcHandleQueryFilterPagination,
+  trpcOutputQueryWithPagination,
+} from "@/lib/trpc/utils"
 import { productSchema } from "@/schemas/product"
-import { ProductVisibility, Status } from "@prisma/client"
+import { Prisma, ProductVisibility, Status } from "@prisma/client"
 import { z } from "zod"
 
 export const productRouter = router({
-  list: publicProcedure.query(() => {
-    return prisma.product.findMany({
-      orderBy: {
-        createdAt: "desc",
-      },
-    })
-  }),
+  list: publicProcedure
+    .input(inputQueryFilterSchema.optional())
+    .query(async ({ input }) => {
+      const handledPagination = trpcHandleQueryFilterPagination(input)
+
+      const where: Prisma.ProductWhereInput | undefined = undefined
+
+      const productItems = await prisma.product.findMany({
+        where,
+        skip: handledPagination?.skip,
+        take: handledPagination?.limit,
+        cursor: handledPagination?.cursor,
+        orderBy: {
+          createdAt: "desc",
+        },
+      })
+
+      if (input?.paginationType === "offset") {
+        const countProductItems = await prisma.product.count({
+          where,
+        })
+
+        return trpcOutputQueryWithPagination(productItems, {
+          type: "offset",
+          page: Number(input?.page),
+          pageSize: Number(input?.pageSize),
+          totalRecords: countProductItems,
+        })
+      } else {
+        return trpcOutputQueryWithPagination(productItems, {
+          type: "cursor-based",
+          nextCursor: "",
+          prevCursor: "",
+        })
+      }
+    }),
 
   detail: publicProcedure
     .input(

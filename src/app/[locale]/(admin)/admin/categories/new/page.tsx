@@ -4,7 +4,7 @@ import { useToast } from "@/components/ui/use-toast"
 import { ADMIN_URL } from "@/constant/urls"
 import trpc from "@/lib/trpc/trpc-client"
 import { useRouter } from "next/navigation"
-import CategoryForm from "../templates/category-form"
+import CategoryForm from "../_components/category-form"
 
 export interface NewCategoryProps {}
 

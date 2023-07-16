@@ -4,7 +4,7 @@ import Link from "@/components/navigations/link"
 import SectionView from "@/components/sections/section-view"
 import StatusPoint from "@/components/status-point"
 import { Button } from "@/components/ui/button"
-import { DataTable } from "@/components/ui/data-table"
+import { DataTable } from "@/components/ui/data-table/data-table"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,14 +18,22 @@ import trpc from "@/lib/trpc/trpc-client"
 import { Category, Status } from "@prisma/client"
 import { ColumnDef } from "@tanstack/react-table"
 import { MoreHorizontal, Plus } from "lucide-react"
+import { useRouter } from "next/navigation"
 
 export interface CategoryListProps {}
 
 function CategoryList({}: CategoryListProps) {
   const t = useToast()
+  const router = useRouter()
   const trpcUtils = trpc.useContext()
 
-  const { data: categories } = trpc.category.list.useQuery()
+  const { data } = trpc.category.list.useQuery({
+    paginationType: "offset",
+    page: 1,
+    pageSize: 9999,
+  })
+  const categories = data?.items || []
+
   const { mutate } = trpc.category.permanentlyDelete.useMutation({
     onSuccess() {
       t.toast({
@@ -115,6 +123,7 @@ function CategoryList({}: CategoryListProps) {
         columns={columns}
         data={categories ?? []}
         searchPlaceholder="Search category..."
+        onCreateNewEntry={() => router.push(ADMIN_URL.CATEGORY.NEW)}
         searchable
       />
     </SectionView>

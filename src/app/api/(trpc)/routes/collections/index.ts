@@ -1,40 +1,61 @@
 import prisma from "@/lib/prisma"
-import { publicProcedure, router } from "@/lib/trpc/trpc"
-import { collectionSchema } from "@/schemas/collection"
 import {
-  infiniteLoaderSchema,
-  outputInfiniteLoaderSchema,
-} from "@/schemas/infinite"
+  inputQueryFilterSchema,
+  outputQueryFilterResultsSchema,
+} from "@/lib/trpc/schemas"
+import { publicProcedure, router } from "@/lib/trpc/trpc"
+import {
+  trpcHandleQueryFilterPagination,
+  trpcOutputQueryWithPagination,
+} from "@/lib/trpc/utils"
+import { collectionSchema } from "@/schemas/collection"
+import { Prisma } from "@prisma/client"
 import { z } from "zod"
 
 export const collectionRouter = router({
   list: publicProcedure
-    .input(infiniteLoaderSchema)
-    .output(outputInfiniteLoaderSchema)
+    .input(inputQueryFilterSchema.optional())
+    .output(outputQueryFilterResultsSchema)
     .query(async ({ input }) => {
-      const { cursor, search } = input
-      const limit = Number(input.limit) ?? 10
+      const search = input?.search || ""
+      const pagination = trpcHandleQueryFilterPagination(input)
+
+      const where: Prisma.CollectionWhereInput = {
+        name: {
+          contains: search ?? "",
+        },
+      }
 
       const items = await prisma.collection.findMany({
-        take: Number(limit) + 1,
-        where: {
-          name: {
-            contains: search ?? "",
-          },
-        },
-        cursor: cursor ? { id: cursor } : undefined,
+        where,
+        take: pagination?.limit,
+        cursor: pagination?.cursor ? { id: pagination?.cursor } : undefined,
       })
 
-      let nextCursor: typeof cursor | undefined = undefined
-      if (items.length > limit) {
-        const nextItem = items.pop()
-        nextCursor = nextItem!.id
+      if (input?.paginationType === "cursor-based") {
+        let nextCursor: any = undefined
+        let previousCursor: any = undefined
+
+        if (items.length > Number(pagination?.limit)) {
+          const nextItem = items.pop()
+          nextCursor = nextItem!.id
+        }
+
+        return trpcOutputQueryWithPagination(items, {
+          type: "cursor-based",
+          nextCursor,
+          previousCursor,
+        })
       }
 
-      return {
-        items,
-        nextCursor,
-      }
+      const countItems = await prisma.collection.count({ where })
+
+      return trpcOutputQueryWithPagination(items, {
+        type: "offset",
+        page: Number(input?.page),
+        pageSize: Number(input?.pageSize),
+        totalRecords: countItems,
+      })
     }),
 
   detail: publicProcedure
@@ -53,7 +74,7 @@ export const collectionRouter = router({
     .mutation(async ({ input }) => {
       return prisma.collection.create({
         data: {
-          code: input.code,
+          slug: input.slug,
           name: input.name,
           description: input.description,
         },
@@ -68,7 +89,7 @@ export const collectionRouter = router({
           id: input.id as unknown as number,
         },
         data: {
-          code: input.code,
+          slug: input.slug,
           name: input.name,
           description: input.description,
         },

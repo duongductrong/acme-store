@@ -5,7 +5,10 @@ import SectionView from "@/components/sections/section-view"
 import StatusPoint from "@/components/status-point"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
-import { DataTable } from "@/components/ui/data-table"
+import {
+  DataTable,
+  useDataTableManualOffsetPagination,
+} from "@/components/ui/data-table"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,7 +19,7 @@ import {
 import { useToast } from "@/components/ui/use-toast"
 import { ADMIN_URL } from "@/constant/urls"
 import { formatCurrency } from "@/lib/currency"
-import { decimalNumber } from "@/lib/number"
+import { decimalNumber, safeParseNumber } from "@/lib/number"
 import trpc from "@/lib/trpc/trpc-client"
 import { Product, Status } from "@prisma/client"
 import { ColumnDef } from "@tanstack/react-table"
@@ -29,8 +32,19 @@ const ProductList = (props: ProductListProps) => {
   const t = useToast()
   const router = useRouter()
   const trpcUitls = trpc.useContext()
-  const { data: products, isLoading: isProductQuerying } =
-    trpc.product.list.useQuery()
+
+  const { page, pageSize, setPage, setPageSize } =
+    useDataTableManualOffsetPagination({ page: 1, pageSize: 10 })
+
+  const { data, isLoading: isProductQuerying } = trpc.product.list.useQuery({
+    paginationType: "offset",
+    page: page,
+    pageSize: pageSize,
+  })
+
+  const products = data?.items || []
+  const productPagination = data?.pagination
+
   const { mutate, isLoading: isProductMutating } =
     trpc.product.permanentlyDelete.useMutation({
       onSuccess() {
@@ -169,11 +183,19 @@ const ProductList = (props: ProductListProps) => {
     >
       <DataTable
         columns={columns}
-        data={products ?? []}
-        searchable
+        data={products}
         searchPlaceholder="Search product name..."
         loading={isProductMutating || isProductQuerying}
         onCreateNewEntry={() => router.push(ADMIN_URL.PRODUCT.NEW)}
+        pagination={{
+          type: "offset",
+          page: safeParseNumber(productPagination?.page, 1),
+          pageSize: safeParseNumber(productPagination?.pageSize, 10),
+          totalRecords: safeParseNumber(productPagination?.totalRecords, 0),
+          setPage,
+          setPageSize,
+        }}
+        searchable
       />
     </SectionView>
   )

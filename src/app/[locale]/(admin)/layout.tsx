@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
 import { Menu } from "lucide-react"
 import dynamic from "next/dynamic"
-import BranchSwitcher from "./components/brand-switcher"
+import BranchSwitcher from "./_components/brand-switcher"
 import { ADMIN_SIDEBARS } from "./constants"
 
 const ToggleDarkLightMode = dynamic(

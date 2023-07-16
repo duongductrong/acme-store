@@ -1,7 +1,7 @@
 import { STORE_FRONT_URL } from "@/constant/urls"
 import { useTranslations } from "next-intl"
 import Link from "next/link"
-import SignUpForm from "./components/sign-up-form"
+import SignUpForm from "./_components/sign-up-form"
 import { Metadata } from "next"
 
 export interface SignUpProps extends CommonLayoutProps {}

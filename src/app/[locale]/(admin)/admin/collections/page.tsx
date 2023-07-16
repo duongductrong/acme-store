@@ -3,7 +3,7 @@
 import Link from "@/components/navigations/link"
 import SectionView from "@/components/sections/section-view"
 import { Button } from "@/components/ui/button"
-import { DataTable } from "@/components/ui/data-table"
+import { DataTable } from "@/components/ui/data-table/data-table"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,14 +16,21 @@ import trpc from "@/lib/trpc/trpc-client"
 import { Collection } from "@prisma/client"
 import { ColumnDef } from "@tanstack/react-table"
 import { MoreHorizontal, Plus } from "lucide-react"
+import { useRouter } from "next/navigation"
 
 export interface CollectionListProps {}
 
 const CollectionList = (props: CollectionListProps) => {
   const t = useToast()
+  const router = useRouter()
   const trpcUtils = trpc.useContext()
 
-  const { data: collections } = trpc.collection.list.useQuery({})
+  const { data } = trpc.collection.list.useQuery({
+    paginationType: "offset",
+    page: 1,
+    pageSize: 9999,
+  })
+  const collections = data?.items || []
 
   const { mutate: deleteCollectionMutate } =
     trpc.collection.permanentlyDelete.useMutation({
@@ -62,8 +69,8 @@ const CollectionList = (props: CollectionListProps) => {
       ),
     },
     {
-      accessorKey: "code",
-      header: () => "Code",
+      accessorKey: "slug",
+      header: () => "Slug",
     },
     {
       accessorKey: "id",
@@ -107,8 +114,9 @@ const CollectionList = (props: CollectionListProps) => {
     >
       <DataTable
         columns={columns}
-        data={collections?.items ?? []}
+        data={collections}
         searchPlaceholder="Search collections..."
+        onCreateNewEntry={() => router.push(ADMIN_URL.COLLECTION.NEW)}
         searchable
       />
     </SectionView>

@@ -1,7 +1,12 @@
 import prisma from "@/lib/prisma"
+import { inputQueryFilterSchema } from "@/lib/trpc/schemas"
 import { publicProcedure, router } from "@/lib/trpc/trpc"
+import {
+  trpcHandleQueryFilterPagination,
+  trpcOutputQueryWithPagination,
+} from "@/lib/trpc/utils"
 import { attributeSchema } from "@/schemas/attribute"
-import { ProductAttributeType } from "@prisma/client"
+import { Prisma, ProductAttributeType } from "@prisma/client"
 import difference from "lodash/difference"
 import { z } from "zod"
 
@@ -9,16 +14,38 @@ export const attributeRouter = router({
   list: publicProcedure
     .input(
       z
-        .object({
-          includes: z.record(z.enum(["groups"]), z.boolean()).optional(),
-        })
+        .intersection(
+          z.object({
+            includes: z.record(z.enum(["groups"]), z.boolean()).optional(),
+          }).optional(),
+          inputQueryFilterSchema.optional()
+        )
         .optional()
     )
-    .query(({ input }) => {
-      return prisma.productAttribute.findMany({
+    .query(async ({ input }) => {
+      const where: Prisma.ProductAttributeWhereInput = {}
+      const pagination = trpcHandleQueryFilterPagination(input)
+
+      const attributes = await prisma.productAttribute.findMany({
+        where,
+        skip: pagination?.skip,
+        take: pagination?.limit,
+        cursor: pagination?.cursor,
         include: {
           groups: { include: { productAttributeGroup: true } },
         },
+      })
+
+      if (input?.paginationType === "cursor-based") {
+        throw new Error("Not implemented yet.")
+      }
+
+      const countItems = await prisma.productAttribute.count({ where })
+      return trpcOutputQueryWithPagination(attributes, {
+        type: "offset",
+        page: Number(input?.page),
+        pageSize: Number(input?.pageSize),
+        totalRecords: countItems,
       })
     }),
 

@@ -52,10 +52,11 @@ const CollectionForm = ({
               />
 
               <FormField
-                label="Code"
-                name="code"
-                placeholder="Code"
-                variant="TEXT"
+                label="Slug"
+                name="slug"
+                fromName="name"
+                placeholder="Slug"
+                variant="UID"
               />
 
               <FormField

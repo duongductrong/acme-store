@@ -1,49 +1,51 @@
 import prisma from "@/lib/prisma"
+import { inputQueryFilterSchema } from "@/lib/trpc/schemas"
 import { publicProcedure, router } from "@/lib/trpc/trpc"
+import { trpcHandleQueryFilterPagination, trpcOutputQueryWithPagination } from "@/lib/trpc/utils"
 import { categorySchema } from "@/schemas/category"
-import {
-  infiniteLoaderSchema,
-  outputInfiniteLoaderSchema,
-} from "@/schemas/infinite"
-import { Status } from "@prisma/client"
+import { Prisma, Status } from "@prisma/client"
 import { z } from "zod"
 
 export const categoryRouter = router({
-  list: publicProcedure.query(() => {
-    return prisma.category.findMany()
-  }),
-
-  listInfinite: publicProcedure
-    .input(infiniteLoaderSchema)
-    .output(outputInfiniteLoaderSchema)
+  list: publicProcedure
+    .input(inputQueryFilterSchema.optional())
     .query(async ({ input }) => {
-      const { cursor } = input
-      const limit = input.limit ?? 50
-      const search = input.search ?? ""
-
-      const items = await prisma.category.findMany({
-        take: limit + 1, // get an extra item at the end which we'll use as next cursor
-        where: {
-          name: {
-            contains: search?.toLowerCase() ?? "",
-          },
+      const search = input?.search ?? ""
+      const pagination = trpcHandleQueryFilterPagination(input)
+      const where: Prisma.CategoryWhereInput = {
+        name: {
+          contains: search?.toLowerCase() ?? "",
         },
-        cursor: cursor ? { id: cursor } : undefined,
+      }
+      const items = await prisma.category.findMany({
+        where,
+        skip: pagination?.skip, // get an extra item at the end which we'll use as next cursor
+        take: pagination?.limit, // get an extra item at the end which we'll use as next cursor
+        cursor: pagination?.cursor ? { id: pagination?.cursor } : undefined,
         orderBy: {
           id: "asc",
         },
       })
-
-      let nextCursor: typeof cursor | undefined = undefined
-      if (items.length > limit) {
-        const nextItem = items.pop()
-        nextCursor = nextItem!.id
+      if (input?.paginationType === "cursor-based") {
+        // const cursor = pagination?.cursor || undefined
+        let nextCursor: any = undefined
+        if (items.length > Number(pagination?.limit)) {
+          const nextItem = items.pop()
+          nextCursor = nextItem!.id
+        }
+        return trpcOutputQueryWithPagination(items, {
+          nextCursor,
+          previousCursor: "",
+          type: "cursor-based",
+        })
       }
-
-      return {
-        items,
-        nextCursor,
-      }
+      const countItems = await prisma.category.count({ where })
+      return trpcOutputQueryWithPagination(items, {
+        type: "offset",
+        page: Number(input?.page),
+        pageSize: Number(input?.pageSize),
+        totalRecords: countItems,
+      })
     }),
 
   detail: publicProcedure

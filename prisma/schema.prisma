@@ -130,7 +130,7 @@ model CatagoryMetadata {
 model Collection {
   id          Int     @id @default(autoincrement()) @db.Int
   name        String
-  code        String
+  slug        String
   description String?
 
   createdAt DateTime @default(now())

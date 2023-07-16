@@ -4,7 +4,7 @@ import Link from "@/components/navigations/link"
 import SectionView from "@/components/sections/section-view"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { DataTable } from "@/components/ui/data-table"
+import { DataTable } from "@/components/ui/data-table/data-table"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -35,7 +35,11 @@ const AttributeList = (props: AttributeListProps) => {
     includes: {
       groups: true,
     },
+    paginationType: "offset",
+    page: 1,
+    pageSize: 9999,
   })
+
   const { mutate: permanentlyDeleteAttribute } =
     trpc.attribute.permanentlyDelete.useMutation({
       onSuccess() {

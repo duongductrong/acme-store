@@ -11,7 +11,7 @@ const ProductCategoryField = (props: ProductCategoryFieldProps) => {
       variant="SELECT_INFINITE"
       wrapperClassName="col-span-2"
       placeholder="Category"
-      useInfiniteQuery={trpc.category.listInfinite.useInfiniteQuery}
+      useInfiniteQuery={trpc.category.list.useInfiniteQuery}
       isMulti={false}
       mapLabelBy="name"
       mapValueBy="id"

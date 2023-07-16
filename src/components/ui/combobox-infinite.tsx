@@ -97,9 +97,10 @@ export const ComboboxInfinite = forwardRef<
     const [comboboxContentWidth, setComboboxContentWidth] = useState(0)
 
     const queryResults = useInfiniteQuery?.(
-      { limit: limit ?? 10, search: publicSearch },
+      { limit: limit ?? 10, search: publicSearch, paginationType: "cursor-based" },
       {
-        getNextPageParam: (lastPage) => lastPage.nextCursor,
+        getNextPageParam: (lastPage) => lastPage?.pagination?.nextCursor,
+        getPreviousPageParam: (lastPage) => lastPage?.pagination?.previousCursor,
       }
     )
 
@@ -184,7 +185,9 @@ export const ComboboxInfinite = forwardRef<
 
         return options.find((option) => value.includes(option.value))?.label
       } else if (placeholder) {
-        return <span className="font-normal text-neutral-500">{placeholder}</span>
+        return (
+          <span className="font-normal text-neutral-500">{placeholder}</span>
+        )
       }
 
       return <span className="w-full" />

@@ -6,7 +6,7 @@ import trpc from "@/lib/trpc/trpc-client"
 import { ProductSchemaType } from "@/schemas/product"
 import { Loader2 } from "lucide-react"
 import { useRouter } from "next/navigation"
-import ProductForm from "../components/product-form"
+import ProductForm from "../_components/product-form"
 
 export interface EditProductProps {
   params: { id: string }
