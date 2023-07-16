@@ -9,6 +9,7 @@
 - [Prisma ORM](https://www.prisma.io/)
 - [Cloudinary](https://cloudinary.com/)
 - [React Email](https://react.email)
+- [Shadcn UI](https://ui.shadcn.com/)
 
 ## Features to be implemented
 
