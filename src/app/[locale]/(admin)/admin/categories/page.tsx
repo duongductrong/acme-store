@@ -27,7 +27,7 @@ function CategoryList({}: CategoryListProps) {
   const router = useRouter()
   const trpcUtils = trpc.useContext()
 
-  const { data } = trpc.category.list.useQuery({
+  const { data, isLoading, isFetching } = trpc.category.list.useQuery({
     paginationType: "offset",
     page: 1,
     pageSize: 9999,
@@ -122,6 +122,7 @@ function CategoryList({}: CategoryListProps) {
       <DataTable
         columns={columns}
         data={categories ?? []}
+        loading={isLoading || isFetching}
         searchPlaceholder="Search category..."
         onCreateNewEntry={() => router.push(ADMIN_URL.CATEGORY.NEW)}
         searchable

@@ -10,8 +10,8 @@ const TextLegend = forwardRef<HTMLElement, TextLegendProps>(
       <Text
         {...props}
         size="xs"
-        weight="bold"
-        transform="uppercase"
+        weight="medium"
+        transform="normal"
         className={cn(className)}
       />
     )

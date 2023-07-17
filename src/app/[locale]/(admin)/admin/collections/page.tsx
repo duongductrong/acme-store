@@ -25,7 +25,7 @@ const CollectionList = (props: CollectionListProps) => {
   const router = useRouter()
   const trpcUtils = trpc.useContext()
 
-  const { data } = trpc.collection.list.useQuery({
+  const { data, isLoading, isFetching } = trpc.collection.list.useQuery({
     paginationType: "offset",
     page: 1,
     pageSize: 9999,
@@ -115,6 +115,7 @@ const CollectionList = (props: CollectionListProps) => {
       <DataTable
         columns={columns}
         data={collections}
+        loading={isLoading || isFetching}
         searchPlaceholder="Search collections..."
         onCreateNewEntry={() => router.push(ADMIN_URL.COLLECTION.NEW)}
         searchable

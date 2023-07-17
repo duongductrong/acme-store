@@ -14,8 +14,8 @@ import {
 export const ADMIN_SIDEBARS = [
   {
     type: "group",
-    id: "catalog",
-    title: "Catalog",
+    id: "general",
+    title: "General",
     children: [
       {
         type: "item",
@@ -44,6 +44,13 @@ export const ADMIN_SIDEBARS = [
         title: "Attributes",
         link: ADMIN_URL.ATTRIBUTE.LIST,
         Icon: Workflow,
+      },
+      {
+        type: "item",
+        id: "coupons",
+        title: "Coupons",
+        link: ADMIN_URL.ATTRIBUTE.LIST,
+        Icon: Gift,
       },
     ],
   },
@@ -77,22 +84,8 @@ export const ADMIN_SIDEBARS = [
   },
   {
     type: "group",
-    id: "promotion",
-    title: "Promotion",
-    children: [
-      {
-        type: "item",
-        id: "coupons",
-        title: "Coupons",
-        link: ADMIN_URL.ATTRIBUTE.LIST,
-        Icon: Gift,
-      },
-    ],
-  },
-  {
-    type: "group",
-    id: "general",
-    title: "General",
+    id: "systems",
+    title: "Systems",
     children: [
       {
         type: "item",

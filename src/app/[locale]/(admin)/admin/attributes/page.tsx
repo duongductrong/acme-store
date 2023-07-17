@@ -15,13 +15,7 @@ import {
 import { useToast } from "@/components/ui/use-toast"
 import { ADMIN_URL } from "@/constant/urls"
 import trpc from "@/lib/trpc/trpc-client"
-import {
-  Prisma,
-  ProductAttribute,
-  ProductAttributeGroup,
-  ProductAttributesOnGroups,
-} from "@prisma/client"
-import { Args } from "@prisma/client/runtime"
+import { Prisma, ProductAttribute, ProductAttributeGroup } from "@prisma/client"
 import { ColumnDef } from "@tanstack/react-table"
 import { MoreHorizontal, Plus } from "lucide-react"
 
@@ -31,7 +25,7 @@ const AttributeList = (props: AttributeListProps) => {
   const t = useToast()
   const trpcUtils = trpc.useContext()
 
-  const { data: attributes } = trpc.attribute.list.useQuery({
+  const { data, isLoading, isFetching } = trpc.attribute.list.useQuery({
     includes: {
       groups: true,
     },
@@ -39,6 +33,8 @@ const AttributeList = (props: AttributeListProps) => {
     page: 1,
     pageSize: 9999,
   })
+
+  const attributes = data?.items || []
 
   const { mutate: permanentlyDeleteAttribute } =
     trpc.attribute.permanentlyDelete.useMutation({
@@ -151,6 +147,7 @@ const AttributeList = (props: AttributeListProps) => {
       <DataTable
         columns={columns}
         data={attributes ?? []}
+        loading={isLoading || isFetching}
         searchPlaceholder="Search attribute..."
         searchable
       />

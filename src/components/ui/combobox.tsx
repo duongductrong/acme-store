@@ -125,7 +125,7 @@ export const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
 
         return options.find((option) => value.includes(option.value))?.label
       } else if (placeholder) {
-        return <span className="font-normal">{placeholder}</span>
+        return <span className="font-normal text-neutral-500">{placeholder}</span>
       }
 
       return <span className="w-full" />

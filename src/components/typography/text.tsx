@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils"
 import { Slot } from "@radix-ui/react-slot"
 import { VariantProps, cva } from "class-variance-authority"
 import { HTMLAttributes, forwardRef } from "react"
@@ -45,7 +46,7 @@ const Text = forwardRef<HTMLSpanElement, TextProps>(
     return (
       <Comp
         {...props}
-        className={textVariants({ className, size, weight, transform })}
+        className={cn(textVariants({ size, weight, transform, className }))}
       />
     )
   }

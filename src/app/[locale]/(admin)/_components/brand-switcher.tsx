@@ -68,9 +68,9 @@ type Team = (typeof groups)[number]["teams"][number]
 
 type PopoverTriggerProps = React.ComponentPropsWithoutRef<typeof PopoverTrigger>
 
-interface BranchSwitcherProps extends PopoverTriggerProps {}
+interface BrandSwitcherProps extends PopoverTriggerProps {}
 
-export default function BranchSwitcher({ className }: BranchSwitcherProps) {
+export default function BrandSwitcher({ className }: BrandSwitcherProps) {
   const [open, setOpen] = React.useState(false)
   const [showNewTeamDialog, setShowNewTeamDialog] = React.useState(false)
   const [selectedTeam, setSelectedTeam] = React.useState<Team>(
