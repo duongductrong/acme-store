@@ -27,7 +27,7 @@ const AdminSidebar = ({ className, ...props }: AdminSidebarProps) => {
 
       {ADMIN_SIDEBARS.map((sidebarItem, sidebarIndex) => (
         <div key={sidebarItem.id} className="flex flex-col">
-          <TextLegend className="mb-base !text-neutral-500">
+          <TextLegend className="mb-base text-neutral-600 dark:!text-neutral-400">
             {sidebarItem.title}
           </TextLegend>
           {sidebarItem.children.map((sidebarChildrenItem, itemIndex) => {
@@ -40,7 +40,7 @@ const AdminSidebar = ({ className, ...props }: AdminSidebarProps) => {
                 className={cn("justify-start h-9 hover:bg-transparent", [
                   isActive
                     ? "text-foreground font-medium"
-                    : "text-neutral-500 font-normal",
+                    : "text-neutral-600 dark:text-neutral-400 font-normal",
                 ])}
                 asChild
               >

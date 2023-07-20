@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/popover"
 import { cn } from "@/lib/utils"
 import {
+  FC,
   forwardRef,
   useEffect,
   useImperativeHandle,
@@ -25,6 +26,7 @@ import {
   useRef,
   useState,
 } from "react"
+import { FixedSizeList, ListChildComponentProps } from "react-window"
 import { ScrollArea } from "./scroll-area"
 
 export interface ComboboxOption<TValue = any> {
@@ -77,6 +79,7 @@ export const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
     const [value, setValue] = useState<string[]>(() => {
       return typeof _value === "string" ? [_value] : _value || []
     })
+    const [filterOptions, setFilterOptions] = useState(options)
     const [comboboxContentWidth, setComboboxContentWidth] = useState(0)
 
     const objectOptions = useMemo(() => {
@@ -85,6 +88,12 @@ export const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
         return optionObjector
       }, {} as { [k: string]: any })
     }, [options])
+
+    // Virtualize
+    const itemSize = 34
+    const itemListSize =
+      filterOptions.length < 10 ? filterOptions.length * itemSize : 300
+    const itemCount = filterOptions.length
 
     const handleSelectOption = (selectedValue: string) => {
       if (isMulti) {
@@ -110,6 +119,18 @@ export const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
       if (closeMenuOnSelect) setOpen(false)
     }
 
+    const handleSearchOption = (search: string) => {
+      setFilterOptions(() =>
+        options.filter((option) =>
+          option.label.toLowerCase().includes(search.toLowerCase())
+        )
+      )
+    }
+
+    useEffect(() => {
+      setFilterOptions(options)
+    }, [options])
+
     useEffect(() => {
       if (onChange) {
         onChange(isMulti ? value : value?.[0])
@@ -125,7 +146,9 @@ export const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
 
         return options.find((option) => value.includes(option.value))?.label
       } else if (placeholder) {
-        return <span className="font-normal text-neutral-500">{placeholder}</span>
+        return (
+          <span className="font-normal text-neutral-500">{placeholder}</span>
+        )
       }
 
       return <span className="w-full" />
@@ -143,6 +166,27 @@ export const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
       ref,
       () => comboboxTriggerRef.current as HTMLButtonElement
     )
+
+    const Row: FC<ListChildComponentProps> = ({ index, style }) => {
+      const option = filterOptions?.[index]
+      if (!option) return null
+
+      return (
+        <CommandItem
+          style={style}
+          key={option.value}
+          onSelect={() => handleSelectOption(option.value)}
+        >
+          <Check
+            className={cn(
+              "mr-2 h-4 w-4",
+              value.includes(option.value) ? "opacity-100" : "opacity-0"
+            )}
+          />
+          {option.label}
+        </CommandItem>
+      )
+    }
 
     return (
       <Popover open={open} onOpenChange={setOpen}>
@@ -162,31 +206,25 @@ export const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
           className={cn(contentClassName, "w-full p-0")}
           style={{ width: comboboxContentWidth }}
         >
-          <Command>
-            <CommandInput placeholder="Search..." />
+          <Command shouldFilter={false}>
+            <CommandInput
+              placeholder="Search..."
+              onValueChange={handleSearchOption}
+            />
             <CommandEmpty>
               {notFound ? notFound : "No option found."}
             </CommandEmpty>
             <CommandGroup>
-              <ScrollArea
-                className={cn(options.length > 10 ? "h-[300px]" : "")}
-              >
-                {options.map((option) => (
-                  <CommandItem
-                    key={option.value}
-                    onSelect={() => handleSelectOption(option.value)}
-                  >
-                    <Check
-                      className={cn(
-                        "mr-2 h-4 w-4",
-                        value.includes(option.value)
-                          ? "opacity-100"
-                          : "opacity-0"
-                      )}
-                    />
-                    {option.label}
-                  </CommandItem>
-                ))}
+              <ScrollArea>
+                <FixedSizeList
+                  width="100%"
+                  overscanCount={1}
+                  height={itemListSize}
+                  itemCount={itemCount}
+                  itemSize={itemSize}
+                >
+                  {Row}
+                </FixedSizeList>
               </ScrollArea>
             </CommandGroup>
           </Command>
