@@ -3,6 +3,7 @@ import {
   Box,
   Gift,
   Image,
+  LucideIcon,
   Package,
   Settings,
   Shapes,
@@ -11,7 +12,25 @@ import {
   Workflow,
 } from "lucide-react"
 
-export const ADMIN_SIDEBARS = [
+export interface AdminSidebarGroup {
+  type: "group"
+  id: string
+  title: string
+  children?: AdminSidebarItem[]
+}
+
+export interface AdminSidebarItem {
+  type: "item"
+  id: string
+  title: string
+  link: string
+  Icon?: LucideIcon
+  children?: AdminSidebarItem[]
+}
+
+export type UnionAdminSidebarItem = AdminSidebarItem | AdminSidebarGroup
+
+export const ADMIN_SIDEBARS: UnionAdminSidebarItem[] = [
   {
     type: "group",
     id: "general",
@@ -23,6 +42,14 @@ export const ADMIN_SIDEBARS = [
         title: "Products",
         link: ADMIN_URL.PRODUCT.LIST,
         Icon: Box,
+        children: [
+          {
+            type: "item",
+            title: "New",
+            id: "new-item",
+            link: ADMIN_URL.PRODUCT.NEW,
+          },
+        ],
       },
       {
         type: "item",
@@ -100,6 +127,14 @@ export const ADMIN_SIDEBARS = [
         title: "Settings",
         link: ADMIN_URL.SETTING.STORE.INFORMATION,
         Icon: Settings,
+        children: [
+          {
+            type: "item",
+            id: "settings-roles",
+            link: ADMIN_URL.SETTING.ROLE.LIST,
+            title: "Roles",
+          },
+        ],
       },
     ],
   },
