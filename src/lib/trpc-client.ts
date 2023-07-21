@@ -1,4 +1,4 @@
-import { AppRouter } from "@/app/api/(trpc)/trpc-router"
+import { AppRouter } from "@/app/(trpc)/types"
 import {
   createTRPCProxyClient,
   createTRPCReact,

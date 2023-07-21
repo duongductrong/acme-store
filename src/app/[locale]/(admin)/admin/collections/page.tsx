@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { useToast } from "@/components/ui/use-toast"
 import { ADMIN_URL } from "@/constant/urls"
-import trpc from "@/lib/trpc/trpc-client"
+import trpc from "@/lib/trpc-client"
 import { Collection } from "@prisma/client"
 import { ColumnDef } from "@tanstack/react-table"
 import { MoreHorizontal, Plus } from "lucide-react"

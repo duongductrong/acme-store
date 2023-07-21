@@ -1,5 +1,5 @@
 import FormField from "@/components/ui/form/form-field"
-import trpc from "@/lib/trpc/trpc-client"
+import trpc from "@/lib/trpc-client"
 
 export interface ProductCategoryFieldProps {}
 

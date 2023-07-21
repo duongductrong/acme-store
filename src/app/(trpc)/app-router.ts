@@ -1,4 +1,4 @@
-import { router } from "@/lib/trpc/trpc"
+import { router } from "@/app/(trpc)/lib/trpc/trpc"
 import { productRouter } from "./routes/products"
 import { categoryRouter } from "./routes/categories"
 import { collectionRouter } from "./routes/collections"

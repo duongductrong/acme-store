@@ -1,17 +1,17 @@
 import { VALIDATION_MESSAGES } from "@/constant/messages"
 import prisma from "@/lib/prisma"
-import { inputQueryFilterSchema } from "@/lib/trpc/schemas"
-import { publicProcedure, router } from "@/lib/trpc/trpc"
+import { inputQueryFilterSchema } from "@/app/(trpc)/lib/trpc/schemas"
+import { publicProcedure, router, shieldedProcedure } from "@/app/(trpc)/lib/trpc/trpc"
 import {
   trpcHandleQueryFilterPagination,
   trpcOutputQueryWithPagination,
-} from "@/lib/trpc/utils"
+} from "@/app/(trpc)/lib/trpc/utils"
 import { productSchema } from "@/schemas/product"
 import { Prisma, ProductVisibility, Status } from "@prisma/client"
 import { z } from "zod"
 
 export const productRouter = router({
-  list: publicProcedure
+  list: shieldedProcedure
     .input(inputQueryFilterSchema.optional())
     .query(async ({ input }) => {
       const handledPagination = trpcHandleQueryFilterPagination(input)
@@ -43,7 +43,7 @@ export const productRouter = router({
         return trpcOutputQueryWithPagination(productItems, {
           type: "cursor-based",
           nextCursor: "",
-          prevCursor: "",
+          previousCursor: "",
         })
       }
     }),

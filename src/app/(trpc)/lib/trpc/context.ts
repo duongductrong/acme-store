@@ -1,7 +1,7 @@
 import { inferAsyncReturnType } from "@trpc/server"
 import { FetchCreateContextFnOptions } from "@trpc/server/adapters/fetch"
 import { AuthOptions, Session, getServerSession } from "next-auth"
-import { NextAuthSession, authOptions } from "../next-auth"
+import { NextAuthSession, authOptions } from "../../../../lib/next-auth"
 
 /**
  * Creates context for an incoming request

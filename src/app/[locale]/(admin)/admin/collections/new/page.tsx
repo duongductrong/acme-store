@@ -2,7 +2,7 @@
 
 import { useToast } from "@/components/ui/use-toast"
 import { ADMIN_URL } from "@/constant/urls"
-import trpc from "@/lib/trpc/trpc-client"
+import trpc from "@/lib/trpc-client"
 import { useRouter } from "next/navigation"
 import CollectionForm from "../_components/collection-form"
 

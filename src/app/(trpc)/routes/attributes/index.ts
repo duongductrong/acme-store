@@ -1,10 +1,10 @@
 import prisma from "@/lib/prisma"
-import { inputQueryFilterSchema } from "@/lib/trpc/schemas"
-import { publicProcedure, router } from "@/lib/trpc/trpc"
+import { inputQueryFilterSchema } from "@/app/(trpc)/lib/trpc/schemas"
+import { publicProcedure, router } from "@/app/(trpc)/lib/trpc/trpc"
 import {
   trpcHandleQueryFilterPagination,
   trpcOutputQueryWithPagination,
-} from "@/lib/trpc/utils"
+} from "@/app/(trpc)/lib/trpc/utils"
 import { attributeSchema } from "@/schemas/attribute"
 import { Prisma, ProductAttributeType } from "@prisma/client"
 import difference from "lodash/difference"

@@ -1,4 +1,4 @@
-import trpc from "@/lib/trpc/trpc-client"
+import trpc from "@/lib/trpc-client"
 
 export const useTRPC = () => {
   return trpc

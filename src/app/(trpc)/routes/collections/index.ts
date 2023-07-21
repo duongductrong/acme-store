@@ -2,12 +2,12 @@ import prisma from "@/lib/prisma"
 import {
   inputQueryFilterSchema,
   outputQueryFilterResultsSchema,
-} from "@/lib/trpc/schemas"
-import { publicProcedure, router } from "@/lib/trpc/trpc"
+} from "@/app/(trpc)/lib/trpc/schemas"
+import { publicProcedure, router } from "@/app/(trpc)/lib/trpc/trpc"
 import {
   trpcHandleQueryFilterPagination,
   trpcOutputQueryWithPagination,
-} from "@/lib/trpc/utils"
+} from "@/app/(trpc)/lib/trpc/utils"
 import { collectionSchema } from "@/schemas/collection"
 import { Prisma } from "@prisma/client"
 import { z } from "zod"

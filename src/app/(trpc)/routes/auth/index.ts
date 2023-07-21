@@ -1,6 +1,6 @@
 import { hashPassword } from "@/lib/bcrypt"
 import prisma from "@/lib/prisma"
-import { publicProcedure, router } from "@/lib/trpc/trpc"
+import { publicProcedure, router } from "@/app/(trpc)/lib/trpc/trpc"
 import { signUpSchema } from "@/schemas/auth"
 import { z } from "zod"
 

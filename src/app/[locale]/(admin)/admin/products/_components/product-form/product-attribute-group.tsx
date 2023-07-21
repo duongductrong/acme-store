@@ -1,6 +1,6 @@
 import { ComboboxOption } from "@/components/ui/combobox"
 import { FormField } from "@/components/ui/form"
-import trpc from "@/lib/trpc/trpc-client"
+import trpc from "@/lib/trpc-client"
 
 export interface ProductAttributeGroupProps {}
 
