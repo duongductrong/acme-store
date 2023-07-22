@@ -1,17 +1,22 @@
-import { VALIDATION_MESSAGES } from "@/constant/messages"
-import prisma from "@/lib/prisma"
 import { inputQueryFilterSchema } from "@/app/(trpc)/lib/trpc/schemas"
-import { router, shieldedProcedure } from "@/app/(trpc)/lib/trpc/trpc"
+import { router, shieldedProcedure } from "@/app/(trpc)/bootstrap/trpc"
 import {
   trpcHandleQueryFilterPagination,
   trpcOutputQueryWithPagination,
 } from "@/app/(trpc)/lib/trpc/utils"
+import { VALIDATION_MESSAGES } from "@/constant/messages"
+import { RESOURCE_KEYS } from "@/constant/resources"
+import prisma from "@/lib/prisma"
 import { productSchema } from "@/schemas/product"
 import { Prisma, ProductVisibility, Status } from "@prisma/client"
 import { z } from "zod"
 
+export const productShieldedProcedure = shieldedProcedure({
+  resource: RESOURCE_KEYS.PRODUCT,
+})
+
 export const productRouter = router({
-  list: shieldedProcedure
+  list: productShieldedProcedure
     .input(inputQueryFilterSchema.optional())
     .query(async ({ input }) => {
       const handledPagination = trpcHandleQueryFilterPagination(input)
@@ -48,7 +53,7 @@ export const productRouter = router({
       }
     }),
 
-  detail: shieldedProcedure
+  detail: productShieldedProcedure
     .input(
       z.object({
         id: z.string(),
@@ -65,7 +70,7 @@ export const productRouter = router({
       })
     }),
 
-  create: shieldedProcedure
+  create: productShieldedProcedure
     .input(
       z.object({
         ...productSchema.shape,
@@ -123,7 +128,7 @@ export const productRouter = router({
       return productCreated
     }),
 
-  update: shieldedProcedure
+  update: productShieldedProcedure
     .input(
       z
         .object({
@@ -197,7 +202,7 @@ export const productRouter = router({
       return productUpdated
     }),
 
-  permanentlyDelete: shieldedProcedure
+  permanentlyDelete: productShieldedProcedure
     .input(z.string())
     .mutation(async ({ input: id }) => {
       return await prisma.product.delete({

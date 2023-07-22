@@ -18,6 +18,7 @@
 - [x] Database on **Mysql**
 - [x] Caching query client on **@tanstack/react-query**
 - [x] Validation with **Zod**
+- [~] Role-based access-control
 - [ ] Custom template email (reset password, forgot password, etc)
 - [ ] File uploads with **Cloudinary**
 - [~] Storefront with products, categories, and subcategories
@@ -32,7 +33,6 @@
   - [ ] subscriptions 
   - [ ] payments 
   - [ ] emails 
-  - [ ] roles
   - [ ] coupons
   - [ ] Media Library
 <!-- - [x] User subscriptions with **Stripe** -->

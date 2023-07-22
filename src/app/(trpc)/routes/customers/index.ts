@@ -1,3 +1,3 @@
-import { router } from "@/app/(trpc)/lib/trpc/trpc"
+import { router } from "@/app/(trpc)/bootstrap/trpc"
 
 export const customerRouter = router({})

@@ -150,13 +150,33 @@ const FormField = forwardRef<
           const shouldHorizontalShowing = variant === "CHECKBOX"
 
           return (
-            <FormItem className={cn(wrapperClassName, shouldHorizontalShowing ? "space-y-0 flex items-center gap-2" : "")} ref={ref}>
-              {label ? <FormLabel className={cn("block", shouldHorizontalShowing ? "order-2" : "")}>{label}</FormLabel> : null}
+            <FormItem
+              className={cn(
+                wrapperClassName,
+                shouldHorizontalShowing
+                  ? "space-y-0 flex items-center gap-2"
+                  : ""
+              )}
+              ref={ref}
+            >
+              {label ? (
+                <FormLabel
+                  className={cn(
+                    "block",
+                    shouldHorizontalShowing ? "order-2" : ""
+                  )}
+                >
+                  {label}
+                </FormLabel>
+              ) : null}
               <FormControl>
                 <InputComp
                   {...field}
                   {...baseProps}
-                  className={cn(className, shouldHorizontalShowing ? "order-1" : "")}
+                  className={cn(
+                    className,
+                    shouldHorizontalShowing ? "order-1" : ""
+                  )}
                 />
               </FormControl>
 

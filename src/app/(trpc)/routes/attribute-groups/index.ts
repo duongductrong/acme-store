@@ -1,23 +1,30 @@
+import { router, shieldedProcedure } from "@/app/(trpc)/bootstrap/trpc"
+import { RESOURCE_KEYS } from "@/constant/resources"
 import prisma from "@/lib/prisma"
-import { shieldedProcedure, router } from "@/app/(trpc)/lib/trpc/trpc"
 import { attributeGroupSchema } from "@/schemas/attribute-group"
 import { z } from "zod"
 
+export const attributeGroupShieldedProcedure = shieldedProcedure({
+  resource: RESOURCE_KEYS.ATTRIBUTE_GROUP,
+})
+
 export const attributeGroupRouter = router({
-  list: shieldedProcedure.query(() => {
+  list: attributeGroupShieldedProcedure.query(({ input }) => {
     return prisma.productAttributeGroup.findMany()
   }),
 
-  detail: shieldedProcedure.input(z.string()).query(({ input: id }) => {
-    return prisma.productAttributeGroup.findFirst({ where: { id } })
-  }),
+  detail: attributeGroupShieldedProcedure
+    .input(z.string())
+    .query(({ input: id }) => {
+      return prisma.productAttributeGroup.findFirst({ where: { id } })
+    }),
 
-  create: shieldedProcedure
+  create: attributeGroupShieldedProcedure
     .input(attributeGroupSchema)
     .mutation(async ({ input }) => {
       return prisma.productAttributeGroup.create({ data: { name: input.name } })
     }),
-  update: shieldedProcedure
+  update: attributeGroupShieldedProcedure
     .input(z.object({ id: z.string() }).extend(attributeGroupSchema.shape))
     .mutation(({ input }) => {
       return prisma.productAttributeGroup.update({
@@ -29,7 +36,7 @@ export const attributeGroupRouter = router({
         },
       })
     }),
-  permanentlyDelete: shieldedProcedure
+  permanentlyDelete: attributeGroupShieldedProcedure
     .input(z.string())
     .mutation(({ input: id }) => {
       return prisma.productAttributeGroup.delete({ where: { id } })

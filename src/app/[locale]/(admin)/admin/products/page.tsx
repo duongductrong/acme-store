@@ -31,7 +31,7 @@ export interface ProductListProps {}
 const ProductList = (props: ProductListProps) => {
   const t = useToast()
   const router = useRouter()
-  const trpcUitls = trpc.useContext()
+  const trpcUtils = trpc.useContext()
 
   const { page, pageSize, setPage, setPageSize } =
     useDataTableManualOffsetPagination({ page: 1, pageSize: 10 })
@@ -53,7 +53,7 @@ const ProductList = (props: ProductListProps) => {
           description: "Deleted a product successfully",
         })
 
-        trpcUitls.product.list.invalidate()
+        trpcUtils.product.list.invalidate()
       },
       onError() {
         t.toast({

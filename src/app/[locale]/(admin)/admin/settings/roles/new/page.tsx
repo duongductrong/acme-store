@@ -1,59 +1,52 @@
 "use client"
 
-import SectionDetail from "@/components/sections/section-detail"
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion"
-import Form, { FormField } from "@/components/ui/form"
-import { Label } from "@/components/ui/label"
-import { SITE_RESOURCES } from "@/constant/resources"
+import trpc from "@/lib/trpc-client"
+import RoleForm from "../_components/role-form"
 import { ADMIN_URL } from "@/constant/urls"
-import { useForm } from "react-hook-form"
+import { useRouter } from "next/navigation"
+import { useToast } from "@/components/ui/use-toast"
 
 export interface NewRoleProps {}
 
 const NewRole = (props: NewRoleProps) => {
-  const methods = useForm()
-  return (
-    <SectionDetail title="Create new role" backTo={ADMIN_URL.SETTING.ROLE.LIST}>
-      <Form {...methods}>
-        <FormField
-          variant="TEXT"
-          name="name"
-          label="Name"
-          placeholder="Name"
-          wrapperClassName="mb-4"
-        />
+  const router = useRouter()
+  const t = useToast()
+  const trpcUtils = trpc.useContext()
 
-        <Label>Permissions</Label>
-        <Accordion type="single" collapsible className="w-full mt-2">
-          {SITE_RESOURCES.map((resource) => (
-            <AccordionItem
-              key={resource.key}
-              variant="filled"
-              value={resource.key}
-            >
-              <AccordionTrigger>{resource.title}</AccordionTrigger>
-              <AccordionContent>
-                <div className="flex flex-col gap-2">
-                  <FormField label="read:any" variant="CHECKBOX" name="1" />
-                  <FormField label="create:any" variant="CHECKBOX" name="1" />
-                  <FormField label="update:any" variant="CHECKBOX" name="1" />
-                  <FormField label="delete:any" variant="CHECKBOX" name="1" />
-                  <FormField label="read:owner" variant="CHECKBOX" name="1" />
-                  <FormField label="create:owner" variant="CHECKBOX" name="1" />
-                  <FormField label="update:owner" variant="CHECKBOX" name="1" />
-                  <FormField label="delete:owner" variant="CHECKBOX" name="1" />
-                </div>
-              </AccordionContent>
-            </AccordionItem>
-          ))}
-        </Accordion>
-      </Form>
-    </SectionDetail>
+  const {
+    mutate: createRole,
+    error,
+    isLoading,
+  } = trpc.role.create.useMutation({
+    onSuccess() {
+      t.toast({
+        title: "Success",
+        description: "Create new role successfully",
+      })
+
+      router.push(ADMIN_URL.SETTING.ROLE.LIST)
+
+      // Invalidate queries
+      trpcUtils.role.list.invalidate()
+    },
+    onError() {
+      t.toast({
+        title: "Error",
+        description: "Has an error when creating a role",
+        variant: "destructive",
+      })
+    },
+  })
+
+  return (
+    <RoleForm
+      title="Create new role"
+      error={error}
+      onSubmit={(values) => {
+        if (isLoading) return
+        createRole(values)
+      }}
+    />
   )
 }
 

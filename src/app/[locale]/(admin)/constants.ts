@@ -1,6 +1,7 @@
 import { ADMIN_URL } from "@/constant/urls"
 import {
   Box,
+  Dot,
   Gift,
   Image,
   LucideIcon,
@@ -48,6 +49,7 @@ export const ADMIN_SIDEBARS: UnionAdminSidebarItem[] = [
             title: "New",
             id: "new-item",
             link: ADMIN_URL.PRODUCT.NEW,
+            Icon: Dot,
           },
         ],
       },
@@ -133,6 +135,7 @@ export const ADMIN_SIDEBARS: UnionAdminSidebarItem[] = [
             id: "settings-roles",
             link: ADMIN_URL.SETTING.ROLE.LIST,
             title: "Roles",
+            Icon: Dot,
           },
         ],
       },

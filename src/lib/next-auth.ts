@@ -1,4 +1,4 @@
-import { Role, User } from "@prisma/client"
+import { RoleBased, User } from "@prisma/client"
 import { NextAuthOptions } from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 import { comparePassword } from "./bcrypt"
@@ -15,7 +15,8 @@ export interface NextAuthSession {
     lastName: string
     email: string
     id: string
-    role: Role
+    role: RoleBased
+    roleId: string
   }
   expires: Date
 }
@@ -32,7 +33,10 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials, req): Promise<any> {
         const { email, password } = credentials as NextAuthCredentials
 
-        const user = await prisma.user.findFirst({ where: { email } })
+        const user = await prisma.user.findFirst({
+          where: { email },
+          include: { role: true },
+        })
 
         if (!user) return null
 
@@ -48,7 +52,8 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     jwt: ({ token, user }) => {
       if (user) {
-        const myUser = user as unknown as User
+        const myUser = user as unknown as User & { role: RoleBased }
+
         return {
           ...token,
           firstName: myUser.firstName,

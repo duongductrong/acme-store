@@ -1,13 +1,21 @@
-import prisma from "@/lib/prisma"
 import { inputQueryFilterSchema } from "@/app/(trpc)/lib/trpc/schemas"
-import { shieldedProcedure, router } from "@/app/(trpc)/lib/trpc/trpc"
-import { trpcHandleQueryFilterPagination, trpcOutputQueryWithPagination } from "@/app/(trpc)/lib/trpc/utils"
+import { router, shieldedProcedure } from "@/app/(trpc)/bootstrap/trpc"
+import {
+  trpcHandleQueryFilterPagination,
+  trpcOutputQueryWithPagination,
+} from "@/app/(trpc)/lib/trpc/utils"
+import { RESOURCE_KEYS } from "@/constant/resources"
+import prisma from "@/lib/prisma"
 import { categorySchema } from "@/schemas/category"
 import { Prisma, Status } from "@prisma/client"
 import { z } from "zod"
 
+export const categoryShieldedProcedure = shieldedProcedure({
+  resource: RESOURCE_KEYS.CATEGORY,
+})
+
 export const categoryRouter = router({
-  list: shieldedProcedure
+  list: categoryShieldedProcedure
     .input(inputQueryFilterSchema.optional())
     .query(async ({ input }) => {
       const search = input?.search ?? ""
@@ -48,7 +56,7 @@ export const categoryRouter = router({
       })
     }),
 
-  detail: shieldedProcedure
+  detail: categoryShieldedProcedure
     .input(
       z.object({
         id: z.string(),
@@ -64,36 +72,38 @@ export const categoryRouter = router({
       })
     }),
 
-  create: shieldedProcedure.input(categorySchema).mutation(async ({ input }) => {
-    const categoryCreated = await prisma.category.create({
-      data: {
-        name: input.name,
-        slug: input.slug,
-        description: input.description,
-        banner: input.banner,
-        status: input.status as Status,
-      },
-    })
-
-    setTimeout(async () => {
-      await prisma.catagoryMetadata.create({
+  create: categoryShieldedProcedure
+    .input(categorySchema)
+    .mutation(async ({ input }) => {
+      const categoryCreated = await prisma.category.create({
         data: {
-          metaTitle: input.metadata?.metaTitle,
-          metaDescription: input.metadata?.metaDescription,
-          metaKeyword: input.metadata?.metaKeyword,
-          Category: {
-            connect: {
-              id: categoryCreated.id,
-            },
-          },
+          name: input.name,
+          slug: input.slug,
+          description: input.description,
+          banner: input.banner,
+          status: input.status as Status,
         },
       })
-    })
 
-    return categoryCreated
-  }),
+      setTimeout(async () => {
+        await prisma.catagoryMetadata.create({
+          data: {
+            metaTitle: input.metadata?.metaTitle,
+            metaDescription: input.metadata?.metaDescription,
+            metaKeyword: input.metadata?.metaKeyword,
+            Category: {
+              connect: {
+                id: categoryCreated.id,
+              },
+            },
+          },
+        })
+      })
 
-  update: shieldedProcedure
+      return categoryCreated
+    }),
+
+  update: categoryShieldedProcedure
     .input(z.object({ id: z.string() }).extend(categorySchema.shape))
     .mutation(async ({ input }) => {
       const categoryUpdated = await prisma.category.update({
@@ -128,7 +138,7 @@ export const categoryRouter = router({
       return categoryUpdated
     }),
 
-  permanentlyDelete: shieldedProcedure
+  permanentlyDelete: categoryShieldedProcedure
     .input(z.string())
     .mutation(async ({ input: id }) => {
       const categoryDeleted = await prisma.category.delete({ where: { id } })

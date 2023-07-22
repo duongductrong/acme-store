@@ -267,10 +267,10 @@ export const DataTable = ({
         {searchable ? (
           <Input
             placeholder={searchPlaceholder}
-            value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-            onChange={(event) =>
-              table.getColumn("name")?.setFilterValue(event.target.value)
-            }
+            // value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+            // onChange={(event) =>
+            //   table.getColumn("name")?.setFilterValue(event.target.value)
+            // }
             className="max-w-sm"
           />
         ) : null}

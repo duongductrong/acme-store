@@ -1,19 +1,24 @@
-import prisma from "@/lib/prisma"
 import {
   inputQueryFilterSchema,
   outputQueryFilterResultsSchema,
 } from "@/app/(trpc)/lib/trpc/schemas"
-import { shieldedProcedure, router } from "@/app/(trpc)/lib/trpc/trpc"
+import { router, shieldedProcedure } from "@/app/(trpc)/bootstrap/trpc"
 import {
   trpcHandleQueryFilterPagination,
   trpcOutputQueryWithPagination,
 } from "@/app/(trpc)/lib/trpc/utils"
+import { RESOURCE_KEYS } from "@/constant/resources"
+import prisma from "@/lib/prisma"
 import { collectionSchema } from "@/schemas/collection"
 import { Prisma } from "@prisma/client"
 import { z } from "zod"
 
+export const collectionShieldedProcedure = shieldedProcedure({
+  resource: RESOURCE_KEYS.COLLECTION,
+})
+
 export const collectionRouter = router({
-  list: shieldedProcedure
+  list: collectionShieldedProcedure
     .input(inputQueryFilterSchema.optional())
     .output(outputQueryFilterResultsSchema)
     .query(async ({ input }) => {
@@ -58,7 +63,7 @@ export const collectionRouter = router({
       })
     }),
 
-  detail: shieldedProcedure
+  detail: collectionShieldedProcedure
     .input(
       z
         .number()
@@ -69,7 +74,7 @@ export const collectionRouter = router({
       return prisma.collection.findFirst({ where: { id } })
     }),
 
-  create: shieldedProcedure
+  create: collectionShieldedProcedure
     .input(collectionSchema)
     .mutation(async ({ input }) => {
       return prisma.collection.create({
@@ -81,7 +86,7 @@ export const collectionRouter = router({
       })
     }),
 
-  update: shieldedProcedure
+  update: collectionShieldedProcedure
     .input(z.object({ id: z.number() }).extend(collectionSchema.shape))
     .mutation(({ input }) => {
       return prisma.collection.update({
@@ -96,7 +101,7 @@ export const collectionRouter = router({
       })
     }),
 
-  permanentlyDelete: shieldedProcedure
+  permanentlyDelete: collectionShieldedProcedure
     .input(z.number())
     .mutation(({ input: id }) => {
       return prisma.collection.delete({ where: { id } })

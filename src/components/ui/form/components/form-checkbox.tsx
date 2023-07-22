@@ -7,7 +7,18 @@ import { Checkbox } from "../../checkbox"
 export interface FormCheckboxProps extends CheckboxProps {}
 
 const FormCheckbox = forwardRef<HTMLButtonElement, FormCheckboxProps>(
-  (props, ref) => <Checkbox {...props} ref={ref} />
+  ({ onChange, checked, value, ...props }, ref) => {
+    return (
+      <Checkbox
+        {...props}
+        ref={ref}
+        value={value}
+        checked={checked}
+        onChange={onChange}
+        onCheckedChange={(value) => onChange && onChange(value as any)}
+      />
+    )
+  }
 )
 
 FormCheckbox.displayName = "FormCheckbox"

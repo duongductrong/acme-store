@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma"
 import { inputQueryFilterSchema } from "@/app/(trpc)/lib/trpc/schemas"
-import { shieldedProcedure, router } from "@/app/(trpc)/lib/trpc/trpc"
+import { shieldedProcedure, router } from "@/app/(trpc)/bootstrap/trpc"
 import {
   trpcHandleQueryFilterPagination,
   trpcOutputQueryWithPagination,
@@ -9,15 +9,22 @@ import { attributeSchema } from "@/schemas/attribute"
 import { Prisma, ProductAttributeType } from "@prisma/client"
 import difference from "lodash/difference"
 import { z } from "zod"
+import { RESOURCE_KEYS } from "@/constant/resources"
+
+export const attributeShieldedProcedure = shieldedProcedure({
+  resource: RESOURCE_KEYS.ATTRIBUTE,
+})
 
 export const attributeRouter = router({
-  list: shieldedProcedure
+  list: attributeShieldedProcedure
     .input(
       z
         .intersection(
-          z.object({
-            includes: z.record(z.enum(["groups"]), z.boolean()).optional(),
-          }).optional(),
+          z
+            .object({
+              includes: z.record(z.enum(["groups"]), z.boolean()).optional(),
+            })
+            .optional(),
           inputQueryFilterSchema.optional()
         )
         .optional()
@@ -49,24 +56,26 @@ export const attributeRouter = router({
       })
     }),
 
-  detail: shieldedProcedure.input(z.string()).query(async ({ input: id }) => {
-    const attribute = await prisma.productAttribute.findFirst({
-      where: { id },
-      include: { groups: true },
-    })
+  detail: attributeShieldedProcedure
+    .input(z.string())
+    .query(async ({ input: id }) => {
+      const attribute = await prisma.productAttribute.findFirst({
+        where: { id },
+        include: { groups: true },
+      })
 
-    return Object.assign(
-      {
-        groupIds:
-          attribute?.groups.map(
-            (attrGroup) => attrGroup.productAttributeGroupId
-          ) ?? [],
-      },
-      attribute
-    )
-  }),
+      return Object.assign(
+        {
+          groupIds:
+            attribute?.groups.map(
+              (attrGroup) => attrGroup.productAttributeGroupId
+            ) ?? [],
+        },
+        attribute
+      )
+    }),
 
-  // groups: shieldedProcedure
+  // groups: attributeShieldedProcedure
   //   .input(attributeBelongsToGroupInputSchema)
   //   .query(async ({ input }) => {
   //     const belongsGroups = await prisma.productAttributesOnGroups.findMany({
@@ -82,34 +91,36 @@ export const attributeRouter = router({
   //     })
   //   }),
 
-  create: shieldedProcedure.input(attributeSchema).mutation(async ({ input }) => {
-    const createdAttribute = await prisma.productAttribute.create({
-      data: {
-        name: input.name,
-        code: input.code,
-        options: input.options as any,
-        sortOrder: 1,
-        type: input.type as ProductAttributeType,
-        isFilterable: input.isFilterable,
-        isRequired: input.isRequired,
-        isShowToCustomer: input.isShowToCustomer,
-      },
-    })
-
-    if (input.groupIds?.length) {
-      await prisma.productAttributesOnGroups.createMany({
-        data: input.groupIds?.map((attrGroupId) => ({
-          productAttributeGroupId: attrGroupId as string,
-          productAttributeId: createdAttribute.id,
-        })),
-        skipDuplicates: true,
+  create: attributeShieldedProcedure
+    .input(attributeSchema)
+    .mutation(async ({ input }) => {
+      const createdAttribute = await prisma.productAttribute.create({
+        data: {
+          name: input.name,
+          code: input.code,
+          options: input.options as any,
+          sortOrder: 1,
+          type: input.type as ProductAttributeType,
+          isFilterable: input.isFilterable,
+          isRequired: input.isRequired,
+          isShowToCustomer: input.isShowToCustomer,
+        },
       })
-    }
 
-    return createdAttribute
-  }),
+      if (input.groupIds?.length) {
+        await prisma.productAttributesOnGroups.createMany({
+          data: input.groupIds?.map((attrGroupId) => ({
+            productAttributeGroupId: attrGroupId as string,
+            productAttributeId: createdAttribute.id,
+          })),
+          skipDuplicates: true,
+        })
+      }
 
-  update: shieldedProcedure
+      return createdAttribute
+    }),
+
+  update: attributeShieldedProcedure
     .input(z.object({ id: z.number().min(1) }).extend(attributeSchema.shape))
     .mutation(async ({ input }) => {
       const updatedAttribute = await prisma.productAttribute.update({
@@ -163,7 +174,7 @@ export const attributeRouter = router({
       return updatedAttribute
     }),
 
-  permanentlyDelete: shieldedProcedure
+  permanentlyDelete: attributeShieldedProcedure
     .input(z.string())
     .mutation(async ({ input: id }) => {
       // Delete relationships

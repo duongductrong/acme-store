@@ -20,13 +20,14 @@ import { cn } from "@/lib/utils"
 import {
   FC,
   forwardRef,
+  memo,
   useEffect,
   useImperativeHandle,
   useMemo,
   useRef,
   useState,
 } from "react"
-import { FixedSizeList, ListChildComponentProps } from "react-window"
+import { FixedSizeList, ListChildComponentProps, areEqual } from "react-window"
 import { ScrollArea } from "./scroll-area"
 
 export interface ComboboxOption<TValue = any> {
@@ -167,9 +168,10 @@ export const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
       () => comboboxTriggerRef.current as HTMLButtonElement
     )
 
-    const Row: FC<ListChildComponentProps> = ({ index, style }) => {
+    // eslint-disable-next-line react/display-name
+    const Row = memo<ListChildComponentProps>(({ index, style }) => {
       const option = filterOptions?.[index]
-      if (!option) return null
+      if (!option) return <></>
 
       return (
         <CommandItem
@@ -180,13 +182,13 @@ export const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
           <Check
             className={cn(
               "mr-2 h-4 w-4",
-              value.includes(option.value) ? "opacity-100" : "opacity-0"
+              value?.includes(option.value) ? "opacity-100" : "opacity-0"
             )}
           />
           {option.label}
         </CommandItem>
       )
-    }
+    }, areEqual)
 
     return (
       <Popover open={open} onOpenChange={setOpen}>

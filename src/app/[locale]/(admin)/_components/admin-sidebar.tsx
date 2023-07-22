@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils"
 import { omit } from "lodash"
 import { ChevronDown, ChevronsUpDown } from "lucide-react"
 import { usePathname } from "next/navigation"
-import { HTMLAttributes, MouseEvent, useState } from "react"
+import { Fragment, HTMLAttributes, MouseEvent, useState } from "react"
 import { ADMIN_SIDEBARS } from "../constants"
 import BrandSwitcher from "./brand-switcher"
 
@@ -39,7 +39,7 @@ const AdminSidebar = ({ className, ...props }: AdminSidebarProps) => {
     >
       <BrandSwitcher className="mb-8" />
 
-      {ADMIN_SIDEBARS.map((sidebarItem, sidebarIndex) => (
+      {ADMIN_SIDEBARS.map((sidebarItem) => (
         <div key={sidebarItem.id} className="flex flex-col">
           <TextLegend className="mb-base text-neutral-600 dark:!text-neutral-400">
             {sidebarItem.title}
@@ -56,9 +56,9 @@ const AdminSidebar = ({ className, ...props }: AdminSidebarProps) => {
               : ChevronDown
 
             return (
-              <>
+              <Fragment key={sidebarChildItemKey}>
                 <Button
-                  key={sidebarChildItemKey}
+                  // key={sidebarChildItemKey}
                   variant="ghost"
                   className={cn(
                     "justify-start h-9 hover:bg-transparent px-0 relative",
@@ -105,7 +105,7 @@ const AdminSidebar = ({ className, ...props }: AdminSidebarProps) => {
                           key={nestedChildItemKey}
                           variant="ghost"
                           className={cn(
-                            "justify-start h-9 hover:bg-transparent ml-8 px-0",
+                            "justify-start h-9 hover:bg-transparent ml-2 px-0 text-[13px]",
                             [
                               isNestedChildItemActive
                                 ? "text-foreground font-medium"
@@ -116,7 +116,7 @@ const AdminSidebar = ({ className, ...props }: AdminSidebarProps) => {
                         >
                           <Link href={nestedChildItem.link ?? "/"}>
                             {nestedChildItem.Icon && (
-                              <nestedChildItem.Icon className="w-4 h-4 mr-base" />
+                              <nestedChildItem.Icon className="w-4 h-4 mr-2" />
                             )}
                             {nestedChildItem.title}
                           </Link>
@@ -125,7 +125,7 @@ const AdminSidebar = ({ className, ...props }: AdminSidebarProps) => {
                     })}
                   </div>
                 ) : null}
-              </>
+              </Fragment>
             )
           })}
         </div>

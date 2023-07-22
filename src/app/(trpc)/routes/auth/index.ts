@@ -1,13 +1,10 @@
 import { hashPassword } from "@/lib/bcrypt"
 import prisma from "@/lib/prisma"
-import { publicProcedure, router } from "@/app/(trpc)/lib/trpc/trpc"
+import { publicProcedure, router } from "@/app/(trpc)/bootstrap/trpc"
 import { signUpSchema } from "@/schemas/auth"
 import { z } from "zod"
 
 export const authRouter = router({
-  // signIn: publicProcedure.input(signInSchema).query(({ input }) => {
-  //   return input
-  // }),
   signUp: publicProcedure
     .input(
       z
@@ -34,7 +31,7 @@ export const authRouter = router({
           firstName,
           lastName,
           passwordHashed,
-          role: "Customer",
+          roleId: "clke4eigd0000kj7tossctmwc",
         },
       })
 

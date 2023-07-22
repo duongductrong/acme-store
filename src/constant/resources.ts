@@ -3,6 +3,7 @@ export const RESOURCE_KEYS = {
   CATEGORY: "categories",
   COLLECTION: "collections",
   ATTRIBUTE: "attributes",
+  ATTRIBUTE_GROUP: "attribute-groups",
   ORDER: "orders",
   CUSTOMER: "customers",
   MEDIA_LIBRARY: "media-library",
@@ -38,6 +39,10 @@ export const SITE_RESOURCES = [
   {
     key: RESOURCE_KEYS.ATTRIBUTE,
     title: "Attribute",
+  },
+  {
+    key: RESOURCE_KEYS.ATTRIBUTE_GROUP,
+    title: "Attribute Group",
   },
   {
     key: RESOURCE_KEYS.SETTING,

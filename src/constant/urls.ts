@@ -38,7 +38,8 @@ export const ADMIN_URL = {
   SETTING: {
     ROLE: {
       LIST: "/admin/settings/roles",
-      NEW: "/admin/settings/roles/new"
+      NEW: "/admin/settings/roles/new",
+      EDIT: "/admin/settings/roles/{id}"
     },
     PERMISSION: {
       LIST: "/admin/settings/permissions",

@@ -19,3 +19,6 @@ export const createContext = async (ctx: FetchCreateContextFnOptions) => {
 }
 
 export type Context = inferAsyncReturnType<typeof createContext>
+export interface Meta {
+  resource: string
+}
