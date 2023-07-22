@@ -17,8 +17,8 @@ const AdminSidebar = ({ className, ...props }: AdminSidebarProps) => {
   const pathname = usePathname()
   const [openKeys, setOpenKeys] = useState<Record<string, true>>({})
 
-  const handleToggleOpensItem = (event: MouseEvent<any>,key: string) => {
-    event.preventDefault();
+  const handleToggleOpensItem = (event: MouseEvent<any>, key: string) => {
+    event.preventDefault()
 
     if (openKeys[key]) {
       return setOpenKeys(omit(openKeys, [key]))
@@ -27,12 +27,11 @@ const AdminSidebar = ({ className, ...props }: AdminSidebarProps) => {
     return setOpenKeys(Object.assign({ [key]: true }, openKeys))
   }
 
-  console.log("openKeys", openKeys)
-
   return (
     <div
       {...props}
       className={cn(
+        "bg-neutral-100 dark:bg-neutral-900",
         "fixed top-0 left-0 min-w-[250px] h-screen border-r border-neutral-200 dark:border-neutral-800",
         "flex flex-col p-base px-6 gap-base",
         className
@@ -52,7 +51,9 @@ const AdminSidebar = ({ className, ...props }: AdminSidebarProps) => {
             const nestedChildItems = sidebarChildrenItem.children || []
             const hasNestedChildItems = !!nestedChildItems.length
             const openNestedChildItemsMenu = openKeys[sidebarChildItemKey]
-            const ChevronDownOrUp = openNestedChildItemsMenu ? ChevronsUpDown : ChevronDown
+            const ChevronDownOrUp = openNestedChildItemsMenu
+              ? ChevronsUpDown
+              : ChevronDown
 
             return (
               <>
@@ -64,7 +65,7 @@ const AdminSidebar = ({ className, ...props }: AdminSidebarProps) => {
                     [
                       isActive
                         ? "text-foreground font-medium"
-                        : "text-neutral-600 dark:text-neutral-400 font-normal",
+                        : "text-muted-foreground font-normal",
                     ]
                   )}
                   asChild
@@ -86,9 +87,7 @@ const AdminSidebar = ({ className, ...props }: AdminSidebarProps) => {
                           handleToggleOpensItem(event, sidebarChildItemKey)
                         }
                       >
-                        <ChevronDownOrUp
-                          className={cn("w-4 h-4", "z-10")}
-                        />
+                        <ChevronDownOrUp className={cn("w-4 h-4", "z-10")} />
                       </Button>
                     ) : null}
                   </Link>
@@ -96,7 +95,9 @@ const AdminSidebar = ({ className, ...props }: AdminSidebarProps) => {
                 {nestedChildItems.length && openNestedChildItemsMenu ? (
                   <div>
                     {nestedChildItems.map((nestedChildItem) => {
-                      const isNestedChildItemActive = pathname.includes(nestedChildItem.link)
+                      const isNestedChildItemActive = pathname.includes(
+                        nestedChildItem.link
+                      )
                       const nestedChildItemKey = `${sidebarItem.id}_${sidebarChildrenItem.id}_${nestedChildItem.id}`
 
                       return (

@@ -1,8 +1,8 @@
 import prisma from "@/lib/prisma"
-import { publicProcedure, router } from "@/app/(trpc)/lib/trpc/trpc"
+import { shieldedProcedure, router } from "@/app/(trpc)/lib/trpc/trpc"
 
 export const orderRouter = router({
-  list: publicProcedure.query(() => {
+  list: shieldedProcedure.query(() => {
     return prisma.order.findMany()
   }),
 })

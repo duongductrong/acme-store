@@ -7,6 +7,7 @@ import { attributeGroupRouter } from "./routes/attribute-groups"
 import { customerRouter } from "./routes/customers"
 import { orderRouter } from "./routes/orders"
 import { authRouter } from "./routes/auth"
+import { roleRouter } from "./routes/settings/roles"
 
 export const appRouter = router({
   product: productRouter,
@@ -17,6 +18,7 @@ export const appRouter = router({
   customer: customerRouter,
   order: orderRouter,
   auth: authRouter,
+  role: roleRouter,
 })
 
 export type AppRouter = typeof appRouter

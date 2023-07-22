@@ -1,13 +1,13 @@
 import prisma from "@/lib/prisma"
 import { inputQueryFilterSchema } from "@/app/(trpc)/lib/trpc/schemas"
-import { publicProcedure, router } from "@/app/(trpc)/lib/trpc/trpc"
+import { shieldedProcedure, router } from "@/app/(trpc)/lib/trpc/trpc"
 import { trpcHandleQueryFilterPagination, trpcOutputQueryWithPagination } from "@/app/(trpc)/lib/trpc/utils"
 import { categorySchema } from "@/schemas/category"
 import { Prisma, Status } from "@prisma/client"
 import { z } from "zod"
 
 export const categoryRouter = router({
-  list: publicProcedure
+  list: shieldedProcedure
     .input(inputQueryFilterSchema.optional())
     .query(async ({ input }) => {
       const search = input?.search ?? ""
@@ -48,7 +48,7 @@ export const categoryRouter = router({
       })
     }),
 
-  detail: publicProcedure
+  detail: shieldedProcedure
     .input(
       z.object({
         id: z.string(),
@@ -64,7 +64,7 @@ export const categoryRouter = router({
       })
     }),
 
-  create: publicProcedure.input(categorySchema).mutation(async ({ input }) => {
+  create: shieldedProcedure.input(categorySchema).mutation(async ({ input }) => {
     const categoryCreated = await prisma.category.create({
       data: {
         name: input.name,
@@ -93,7 +93,7 @@ export const categoryRouter = router({
     return categoryCreated
   }),
 
-  update: publicProcedure
+  update: shieldedProcedure
     .input(z.object({ id: z.string() }).extend(categorySchema.shape))
     .mutation(async ({ input }) => {
       const categoryUpdated = await prisma.category.update({
@@ -128,7 +128,7 @@ export const categoryRouter = router({
       return categoryUpdated
     }),
 
-  permanentlyDelete: publicProcedure
+  permanentlyDelete: shieldedProcedure
     .input(z.string())
     .mutation(async ({ input: id }) => {
       const categoryDeleted = await prisma.category.delete({ where: { id } })

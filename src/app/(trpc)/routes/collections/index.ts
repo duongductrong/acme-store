@@ -3,7 +3,7 @@ import {
   inputQueryFilterSchema,
   outputQueryFilterResultsSchema,
 } from "@/app/(trpc)/lib/trpc/schemas"
-import { publicProcedure, router } from "@/app/(trpc)/lib/trpc/trpc"
+import { shieldedProcedure, router } from "@/app/(trpc)/lib/trpc/trpc"
 import {
   trpcHandleQueryFilterPagination,
   trpcOutputQueryWithPagination,
@@ -13,7 +13,7 @@ import { Prisma } from "@prisma/client"
 import { z } from "zod"
 
 export const collectionRouter = router({
-  list: publicProcedure
+  list: shieldedProcedure
     .input(inputQueryFilterSchema.optional())
     .output(outputQueryFilterResultsSchema)
     .query(async ({ input }) => {
@@ -58,7 +58,7 @@ export const collectionRouter = router({
       })
     }),
 
-  detail: publicProcedure
+  detail: shieldedProcedure
     .input(
       z
         .number()
@@ -69,7 +69,7 @@ export const collectionRouter = router({
       return prisma.collection.findFirst({ where: { id } })
     }),
 
-  create: publicProcedure
+  create: shieldedProcedure
     .input(collectionSchema)
     .mutation(async ({ input }) => {
       return prisma.collection.create({
@@ -81,7 +81,7 @@ export const collectionRouter = router({
       })
     }),
 
-  update: publicProcedure
+  update: shieldedProcedure
     .input(z.object({ id: z.number() }).extend(collectionSchema.shape))
     .mutation(({ input }) => {
       return prisma.collection.update({
@@ -96,7 +96,7 @@ export const collectionRouter = router({
       })
     }),
 
-  permanentlyDelete: publicProcedure
+  permanentlyDelete: shieldedProcedure
     .input(z.number())
     .mutation(({ input: id }) => {
       return prisma.collection.delete({ where: { id } })

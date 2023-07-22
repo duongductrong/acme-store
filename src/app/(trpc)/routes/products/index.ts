@@ -1,7 +1,7 @@
 import { VALIDATION_MESSAGES } from "@/constant/messages"
 import prisma from "@/lib/prisma"
 import { inputQueryFilterSchema } from "@/app/(trpc)/lib/trpc/schemas"
-import { publicProcedure, router, shieldedProcedure } from "@/app/(trpc)/lib/trpc/trpc"
+import { router, shieldedProcedure } from "@/app/(trpc)/lib/trpc/trpc"
 import {
   trpcHandleQueryFilterPagination,
   trpcOutputQueryWithPagination,
@@ -48,7 +48,7 @@ export const productRouter = router({
       }
     }),
 
-  detail: publicProcedure
+  detail: shieldedProcedure
     .input(
       z.object({
         id: z.string(),
@@ -65,7 +65,7 @@ export const productRouter = router({
       })
     }),
 
-  create: publicProcedure
+  create: shieldedProcedure
     .input(
       z.object({
         ...productSchema.shape,
@@ -123,7 +123,7 @@ export const productRouter = router({
       return productCreated
     }),
 
-  update: publicProcedure
+  update: shieldedProcedure
     .input(
       z
         .object({
@@ -197,7 +197,7 @@ export const productRouter = router({
       return productUpdated
     }),
 
-  permanentlyDelete: publicProcedure
+  permanentlyDelete: shieldedProcedure
     .input(z.string())
     .mutation(async ({ input: id }) => {
       return await prisma.product.delete({

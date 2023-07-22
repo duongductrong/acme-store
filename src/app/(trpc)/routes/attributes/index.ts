@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma"
 import { inputQueryFilterSchema } from "@/app/(trpc)/lib/trpc/schemas"
-import { publicProcedure, router } from "@/app/(trpc)/lib/trpc/trpc"
+import { shieldedProcedure, router } from "@/app/(trpc)/lib/trpc/trpc"
 import {
   trpcHandleQueryFilterPagination,
   trpcOutputQueryWithPagination,
@@ -11,7 +11,7 @@ import difference from "lodash/difference"
 import { z } from "zod"
 
 export const attributeRouter = router({
-  list: publicProcedure
+  list: shieldedProcedure
     .input(
       z
         .intersection(
@@ -49,7 +49,7 @@ export const attributeRouter = router({
       })
     }),
 
-  detail: publicProcedure.input(z.string()).query(async ({ input: id }) => {
+  detail: shieldedProcedure.input(z.string()).query(async ({ input: id }) => {
     const attribute = await prisma.productAttribute.findFirst({
       where: { id },
       include: { groups: true },
@@ -66,7 +66,7 @@ export const attributeRouter = router({
     )
   }),
 
-  // groups: publicProcedure
+  // groups: shieldedProcedure
   //   .input(attributeBelongsToGroupInputSchema)
   //   .query(async ({ input }) => {
   //     const belongsGroups = await prisma.productAttributesOnGroups.findMany({
@@ -82,7 +82,7 @@ export const attributeRouter = router({
   //     })
   //   }),
 
-  create: publicProcedure.input(attributeSchema).mutation(async ({ input }) => {
+  create: shieldedProcedure.input(attributeSchema).mutation(async ({ input }) => {
     const createdAttribute = await prisma.productAttribute.create({
       data: {
         name: input.name,
@@ -109,7 +109,7 @@ export const attributeRouter = router({
     return createdAttribute
   }),
 
-  update: publicProcedure
+  update: shieldedProcedure
     .input(z.object({ id: z.number().min(1) }).extend(attributeSchema.shape))
     .mutation(async ({ input }) => {
       const updatedAttribute = await prisma.productAttribute.update({
@@ -163,7 +163,7 @@ export const attributeRouter = router({
       return updatedAttribute
     }),
 
-  permanentlyDelete: publicProcedure
+  permanentlyDelete: shieldedProcedure
     .input(z.string())
     .mutation(async ({ input: id }) => {
       // Delete relationships

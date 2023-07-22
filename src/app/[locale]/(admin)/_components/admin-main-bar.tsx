@@ -8,7 +8,7 @@ const AdminMainBar = ({ className, children, ...props }: AdminMainBarProps) => {
     <main
       {...props}
       className={cn(
-        "w-full ml-[250px] bg-neutral-50 dark:bg-black min-h-[calc(100vh-64px)]",
+        "w-full ml-[250px] bg-white dark:bg-black min-h-[calc(100vh-64px)]",
         className
       )}
     >
