@@ -1,5 +1,6 @@
 "use client"
 
+import { useTRPCTransformerFieldErrorsWithRHF } from "@/app/(trpc)/lib/trpc/hooks"
 import SectionDetail from "@/components/sections/section-detail"
 import SectionPaper from "@/components/sections/section-paper"
 import { Button } from "@/components/ui/button"
@@ -9,11 +10,13 @@ import { ADMIN_URL } from "@/constant/urls"
 import { CategorySchemaType, categorySchema } from "@/schemas/category"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Status } from "@prisma/client"
+import { TRPCClientErrorLike } from "@trpc/client"
 import { useForm } from "react-hook-form"
 
 export interface CategoryFormProps {
   title: string
   defaultValues?: Partial<CategorySchemaType>
+  error: TRPCClientErrorLike<any> | null
 
   onSubmit: (values: CategorySchemaType) => void
 }
@@ -21,6 +24,7 @@ export interface CategoryFormProps {
 const CategoryForm = ({
   title,
   defaultValues,
+  error,
   onSubmit,
 }: CategoryFormProps) => {
   const methods = useForm<CategorySchemaType>({
@@ -32,6 +36,8 @@ const CategoryForm = ({
   })
 
   const handleSubmit = methods.handleSubmit(onSubmit)
+
+  useTRPCTransformerFieldErrorsWithRHF(error, methods)
 
   return (
     <Form {...methods}>

@@ -12,6 +12,7 @@ import prisma from "@/lib/prisma"
 import { collectionSchema } from "@/schemas/collection"
 import { Prisma } from "@prisma/client"
 import { z } from "zod"
+import { VALIDATION_MESSAGES } from "@/constant/messages"
 
 export const collectionShieldedProcedure = shieldedProcedure({
   resource: RESOURCE_KEYS.COLLECTION,
@@ -75,7 +76,25 @@ export const collectionRouter = router({
     }),
 
   create: collectionShieldedProcedure
-    .input(collectionSchema)
+    .input(
+      collectionSchema.superRefine(async (values, ctx) => {
+        const collection = await prisma.collection.findFirst({
+          where: {
+            slug: values.slug,
+          },
+        })
+
+        if (collection) {
+          return ctx.addIssue({
+            message: VALIDATION_MESSAGES.ALREADY_EXISTS("Slug"),
+            path: ["slug"],
+            code: "custom",
+          })
+        }
+
+        return ctx
+      })
+    )
     .mutation(async ({ input }) => {
       return prisma.collection.create({
         data: {
@@ -87,7 +106,31 @@ export const collectionRouter = router({
     }),
 
   update: collectionShieldedProcedure
-    .input(z.object({ id: z.number() }).extend(collectionSchema.shape))
+    .input(
+      z
+        .object({ id: z.number() })
+        .extend(collectionSchema.shape)
+        .superRefine(async (values, ctx) => {
+          const collection = await prisma.collection.findFirst({
+            where: {
+              slug: values.slug,
+              id: {
+                not: Number(values.id)
+              },
+            },
+          })
+
+          if (collection) {
+            return ctx.addIssue({
+              message: VALIDATION_MESSAGES.ALREADY_EXISTS("Slug"),
+              path: ["slug"],
+              code: "custom",
+            })
+          }
+
+          return ctx
+        })
+    )
     .mutation(({ input }) => {
       return prisma.collection.update({
         where: {

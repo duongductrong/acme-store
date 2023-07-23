@@ -99,7 +99,7 @@ model Category {
   description String?
   status      Status  @default(Enabled)
 
-  metadata   CatagoryMetadata? @relation(fields: [metadataId], references: [id])
+  metadata   CategoryMetadata? @relation(fields: [metadataId], references: [id])
   metadataId String?           @db.VarChar(25)
 
   products Product[]
@@ -111,7 +111,7 @@ model Category {
   @@map("categories")
 }
 
-model CatagoryMetadata {
+model CategoryMetadata {
   id String @id @default(cuid()) @db.VarChar(25)
 
   metaTitle       String?

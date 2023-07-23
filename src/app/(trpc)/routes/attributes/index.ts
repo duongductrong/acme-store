@@ -10,6 +10,7 @@ import { Prisma, ProductAttributeType } from "@prisma/client"
 import difference from "lodash/difference"
 import { z } from "zod"
 import { RESOURCE_KEYS } from "@/constant/resources"
+import { VALIDATION_MESSAGES } from "@/constant/messages"
 
 export const attributeShieldedProcedure = shieldedProcedure({
   resource: RESOURCE_KEYS.ATTRIBUTE,
@@ -92,7 +93,23 @@ export const attributeRouter = router({
   //   }),
 
   create: attributeShieldedProcedure
-    .input(attributeSchema)
+    .input(
+      attributeSchema.superRefine(async (values, ctx) => {
+        const attribute = await prisma.productAttribute.findFirst({
+          where: { code: values.code },
+        })
+
+        if (attribute) {
+          ctx.addIssue({
+            code: "custom",
+            message: VALIDATION_MESSAGES.ALREADY_EXISTS("Code"),
+            path: ["code"],
+          })
+        }
+
+        return ctx
+      })
+    )
     .mutation(async ({ input }) => {
       const createdAttribute = await prisma.productAttribute.create({
         data: {
@@ -121,7 +138,26 @@ export const attributeRouter = router({
     }),
 
   update: attributeShieldedProcedure
-    .input(z.object({ id: z.number().min(1) }).extend(attributeSchema.shape))
+    .input(
+      z
+        .object({ id: z.number().min(1) })
+        .extend(attributeSchema.shape)
+        .superRefine(async (values, ctx) => {
+          const attribute = await prisma.productAttribute.findFirst({
+            where: { code: values.code, id: { not: values.id?.toString() } },
+          })
+
+          if (attribute) {
+            ctx.addIssue({
+              code: "custom",
+              message: VALIDATION_MESSAGES.ALREADY_EXISTS("Code"),
+              path: ["code"],
+            })
+          }
+
+          return ctx
+        })
+    )
     .mutation(async ({ input }) => {
       const updatedAttribute = await prisma.productAttribute.update({
         where: { id: input.id as string },

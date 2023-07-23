@@ -6,7 +6,7 @@ import trpc from "@/lib/trpc-client"
 import { AttributeSchemaType } from "@/schemas/attribute"
 import { Loader2 } from "lucide-react"
 import { useRouter } from "next/navigation"
-import AttributeForm from "../components/attribute-form"
+import AttributeForm from "../_components/attribute-form"
 
 export interface EditAttributeProps {
   params: { id: string }
@@ -18,7 +18,7 @@ const EditAttribute = ({ params: { id } }: EditAttributeProps) => {
   const trpcUtils = trpc.useContext()
 
   const { data: attribute, error } = trpc.attribute.detail.useQuery(id)
-  const { mutate: updateAttribute } = trpc.attribute.update.useMutation({
+  const { mutate: updateAttribute, error: errorUpdateAttribute } = trpc.attribute.update.useMutation({
     onSuccess() {
       t.toast({
         title: "Success",
@@ -46,6 +46,7 @@ const EditAttribute = ({ params: { id } }: EditAttributeProps) => {
   return (
     <AttributeForm
       title="Edit a attribute"
+      error={errorUpdateAttribute}
       defaultValues={attribute as AttributeSchemaType}
       onSubmit={(values) => updateAttribute(values)}
     />

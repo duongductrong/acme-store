@@ -11,15 +11,19 @@ import { useForm, useWatch } from "react-hook-form"
 import AttributeOptions from "../attribute-options"
 import { Button } from "@/components/ui/button"
 import AttributeGroup from "../attribute-group"
+import { TRPCClientErrorLike } from "@trpc/client"
+import { useTRPCTransformerFieldErrorsWithRHF } from "@/app/(trpc)/lib/trpc/hooks"
 
 export interface AttributeFormProps {
   title: string
+  error: TRPCClientErrorLike<any> | null
   defaultValues?: Partial<AttributeSchemaType>
   onSubmit: (values: AttributeSchemaType) => void
 }
 
 const AttributeForm = ({
   title,
+  error,
   defaultValues,
   onSubmit,
 }: AttributeFormProps) => {
@@ -44,6 +48,8 @@ const AttributeForm = ({
   }))
 
   const handleSubmit = methods.handleSubmit(onSubmit)
+
+  useTRPCTransformerFieldErrorsWithRHF(error, methods)
 
   return (
     <Form {...methods}>

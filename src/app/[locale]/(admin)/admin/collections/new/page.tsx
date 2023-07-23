@@ -13,7 +13,7 @@ const NewCollection = (props: NewCollectionProps) => {
   const router = useRouter()
   const trpcUtils = trpc.useContext()
 
-  const { mutate: collectionMutate } = trpc.collection.create.useMutation({
+  const { mutate: collectionMutate, error: errorCreateCollection } = trpc.collection.create.useMutation({
     onSuccess() {
       t.toast({
         title: "Success",
@@ -37,6 +37,7 @@ const NewCollection = (props: NewCollectionProps) => {
   return (
     <CollectionForm
       title="Create new collection"
+      error={errorCreateCollection}
       onSubmit={(values) => collectionMutate(values)}
     />
   )

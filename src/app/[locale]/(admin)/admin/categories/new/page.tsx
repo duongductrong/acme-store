@@ -13,7 +13,7 @@ function NewCategory({}: NewCategoryProps) {
   const t = useToast()
   const trpcUtils = trpc.useContext()
 
-  const { mutate: categoryMutate } = trpc.category.create.useMutation({
+  const { mutate: categoryMutate, error } = trpc.category.create.useMutation({
     onSuccess() {
       t.toast({
         title: "Success",
@@ -37,6 +37,7 @@ function NewCategory({}: NewCategoryProps) {
   return (
     <CategoryForm
       title="Create a category"
+      error={error}
       onSubmit={(values) => categoryMutate(values)}
     />
   )

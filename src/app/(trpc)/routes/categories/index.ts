@@ -9,6 +9,7 @@ import prisma from "@/lib/prisma"
 import { categorySchema } from "@/schemas/category"
 import { Prisma, Status } from "@prisma/client"
 import { z } from "zod"
+import { VALIDATION_MESSAGES } from "@/constant/messages"
 
 export const categoryShieldedProcedure = shieldedProcedure({
   resource: RESOURCE_KEYS.CATEGORY,
@@ -73,7 +74,23 @@ export const categoryRouter = router({
     }),
 
   create: categoryShieldedProcedure
-    .input(categorySchema)
+    .input(
+      categorySchema.superRefine(async (values, ctx) => {
+        const category = await prisma.category.findFirst({
+          where: { slug: values.slug },
+        })
+
+        if (category) {
+          return ctx.addIssue({
+            message: VALIDATION_MESSAGES.ALREADY_EXISTS("Slug"),
+            path: ["slug"],
+            code: "custom",
+          })
+        }
+
+        return ctx
+      })
+    )
     .mutation(async ({ input }) => {
       const categoryCreated = await prisma.category.create({
         data: {
@@ -86,7 +103,7 @@ export const categoryRouter = router({
       })
 
       setTimeout(async () => {
-        await prisma.catagoryMetadata.create({
+        await prisma.categoryMetadata.create({
           data: {
             metaTitle: input.metadata?.metaTitle,
             metaDescription: input.metadata?.metaDescription,
@@ -104,7 +121,31 @@ export const categoryRouter = router({
     }),
 
   update: categoryShieldedProcedure
-    .input(z.object({ id: z.string() }).extend(categorySchema.shape))
+    .input(
+      z
+        .object({ id: z.string() })
+        .extend(categorySchema.shape)
+        .superRefine(async (values, ctx) => {
+          const category = await prisma.category.findFirst({
+            where: {
+              slug: values.slug,
+              id: {
+                not: values.id,
+              },
+            },
+          })
+
+          if (category) {
+            return ctx.addIssue({
+              message: VALIDATION_MESSAGES.ALREADY_EXISTS("Slug"),
+              path: ["slug"],
+              code: "custom",
+            })
+          }
+
+          return ctx
+        })
+    )
     .mutation(async ({ input }) => {
       const categoryUpdated = await prisma.category.update({
         where: {
@@ -122,7 +163,7 @@ export const categoryRouter = router({
 
       setTimeout(async () => {
         if (categoryUpdated.metadataId) {
-          await prisma.catagoryMetadata.update({
+          await prisma.categoryMetadata.update({
             where: {
               id: categoryUpdated.metadataId,
             },

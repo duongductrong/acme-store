@@ -17,7 +17,7 @@ const EditCollection = ({ params: { id } }: EditCollectionProps) => {
   const router = useRouter()
 
   const { data: collection, error } = trpc.collection.detail.useQuery(id)
-  const { mutate: updateCollectionMutate } = trpc.collection.update.useMutation(
+  const { mutate: updateCollectionMutate, error: errorUpdateCollection } = trpc.collection.update.useMutation(
     {
       onSuccess() {
         t.toast({
@@ -47,6 +47,7 @@ const EditCollection = ({ params: { id } }: EditCollectionProps) => {
   return (
     <CollectionForm
       title="Edit a collection"
+      error={errorUpdateCollection}
       defaultValues={collection}
       onSubmit={(values) => updateCollectionMutate(values)}
     />

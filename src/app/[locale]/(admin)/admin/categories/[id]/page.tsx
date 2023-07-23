@@ -10,9 +10,6 @@ export interface EditCategoryProps {
   params: { id: string }
 }
 
-export const revalidate = 0
-export const dynamic = "force-dynamic"
-
 const EditCategory = ({ params: { id } }: EditCategoryProps) => {
   const t = useToast()
   const trpcUtils = trpc.useContext()
@@ -23,7 +20,7 @@ const EditCategory = ({ params: { id } }: EditCategoryProps) => {
       metadata: true,
     },
   })
-  const { mutate: categoryMutate } = trpc.category.update.useMutation({
+  const { mutate: categoryMutate, error: throwCategoryError } = trpc.category.update.useMutation({
     onSuccess() {
       t.toast({
         title: "Success",
@@ -48,6 +45,7 @@ const EditCategory = ({ params: { id } }: EditCategoryProps) => {
 
   return (
     <CategoryForm
+      error={throwCategoryError}
       title="Edit a category"
       defaultValues={category as any as CategorySchemaType}
       onSubmit={(values) => categoryMutate(values)}
