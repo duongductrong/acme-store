@@ -1,4 +1,4 @@
-import { generateGrantsListFromPolicies } from "@/components/gates/lib/accesscontrol"
+import { getGrantsFromPrivileges } from "@/components/gates/lib/accesscontrol"
 import { authOptions } from "@/lib/next-auth"
 import prisma from "@/lib/prisma"
 import { getServerSession } from "next-auth"
@@ -13,7 +13,7 @@ export interface AdminLayoutProps extends CommonLayoutProps {}
 
 const AdminLayout = async ({ children }: AdminLayoutProps) => {
   const currentSession = await getServerSession(authOptions)
-  const currentUserRole = await prisma.roleBased.findFirst({
+  const currentUserRole = await prisma.role.findFirst({
     where: { id: currentSession?.user.roleId },
   })
 
@@ -21,13 +21,13 @@ const AdminLayout = async ({ children }: AdminLayoutProps) => {
     <AdminProvider
       session={currentSession}
       role={currentUserRole?.id as string}
-      grants={generateGrantsListFromPolicies(currentUserRole?.policies, currentUserRole?.id as string)}
+      grants={getGrantsFromPrivileges(currentUserRole?.privileges, currentUserRole?.id as string)}
     >
       <div className="flex">
         <AdminSidebar
           user={{
             role: currentUserRole?.id as string,
-            policies: currentUserRole?.policies,
+            privileges: currentUserRole?.privileges,
           }}
         />
         <AdminMainBar>

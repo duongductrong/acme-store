@@ -31,7 +31,7 @@ export const authRouter = router({
           firstName,
           lastName,
           passwordHashed,
-          roleId: "clke4eigd0000kj7tossctmwc",
+          roleId: "clkh3cduh0000kjse70uyy6gf",
         },
       })
 

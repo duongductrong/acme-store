@@ -7,7 +7,7 @@ export const roleSchema = z.object({
     .string({ required_error: VALIDATION_MESSAGES.REQUIRED("Name") })
     .min(1, VALIDATION_MESSAGES.REQUIRED("Name")),
   description: z.string().nullish(),
-  policies: z.array(
+  privileges: z.array(
     z
       .object({
         resource: z.string().nullish(),

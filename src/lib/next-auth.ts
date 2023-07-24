@@ -1,4 +1,4 @@
-import { RoleBased, User } from "@prisma/client"
+import { Role, User } from "@prisma/client"
 import { NextAuthOptions } from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 import { comparePassword } from "./bcrypt"
@@ -15,7 +15,7 @@ export interface NextAuthSession {
     lastName: string
     email: string
     id: string
-    role: RoleBased
+    role: Role
     roleId: string
   }
   expires: Date
@@ -52,7 +52,7 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     jwt: ({ token, user }) => {
       if (user) {
-        const myUser = user as unknown as User & { role: RoleBased }
+        const myUser = user as unknown as User & { role: Role }
 
         return {
           ...token,

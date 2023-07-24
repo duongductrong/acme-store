@@ -21,9 +21,9 @@ export const roleRouter = router({
     .query(async ({ input }) => {
       const pagination = trpcHandleQueryFilterPagination(input)
 
-      const whereRole = {} as Prisma.RoleBasedWhereInput
+      const whereRole = {} as Prisma.RoleWhereInput
 
-      const items = await prisma.roleBased.findMany({
+      const items = await prisma.role.findMany({
         where: whereRole,
         skip: Number(pagination?.skip),
         cursor: pagination?.cursor,
@@ -31,7 +31,7 @@ export const roleRouter = router({
       })
 
       if (input?.paginationType === "offset") {
-        const countItems = await prisma.roleBased.count({
+        const countItems = await prisma.role.count({
           where: whereRole,
         })
 
@@ -53,17 +53,17 @@ export const roleRouter = router({
   detail: roleShieldedProcedure
     .input(z.object({ id: roleSchema.shape.id }))
     .query(({ input }) => {
-      return prisma.roleBased.findFirst({ where: { id: input.id?.toString() } })
+      return prisma.role.findFirst({ where: { id: input.id?.toString() } })
     }),
 
   create: roleShieldedProcedure
     .input(roleSchema)
     .mutation(async ({ input }) => {
-      return prisma.roleBased.create({
+      return prisma.role.create({
         data: {
           name: input.name,
           description: input.description,
-          policies: input.policies as object,
+          privileges: input.privileges as object,
         },
       })
     }),
@@ -76,7 +76,7 @@ export const roleRouter = router({
         })
         .extend(roleSchema.shape)
         .superRefine(async ({ id }, ctx) => {
-          const role = await prisma.roleBased.findFirst({
+          const role = await prisma.role.findFirst({
             where: { id: id?.toString() },
           })
 
@@ -92,12 +92,12 @@ export const roleRouter = router({
         })
     )
     .mutation(async ({ input }) => {
-      return prisma.roleBased.update({
+      return prisma.role.update({
         where: { id: input.id?.toString() },
         data: {
           name: input.name,
           description: input.description,
-          policies: input.policies as object,
+          privileges: input.privileges as object,
         },
       })
     }),
@@ -105,7 +105,7 @@ export const roleRouter = router({
   permanentlyDelete: roleShieldedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ input }) => {
-      return await prisma.roleBased.delete({
+      return await prisma.role.delete({
         where: { id: input.id },
       })
     }),

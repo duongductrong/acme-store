@@ -1,7 +1,7 @@
 "use client"
 
 import Gate, { GatePrivilege } from "@/components/gates/gate"
-import { generateGrantsListFromPolicies } from "@/components/gates/lib/accesscontrol"
+import { getGrantsFromPrivileges } from "@/components/gates/lib/accesscontrol"
 import { SITE_RESOURCES } from "@/constant/resources"
 import { usePathname } from "next/navigation"
 import { useAdmin } from "./_providers/admin-provider/hooks"
@@ -11,7 +11,6 @@ export interface AdminTemplateProps extends CommonLayoutProps {}
 const AdminTemplate = ({ children }: AdminTemplateProps) => {
   const resources = SITE_RESOURCES
   const pathname = usePathname()
-  const { grants } = useAdmin()
 
   const getPathRegexPattern = (path: string) => {
     const regexPattern = new RegExp(
@@ -43,7 +42,6 @@ const AdminTemplate = ({ children }: AdminTemplateProps) => {
   // })
   return (
     <Gate
-      grants={grants}
       resource={currentResourceFromPathname.key}
       privileges={Object.keys(currentPrivileges) as Array<GatePrivilege>}
     >

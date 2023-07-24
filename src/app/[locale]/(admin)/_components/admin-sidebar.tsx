@@ -3,9 +3,9 @@
 import Link from "@/components/navigations/link"
 import TextLegend from "@/components/typography/text-legend"
 import { Button } from "@/components/ui/button"
-import { generateGrantsListFromPolicies } from "@/components/gates/lib/accesscontrol"
+import { getGrantsFromPrivileges } from "@/components/gates/lib/accesscontrol"
 import { cn } from "@/lib/utils"
-import { RoleBased } from "@prisma/client"
+import { Role } from "@prisma/client"
 import { AccessControl, Permission, Query } from "accesscontrol"
 import { omit } from "lodash"
 import { ChevronDown, ChevronsUpDown } from "lucide-react"
@@ -17,7 +17,7 @@ import BrandSwitcher from "./brand-switcher"
 export interface AdminSidebarProps extends HTMLAttributes<HTMLDivElement> {
   user: {
     role: string
-    policies?: RoleBased["policies"]
+    privileges?: Role["privileges"]
   }
 }
 
@@ -27,10 +27,8 @@ const AdminSidebar = ({ className, user, ...props }: AdminSidebarProps) => {
 
   const userGrantPrivileges = useMemo(
     () =>
-      new AccessControl(
-        generateGrantsListFromPolicies(user.policies, user.role)
-      ),
-    [user.role, user.policies]
+      new AccessControl(getGrantsFromPrivileges(user.privileges, user.role)),
+    [user.role, user.privileges]
   )
 
   const handleToggleOpensItem = (event: MouseEvent<any>, key: string) => {
@@ -72,18 +70,23 @@ const AdminSidebar = ({ className, user, ...props }: AdminSidebarProps) => {
               ? ChevronsUpDown
               : ChevronDown
 
-            const { resource: privilegesResource, actions: privilegesActions } = privilege
+            const { resource: privilegesResource, actions: privilegesActions } =
+              privilege
             const hasGrantedPrivilege = privilegesActions
               .map((action) => {
                 const grant = userGrantPrivileges
                   .can(user.role)
                   .resource(privilegesResource)
 
-                const permission = grant[action](
-                  privilegesResource
-                ) as Permission
+                try {
+                  const permission = grant[action](
+                    privilegesResource
+                  ) as Permission
 
-                return permission.granted
+                  return permission.granted
+                } catch {
+                  return false
+                }
               })
               .some((hasPrivilege) => hasPrivilege)
 

@@ -151,7 +151,7 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  role   RoleBased @relation(fields: [roleId], references: [id])
+  role   Role @relation(fields: [roleId], references: [id])
   roleId String    @db.VarChar(25)
 
   @@index([id, code])
@@ -292,14 +292,14 @@ model ProductVariant {
   @@map("product_variants")
 }
 
-model RoleBased {
+model Role {
   id String @id @default(cuid()) @db.VarChar(25)
 
   name        String
   description String?
 
-  policies Json?  @db.Json
+  privileges Json?  @db.Json
   users    User[]
 
-  @@map("roles_based")
+  @@map("roles")
 }

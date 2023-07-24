@@ -11,7 +11,7 @@ import {
 import { Button } from "@/components/ui/button"
 import Form, { FormField } from "@/components/ui/form"
 import { Label } from "@/components/ui/label"
-import { policies } from "@/constant/access-controls"
+import { privileges } from "@/constant/access-controls"
 import { SITE_RESOURCES } from "@/constant/resources"
 import { ADMIN_URL } from "@/constant/urls"
 import { RoleSchemaType, roleSchema } from "@/schemas/role"
@@ -66,14 +66,14 @@ const RoleForm = ({ title, onSubmit, error, defaultValues }: RoleFormProps) => {
           >
             {SITE_RESOURCES.map((resource, resourceIndex) => {
               const registeredInputResource = methods.register(
-                `policies.${resourceIndex}.resource`,
+                `privileges.${resourceIndex}.resource`,
                 {
                   value: resource.key,
                 }
               )
 
-              const registerActionsName = `policies.${resourceIndex}.actions`
-              const registerAttributesName = `policies.${resourceIndex}.attributes`
+              const registerActionsName = `privileges.${resourceIndex}.actions`
+              const registerAttributesName = `privileges.${resourceIndex}.attributes`
 
               return (
                 <AccordionItem
@@ -87,10 +87,10 @@ const RoleForm = ({ title, onSubmit, error, defaultValues }: RoleFormProps) => {
                     <div className="flex flex-col gap-2">
                       <FormField
                         variant="SELECT"
-                        label="Policies"
-                        options={policies}
+                        label="privileges"
+                        options={privileges}
                         name={registerActionsName}
-                        placeholder="Select policies"
+                        placeholder="Select privileges"
                         closeMenuOnSelect={false}
                         isMulti
                       />

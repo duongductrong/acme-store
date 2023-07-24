@@ -1,6 +1,6 @@
 // [] Made gate with privileges for an action or a layout.
 
-import { generateGrantsListFromPolicies } from "@/components/gates/lib/accesscontrol"
+import { getGrantsFromPrivileges } from "@/components/gates/lib/accesscontrol"
 import { AccessControl, Permission, Query } from "accesscontrol"
 import { ReactNode, useMemo } from "react"
 import { useGate } from "./hooks/use-gate"
@@ -75,11 +75,16 @@ const Gate = ({ children, forbidden, privileges, resource }: GateProps) => {
       const privilegeInAccessControl = gatePrivileges[privilege]
       const role = userGrantPrivilege.can(gate.role as string)
       const resourceOwn = role.resource(resource)
-      const permission = resourceOwn[privilegeInAccessControl](
-        resource
-      ) as Permission
-
-      return permission.granted
+      
+      try {
+        const permission = resourceOwn[privilegeInAccessControl](
+          resource
+        ) as Permission
+  
+        return permission.granted
+      } catch {
+        return false
+      }
     })
     .some((granted) => granted)
 

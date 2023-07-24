@@ -8,7 +8,7 @@ import { DataTable } from "@/components/ui/data-table/data-table"
 import { useToast } from "@/components/ui/use-toast"
 import { ADMIN_URL } from "@/constant/urls"
 import trpc from "@/lib/trpc-client"
-import { RoleBased } from "@prisma/client"
+import { Role } from "@prisma/client"
 import { ColumnDef } from "@tanstack/react-table"
 import { Plus, Trash } from "lucide-react"
 
@@ -48,7 +48,7 @@ const RoleList = (props: RoleListProps) => {
 
   const roles = data?.items || []
   const totalRoles = data?.pagination.totalRecords || 0
-  const columns: ColumnDef<RoleBased>[] = [
+  const columns: ColumnDef<Role>[] = [
     {
       accessorKey: "name",
       header: "Name",

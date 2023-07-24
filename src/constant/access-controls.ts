@@ -19,7 +19,7 @@
 //   },
 // }
 
-export const policies = [
+export const privileges = [
   {
     label: "read:any",
     value: "read:any",

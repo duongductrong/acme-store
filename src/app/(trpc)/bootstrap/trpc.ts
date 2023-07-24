@@ -1,4 +1,4 @@
-import { generateGrantsListFromPolicies } from "@/components/gates/lib/accesscontrol"
+import { getGrantsFromPrivileges } from "@/components/gates/lib/accesscontrol"
 import prisma from "@/lib/prisma"
 import { TRPCError, initTRPC } from "@trpc/server"
 import { AccessControl } from "accesscontrol"
@@ -30,15 +30,15 @@ const t = initTRPC
 export const permissionsMiddleware = t.middleware(async (opts) => {
   const { ctx, meta, next } = opts
 
-  const currentUserRole = await prisma.roleBased.findFirst({
+  const currentUserRole = await prisma.role.findFirst({
     where: { id: ctx.session?.user.roleId },
   })
 
   const resource = meta?.resource as string
-  const policies = currentUserRole?.policies || []
+  const privileges = currentUserRole?.privileges || []
 
-  const grantsList = generateGrantsListFromPolicies(
-    policies,
+  const grantsList = getGrantsFromPrivileges(
+    privileges,
     currentUserRole?.id as string
   )
 
