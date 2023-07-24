@@ -1,5 +1,6 @@
 "use client"
 
+import Gate from "@/components/gates/gate"
 import Link from "@/components/navigations/link"
 import SectionView from "@/components/sections/section-view"
 import StatusPoint from "@/components/status-point"
@@ -173,12 +174,14 @@ const ProductList = (props: ProductListProps) => {
     <SectionView
       title="Products"
       whereTopRight={
-        <Button asChild>
-          <Link href={ADMIN_URL.PRODUCT.NEW}>
-            <Plus className="w-4 h-4 mr-2" />
-            New Product
-          </Link>
-        </Button>
+        <Gate privileges={["create", "create:any", "create:own"]} resource="products">
+          <Button asChild>
+            <Link href={ADMIN_URL.PRODUCT.NEW}>
+              <Plus className="w-4 h-4 mr-2" />
+              New Product
+            </Link>
+          </Button>
+        </Gate>
       }
     >
       <DataTable

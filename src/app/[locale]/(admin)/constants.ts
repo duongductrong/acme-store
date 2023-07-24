@@ -1,4 +1,6 @@
+import { RESOURCE_KEYS } from "@/constant/resources"
 import { ADMIN_URL } from "@/constant/urls"
+import { Query } from "accesscontrol"
 import {
   Box,
   Dot,
@@ -27,6 +29,10 @@ export interface AdminSidebarItem {
   link: string
   Icon?: LucideIcon
   children?: AdminSidebarItem[]
+  privilege: {
+    resource: string
+    actions: (keyof Query)[]
+  }
 }
 
 export type UnionAdminSidebarItem = AdminSidebarItem | AdminSidebarGroup
@@ -43,6 +49,10 @@ export const ADMIN_SIDEBARS: UnionAdminSidebarItem[] = [
         title: "Products",
         link: ADMIN_URL.PRODUCT.LIST,
         Icon: Box,
+        privilege: {
+          actions: ["read", "readAny", "readOwn"],
+          resource: RESOURCE_KEYS.PRODUCT,
+        },
         children: [
           {
             type: "item",
@@ -50,6 +60,10 @@ export const ADMIN_SIDEBARS: UnionAdminSidebarItem[] = [
             id: "new-item",
             link: ADMIN_URL.PRODUCT.NEW,
             Icon: Dot,
+            privilege: {
+              actions: ["create", "createAny", "createOwn"],
+              resource: RESOURCE_KEYS.PRODUCT,
+            },
           },
         ],
       },
@@ -59,6 +73,10 @@ export const ADMIN_SIDEBARS: UnionAdminSidebarItem[] = [
         title: "Categories",
         link: ADMIN_URL.CATEGORY.LIST,
         Icon: SquareStack,
+        privilege: {
+          actions: ["read", "readAny", "readOwn"],
+          resource: RESOURCE_KEYS.CATEGORY,
+        },
       },
       {
         type: "item",
@@ -66,6 +84,10 @@ export const ADMIN_SIDEBARS: UnionAdminSidebarItem[] = [
         title: "Collections",
         link: ADMIN_URL.COLLECTION.LIST,
         Icon: Shapes,
+        privilege: {
+          actions: ["read", "readAny", "readOwn"],
+          resource: RESOURCE_KEYS.COLLECTION,
+        },
       },
       {
         type: "item",
@@ -73,6 +95,10 @@ export const ADMIN_SIDEBARS: UnionAdminSidebarItem[] = [
         title: "Attributes",
         link: ADMIN_URL.ATTRIBUTE.LIST,
         Icon: Workflow,
+        privilege: {
+          actions: ["read", "readAny", "readOwn"],
+          resource: RESOURCE_KEYS.ATTRIBUTE,
+        },
       },
       {
         type: "item",
@@ -80,6 +106,10 @@ export const ADMIN_SIDEBARS: UnionAdminSidebarItem[] = [
         title: "Coupons",
         link: ADMIN_URL.ATTRIBUTE.LIST,
         Icon: Gift,
+        privilege: {
+          actions: ["read", "readAny", "readOwn"],
+          resource: RESOURCE_KEYS.ATTRIBUTE,
+        },
       },
     ],
   },
@@ -94,6 +124,10 @@ export const ADMIN_SIDEBARS: UnionAdminSidebarItem[] = [
         title: "Orders",
         link: ADMIN_URL.ORDER.LIST,
         Icon: Package,
+        privilege: {
+          actions: ["read", "readAny", "readOwn"],
+          resource: RESOURCE_KEYS.ORDER,
+        },
       },
     ],
   },
@@ -108,6 +142,10 @@ export const ADMIN_SIDEBARS: UnionAdminSidebarItem[] = [
         title: "Customers",
         link: ADMIN_URL.CUSTOMER.LIST,
         Icon: Users2,
+        privilege: {
+          actions: ["read", "readAny", "readOwn"],
+          resource: RESOURCE_KEYS.CUSTOMER,
+        },
       },
     ],
   },
@@ -122,6 +160,10 @@ export const ADMIN_SIDEBARS: UnionAdminSidebarItem[] = [
         title: "Media Library",
         link: ADMIN_URL.MEDIA_LIBRARY.LIST,
         Icon: Image,
+        privilege: {
+          actions: ["read", "readAny", "readOwn"],
+          resource: RESOURCE_KEYS.MEDIA_LIBRARY,
+        },
       },
       {
         type: "item",
@@ -129,6 +171,10 @@ export const ADMIN_SIDEBARS: UnionAdminSidebarItem[] = [
         title: "Settings",
         link: ADMIN_URL.SETTING.STORE.INFORMATION,
         Icon: Settings,
+        privilege: {
+          actions: ["read", "readAny", "readOwn"],
+          resource: RESOURCE_KEYS.SETTING,
+        },
         children: [
           {
             type: "item",
@@ -136,6 +182,10 @@ export const ADMIN_SIDEBARS: UnionAdminSidebarItem[] = [
             link: ADMIN_URL.SETTING.ROLE.LIST,
             title: "Roles",
             Icon: Dot,
+            privilege: {
+              actions: ["read", "readAny", "readOwn"],
+              resource: RESOURCE_KEYS.ROLE,
+            },
           },
         ],
       },

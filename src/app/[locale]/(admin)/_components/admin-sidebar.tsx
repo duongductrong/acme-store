@@ -3,19 +3,35 @@
 import Link from "@/components/navigations/link"
 import TextLegend from "@/components/typography/text-legend"
 import { Button } from "@/components/ui/button"
+import { generateGrantsListFromPolicies } from "@/components/gates/lib/accesscontrol"
 import { cn } from "@/lib/utils"
+import { RoleBased } from "@prisma/client"
+import { AccessControl, Permission, Query } from "accesscontrol"
 import { omit } from "lodash"
 import { ChevronDown, ChevronsUpDown } from "lucide-react"
 import { usePathname } from "next/navigation"
-import { Fragment, HTMLAttributes, MouseEvent, useState } from "react"
+import { Fragment, HTMLAttributes, MouseEvent, useMemo, useState } from "react"
 import { ADMIN_SIDEBARS } from "../constants"
 import BrandSwitcher from "./brand-switcher"
 
-export interface AdminSidebarProps extends HTMLAttributes<HTMLDivElement> {}
+export interface AdminSidebarProps extends HTMLAttributes<HTMLDivElement> {
+  user: {
+    role: string
+    policies?: RoleBased["policies"]
+  }
+}
 
-const AdminSidebar = ({ className, ...props }: AdminSidebarProps) => {
+const AdminSidebar = ({ className, user, ...props }: AdminSidebarProps) => {
   const pathname = usePathname()
   const [openKeys, setOpenKeys] = useState<Record<string, true>>({})
+
+  const userGrantPrivileges = useMemo(
+    () =>
+      new AccessControl(
+        generateGrantsListFromPolicies(user.policies, user.role)
+      ),
+    [user.role, user.policies]
+  )
 
   const handleToggleOpensItem = (event: MouseEvent<any>, key: string) => {
     event.preventDefault()
@@ -45,6 +61,7 @@ const AdminSidebar = ({ className, ...props }: AdminSidebarProps) => {
             {sidebarItem.title}
           </TextLegend>
           {sidebarItem.children?.map((sidebarChildrenItem) => {
+            const { privilege } = sidebarChildrenItem
             const isActive = pathname.includes(sidebarChildrenItem.id)
             const sidebarChildItemKey = `${sidebarItem.id}_${sidebarChildrenItem.id}`
 
@@ -54,6 +71,23 @@ const AdminSidebar = ({ className, ...props }: AdminSidebarProps) => {
             const ChevronDownOrUp = openNestedChildItemsMenu
               ? ChevronsUpDown
               : ChevronDown
+
+            const { resource: privilegesResource, actions: privilegesActions } = privilege
+            const hasGrantedPrivilege = privilegesActions
+              .map((action) => {
+                const grant = userGrantPrivileges
+                  .can(user.role)
+                  .resource(privilegesResource)
+
+                const permission = grant[action](
+                  privilegesResource
+                ) as Permission
+
+                return permission.granted
+              })
+              .some((hasPrivilege) => hasPrivilege)
+
+            if (!hasGrantedPrivilege) return null
 
             return (
               <Fragment key={sidebarChildItemKey}>

@@ -1,5 +1,5 @@
+import { generateGrantsListFromPolicies } from "@/components/gates/lib/accesscontrol"
 import prisma from "@/lib/prisma"
-import { RoleSchemaType } from "@/schemas/role"
 import { TRPCError, initTRPC } from "@trpc/server"
 import { AccessControl } from "accesscontrol"
 import compact from "lodash/compact"
@@ -37,18 +37,10 @@ export const permissionsMiddleware = t.middleware(async (opts) => {
   const resource = meta?.resource as string
   const policies = currentUserRole?.policies || []
 
-  const grantsList = (policies as RoleSchemaType["policies"])
-    .map((policy) => {
-      return policy?.actions?.map((action: string) => {
-        return {
-          action,
-          role: currentUserRole?.id,
-          resource: policy?.resource,
-          attributes: policy.attributes || "*",
-        }
-      })
-    })
-    .flat(1)
+  const grantsList = generateGrantsListFromPolicies(
+    policies,
+    currentUserRole?.id as string
+  )
 
   const ac = new AccessControl(compact(grantsList))
 
