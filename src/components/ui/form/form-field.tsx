@@ -18,6 +18,7 @@ import FormFieldInternal from "./form-field-internal"
 import FormItem from "./form-item"
 import FormLabel from "./form-label"
 import FormMessage from "./form-message"
+import { Asterisk } from "lucide-react"
 
 const FormInput = dynamic(() => import("./components/form-input"), {
   ssr: true,
@@ -108,6 +109,7 @@ export interface FormFieldStandardBaseProps {
   placeholder?: string
   description?: string
   disabled?: boolean
+  required?: boolean
 
   wrapperClassName?: string
   className?: string
@@ -162,11 +164,16 @@ const FormField = forwardRef<
               {label ? (
                 <FormLabel
                   className={cn(
-                    "block",
+                    "flex items-center",
                     shouldHorizontalShowing ? "order-2" : ""
                   )}
                 >
                   {label}
+                  {baseProps?.required ? (
+                    <Asterisk className="w-3 h-3 ml-1" />
+                  ) : (
+                    ""
+                  )}
                 </FormLabel>
               ) : null}
               <FormControl>
@@ -175,6 +182,7 @@ const FormField = forwardRef<
                   {...baseProps}
                   className={cn(
                     className,
+                    _error?.message ? "!border-destructive" : null,
                     shouldHorizontalShowing ? "order-1" : ""
                   )}
                 />
