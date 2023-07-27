@@ -13,7 +13,7 @@ const SectionPaper = forwardRef<HTMLDivElement, SectionPaperProps>(
         {...props}
         ref={ref}
         className={cn(
-          "border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-950 p-5 rounded-lg",
+          "border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-5 rounded-lg",
           className
         )}
       >

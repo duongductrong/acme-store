@@ -17,9 +17,9 @@ const SSPanelGroupItem = forwardRef<HTMLButtonElement, SSPanelGroupItemProps>(
           className,
           "w-full justify-start border-r-2 rounded-r-none px-2",
           {
-            "border-transparent text-neutral-700 dark:text-neutral-300":
+            "border-transparent text-zinc-700 dark:text-zinc-300":
               !active,
-            "border-neutral-950 dark:border-neutral-50 font-bold": active,
+            "border-zinc-950 dark:border-zinc-50 font-bold": active,
           }
         )}
         variant="ghost"

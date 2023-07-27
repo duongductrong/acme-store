@@ -11,7 +11,7 @@ const SSPanelSidebar = forwardRef<HTMLDivElement, SSPanelSidebarProps>(
         ref={ref}
         className={cn(
           className,
-          "w-[230px] border-r border-neutral-200 dark:border-neutral-800"
+          "w-[230px] border-r border-zinc-200 dark:border-zinc-800"
         )}
       >
         {children}

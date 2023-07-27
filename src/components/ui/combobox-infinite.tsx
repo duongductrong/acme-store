@@ -186,7 +186,7 @@ export const ComboboxInfinite = forwardRef<
         return options.find((option) => value.includes(option.value))?.label
       } else if (placeholder) {
         return (
-          <span className="font-normal text-neutral-500">{placeholder}</span>
+          <span className="font-normal text-zinc-500">{placeholder}</span>
         )
       }
 

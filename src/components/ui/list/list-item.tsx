@@ -12,10 +12,10 @@ const listItemVariants = cva(
   {
     variants: {
       hover: {
-        true: "hover:bg-neutral-200/50 dark:hover:bg-neutral-900/50",
+        true: "hover:bg-zinc-200/50 dark:hover:bg-zinc-900/50",
       },
       active: {
-        true: "text-foreground font-medium bg-neutral-200/50 dark:bg-neutral-900/50",
+        true: "text-foreground font-medium bg-zinc-200/50 dark:bg-zinc-900/50",
         false: "text-muted-foreground font-normal",
       },
     },

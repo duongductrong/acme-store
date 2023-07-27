@@ -49,7 +49,7 @@ const AdminSidebar = ({ className, user, ...props }: AdminSidebarProps) => {
     <ListRoot
       {...props}
       className={cn(
-        "fixed top-0 left-0 min-w-[250px] h-screen border-r border-neutral-200 dark:border-neutral-800",
+        "fixed top-0 left-0 min-w-[250px] h-screen border-r border-zinc-200 dark:border-zinc-800",
         className
       )}
     >
@@ -57,7 +57,7 @@ const AdminSidebar = ({ className, user, ...props }: AdminSidebarProps) => {
 
       {ADMIN_SIDEBARS.map((sidebarItem) => (
         <ListGroup key={sidebarItem.id}>
-          <TextLegend className="mb-base text-neutral-600 dark:!text-neutral-400">
+          <TextLegend className="mb-base text-zinc-600 dark:!text-zinc-400">
             {sidebarItem.title}
           </TextLegend>
           {sidebarItem.children?.map((sidebarChildrenItem) => {

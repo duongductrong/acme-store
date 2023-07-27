@@ -47,7 +47,7 @@ const FormUID = forwardRef<HTMLInputElement, FormUIDProps>(
             "flex gap-2"
           )}
         >
-          <p className="text-xs text-neutral-500 invisible group-hover:visible">
+          <p className="text-xs text-zinc-500 invisible group-hover:visible">
             {isGenerating
               ? "Loading.."
               : props?.value
@@ -58,7 +58,7 @@ const FormUID = forwardRef<HTMLInputElement, FormUIDProps>(
             <Loader className="w-4 h-4 animate-spin" />
           ) : (
             <RotateCw
-              className={cn("w-4 h-4 cursor-pointer", "text-neutral-500")}
+              className={cn("w-4 h-4 cursor-pointer", "text-zinc-500")}
               onClick={handleGenerateUID}
             />
           )}

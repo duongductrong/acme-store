@@ -64,7 +64,7 @@ const FormNumber = forwardRef<HTMLInputElement, FormNumberProps>(
             role="button"
             className={cn(
               "w-full flex items-center justify-center flex-1",
-              "border border-b-0 border-solid border-neutral-200 dark:border-neutral-800",
+              "border border-b-0 border-solid border-zinc-200 dark:border-zinc-800",
               "rounded-tr-[7px] cursor-pointer"
             )}
             onClick={handleUp}
@@ -75,7 +75,7 @@ const FormNumber = forwardRef<HTMLInputElement, FormNumberProps>(
             role="button"
             className={cn(
               "w-full flex items-center justify-center flex-1",
-              "border border-solid border-neutral-200 dark:border-neutral-800",
+              "border border-solid border-zinc-200 dark:border-zinc-800",
               "rounded-br-[7px] cursor-pointer"
             )}
             onClick={handleDown}

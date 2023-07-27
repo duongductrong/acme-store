@@ -339,7 +339,7 @@ export const DataTable = ({
             ) : null}
 
             {loading && (
-              <TableRow className="absolute top-0 left-0 w-full h-full bg-neutral-100/50 dark:bg-neutral-900/50">
+              <TableRow className="absolute top-0 left-0 w-full h-full bg-zinc-100/50 dark:bg-zinc-900/50">
                 <TableCell
                   colSpan={999}
                   className="h-full w-full flex items-center justify-center"

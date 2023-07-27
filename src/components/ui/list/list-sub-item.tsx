@@ -12,7 +12,7 @@ export const listSubItemVariants = cva(
     variants: {
       active: {
         true: "text-foreground font-medium",
-        false: "text-neutral-600 dark:text-neutral-400 font-normal",
+        false: "text-zinc-600 dark:text-zinc-400 font-normal",
       },
     },
     defaultVariants: {

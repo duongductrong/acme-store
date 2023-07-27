@@ -6,7 +6,7 @@ export interface SSPanelGroupLegendProps extends HTMLAttributes<HTMLElement> {}
 const SSPanelGroupLegend = forwardRef<HTMLElement, SSPanelGroupLegendProps>(
   ({ children, className, ...props }, ref) => {
     return (
-      <TextLegend ref={ref} {...props} className="mb-2 text-neutral-500">
+      <TextLegend ref={ref} {...props} className="mb-2 text-zinc-500">
         {children}
       </TextLegend>
     )

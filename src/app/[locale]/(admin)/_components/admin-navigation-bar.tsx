@@ -20,7 +20,7 @@ const AdminNavigationBar = ({
     <header
       {...props}
       className={cn(
-        "h-[64px] border-b dark:border-neutral-800 bg-white dark:bg-neutral-950 sticky top-0 z-10",
+        "h-[64px] border-b dark:border-zinc-800 bg-white dark:bg-zinc-950 sticky top-0 z-10",
         className
       )}
     >

@@ -13,7 +13,7 @@ const accordionItemVariants = cva("", {
   variants: {
     variant: {
       default: "border-b",
-      filled: "bg-neutral-100 dark:bg-neutral-900 rounded-lg mb-2 px-4",
+      filled: "bg-zinc-100 dark:bg-zinc-900 rounded-lg mb-2 px-4",
     },
   },
   defaultVariants: {
