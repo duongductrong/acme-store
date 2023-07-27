@@ -1,12 +1,16 @@
 "use client"
 
+import { getGrantsFromPrivileges } from "@/components/gates/lib/accesscontrol"
 import Link from "@/components/navigations/link"
 import TextLegend from "@/components/typography/text-legend"
 import { Button } from "@/components/ui/button"
-import { getGrantsFromPrivileges } from "@/components/gates/lib/accesscontrol"
+import ListGroup from "@/components/ui/list/list-group"
+import ListItem from "@/components/ui/list/list-item"
+import ListRoot from "@/components/ui/list/list-root"
+import ListSubItem from "@/components/ui/list/list-sub-item"
 import { cn } from "@/lib/utils"
 import { Role } from "@prisma/client"
-import { AccessControl, Permission, Query } from "accesscontrol"
+import { AccessControl, Permission } from "accesscontrol"
 import { omit } from "lodash"
 import { ChevronDown, ChevronsUpDown } from "lucide-react"
 import { usePathname } from "next/navigation"
@@ -42,19 +46,17 @@ const AdminSidebar = ({ className, user, ...props }: AdminSidebarProps) => {
   }
 
   return (
-    <div
+    <ListRoot
       {...props}
       className={cn(
-        "bg-neutral-100 dark:bg-neutral-900",
         "fixed top-0 left-0 min-w-[250px] h-screen border-r border-neutral-200 dark:border-neutral-800",
-        "flex flex-col p-base px-6 gap-base",
         className
       )}
     >
       <BrandSwitcher className="mb-8" />
 
       {ADMIN_SIDEBARS.map((sidebarItem) => (
-        <div key={sidebarItem.id} className="flex flex-col">
+        <ListGroup key={sidebarItem.id}>
           <TextLegend className="mb-base text-neutral-600 dark:!text-neutral-400">
             {sidebarItem.title}
           </TextLegend>
@@ -94,19 +96,7 @@ const AdminSidebar = ({ className, user, ...props }: AdminSidebarProps) => {
 
             return (
               <Fragment key={sidebarChildItemKey}>
-                <Button
-                  // key={sidebarChildItemKey}
-                  variant="ghost"
-                  className={cn(
-                    "justify-start h-9 hover:bg-transparent px-0 relative",
-                    [
-                      isActive
-                        ? "text-foreground font-medium"
-                        : "text-muted-foreground font-normal",
-                    ]
-                  )}
-                  asChild
-                >
+                <ListItem active={isActive} asChild>
                   <Link href={sidebarChildrenItem.link ?? "/"}>
                     {sidebarChildrenItem.Icon && (
                       <sidebarChildrenItem.Icon className="w-4 h-4 mr-base" />
@@ -117,7 +107,7 @@ const AdminSidebar = ({ className, user, ...props }: AdminSidebarProps) => {
                         variant="ghost"
                         size="icon"
                         className={cn(
-                          "absolute top-1/2 right-0 transform -translate-y-1/2",
+                          "absolute top-1/2 right-2 transform -translate-y-1/2",
                           "flex items-center justify-center"
                         )}
                         onClick={(event) =>
@@ -128,9 +118,9 @@ const AdminSidebar = ({ className, user, ...props }: AdminSidebarProps) => {
                       </Button>
                     ) : null}
                   </Link>
-                </Button>
+                </ListItem>
                 {nestedChildItems.length && openNestedChildItemsMenu ? (
-                  <div>
+                  <ListGroup>
                     {nestedChildItems.map((nestedChildItem) => {
                       const isNestedChildItemActive = pathname.includes(
                         nestedChildItem.link
@@ -138,17 +128,9 @@ const AdminSidebar = ({ className, user, ...props }: AdminSidebarProps) => {
                       const nestedChildItemKey = `${sidebarItem.id}_${sidebarChildrenItem.id}_${nestedChildItem.id}`
 
                       return (
-                        <Button
+                        <ListSubItem
                           key={nestedChildItemKey}
-                          variant="ghost"
-                          className={cn(
-                            "justify-start h-9 hover:bg-transparent ml-2 px-0 text-[13px]",
-                            [
-                              isNestedChildItemActive
-                                ? "text-foreground font-medium"
-                                : "text-neutral-600 dark:text-neutral-400 font-normal",
-                            ]
-                          )}
+                          active={isNestedChildItemActive}
                           asChild
                         >
                           <Link href={nestedChildItem.link ?? "/"}>
@@ -157,17 +139,17 @@ const AdminSidebar = ({ className, user, ...props }: AdminSidebarProps) => {
                             )}
                             {nestedChildItem.title}
                           </Link>
-                        </Button>
+                        </ListSubItem>
                       )
                     })}
-                  </div>
+                  </ListGroup>
                 ) : null}
               </Fragment>
             )
           })}
-        </div>
+        </ListGroup>
       ))}
-    </div>
+    </ListRoot>
   )
 }
 

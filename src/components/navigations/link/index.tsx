@@ -1,7 +1,8 @@
 "use client"
 
 import LinkOriginal, { LinkProps as LinkOriginalProps } from "next/link"
-import { AnchorHTMLAttributes, useTransition } from "react"
+import { useRouter } from "next/navigation"
+import { AnchorHTMLAttributes, MouseEvent, useTransition } from "react"
 import { revalidateByCookie } from "./actions"
 
 export interface LinkProps
@@ -11,9 +12,17 @@ export interface LinkProps
     >,
     LinkOriginalProps {
   dynamic?: boolean
+  scroll?: boolean
 }
 
-const Link = ({ href, children, dynamic = false, ...props }: LinkProps) => {
+const Link = ({
+  href,
+  children,
+  dynamic = false,
+  scroll,
+  ...props
+}: LinkProps) => {
+  const router = useRouter()
   const [isPending, startTransition] = useTransition()
 
   const handleRevalidate = () => {
@@ -22,13 +31,19 @@ const Link = ({ href, children, dynamic = false, ...props }: LinkProps) => {
     })
   }
 
-  // if (isPending) return <Loader2 className="w-4 h-4 animate-spin" />
+  const handleNavigation = (event: MouseEvent<HTMLAnchorElement>) => {
+    event.preventDefault()
+
+    startTransition(() => {
+      router.push(href.toString(), scroll ? { scroll } : undefined)
+    })
+  }
 
   return (
     <LinkOriginal
       {...props}
       href={href}
-      onClick={dynamic ? handleRevalidate : () => null}
+      onClick={dynamic ? handleRevalidate : () => handleNavigation}
     >
       {children}
     </LinkOriginal>
