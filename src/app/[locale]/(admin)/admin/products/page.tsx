@@ -1,7 +1,7 @@
 "use client"
 
+import { Link } from "@/components/assistant-router"
 import Gate from "@/components/gates/gate"
-import Link from "@/components/navigations/link"
 import SectionView from "@/components/sections/section-view"
 import StatusPoint from "@/components/status-point"
 import { Button } from "@/components/ui/button"
@@ -174,7 +174,10 @@ const ProductList = (props: ProductListProps) => {
     <SectionView
       title="Products"
       whereTopRight={
-        <Gate privileges={["create", "create:any", "create:own"]} resource="products">
+        <Gate
+          privileges={["create", "create:any", "create:own"]}
+          resource="products"
+        >
           <Button asChild>
             <Link href={ADMIN_URL.PRODUCT.NEW}>
               <Plus className="w-4 h-4 mr-2" />

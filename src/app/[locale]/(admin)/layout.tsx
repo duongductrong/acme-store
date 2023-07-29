@@ -1,3 +1,4 @@
+import AssistantRouterProvider from "@/components/assistant-router/providers/assistant-router-provider"
 import { getGrantsFromPrivileges } from "@/components/gates/lib/accesscontrol"
 import { authOptions } from "@/lib/next-auth"
 import prisma from "@/lib/prisma"
@@ -21,20 +22,25 @@ const AdminLayout = async ({ children }: AdminLayoutProps) => {
     <AdminProvider
       session={currentSession}
       role={currentUserRole?.id as string}
-      grants={getGrantsFromPrivileges(currentUserRole?.privileges, currentUserRole?.id as string)}
+      grants={getGrantsFromPrivileges(
+        currentUserRole?.privileges,
+        currentUserRole?.id as string
+      )}
     >
-      <div className="flex">
-        <AdminSidebar
-          user={{
-            role: currentUserRole?.id as string,
-            privileges: currentUserRole?.privileges,
-          }}
-        />
-        <AdminMainBar>
-          <AdminNavigationBar />
-          <div className="px-6 py-8">{children}</div>
-        </AdminMainBar>
-      </div>
+      <AssistantRouterProvider>
+        <div className="flex">
+          <AdminSidebar
+            user={{
+              role: currentUserRole?.id as string,
+              privileges: currentUserRole?.privileges,
+            }}
+          />
+          <AdminMainBar>
+            <AdminNavigationBar />
+            <div className="px-6 py-8">{children}</div>
+          </AdminMainBar>
+        </div>
+      </AssistantRouterProvider>
     </AdminProvider>
   )
 }

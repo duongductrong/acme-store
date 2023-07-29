@@ -1,7 +1,7 @@
 "use client"
 
+import { Link } from "@/components/assistant-router"
 import { getGrantsFromPrivileges } from "@/components/gates/lib/accesscontrol"
-import Link from "@/components/navigations/link"
 import TextLegend from "@/components/typography/text-legend"
 import { Button } from "@/components/ui/button"
 import ListGroup from "@/components/ui/list/list-group"

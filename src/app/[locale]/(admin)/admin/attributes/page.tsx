@@ -1,6 +1,6 @@
 "use client"
 
-import Link from "@/components/navigations/link"
+import { Link } from "@/components/assistant-router"
 import SectionView from "@/components/sections/section-view"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"

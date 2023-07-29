@@ -1,14 +1,3 @@
-import SSPanel, {
-  SSPanelContent,
-  SSPanelGroup,
-  SSPanelGroupContent,
-  SSPanelGroupItem,
-  SSPanelGroupLegend,
-  SSPanelSidebar,
-  SSPanelTitle,
-} from "@/components/sections/ss-panel"
-import ProductList from "../../products/page"
-import Link from "@/components/navigations/link"
 
 export interface SettingStoreProps {}
 

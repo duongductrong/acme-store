@@ -45,6 +45,7 @@ import {
   SelectValue,
 } from "../select"
 import { getCanNextPageBasedType, getCanPreviousPageBasedType } from "./utils"
+import Spin from "../loadings/spin"
 
 export interface DataTableOffsetPagination {
   type: "offset"
@@ -344,7 +345,7 @@ export const DataTable = ({
                   colSpan={999}
                   className="h-full w-full flex items-center justify-center"
                 >
-                  <Loader className="w-5 h-5 animate-spin mx-auto" />
+                  <Spin className="w-5 h-5 mx-auto" />
                 </TableCell>
               </TableRow>
             )}
