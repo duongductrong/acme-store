@@ -1,7 +1,9 @@
 import AuthProvider from "@/components/auth-provider/auth-provider"
-import NextThemeProvider from "@/components/theme-provider"
 import TrpcProvider from "@/components/trpc-provider"
+import ThemeProvider from "@/components/ui/theme"
+import Body from "@/components/ui/theme/body"
 import { Toaster } from "@/components/ui/toaster"
+import { cn } from "@/lib/utils"
 import { Metadata } from "next"
 import { NextIntlClientProvider, createTranslator } from "next-intl"
 import { Inter } from "next/font/google"
@@ -70,16 +72,16 @@ export default async function RootLayout({
 
   return (
     <html lang={locale} suppressHydrationWarning>
-      <body className={inter.className}>
-        <TrpcProvider>
-          <NextThemeProvider>
+      <ThemeProvider>
+        <Body className={cn(inter.className)}>
+          <TrpcProvider>
             <NextIntlClientProvider locale={locale} messages={directories}>
               <AuthProvider>{children}</AuthProvider>
               <Toaster />
             </NextIntlClientProvider>
-          </NextThemeProvider>
-        </TrpcProvider>
-      </body>
+          </TrpcProvider>
+        </Body>
+      </ThemeProvider>
     </html>
   )
 }

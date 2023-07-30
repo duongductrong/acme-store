@@ -10,6 +10,7 @@ const nextConfig = {
     appDocumentPreloading: true,
     serverActions: true,
   },
+  images: { domains: ["demo.vercel.store"] },
 }
 
 module.exports = withNextIntl(nextConfig)

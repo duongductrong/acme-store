@@ -39,7 +39,7 @@ export const ADMIN_URL = {
     ROLE: {
       LIST: "/admin/settings/roles",
       NEW: "/admin/settings/roles/new",
-      EDIT: "/admin/settings/roles/{id}"
+      EDIT: "/admin/settings/roles/{id}",
     },
     PERMISSION: {
       LIST: "/admin/settings/permissions",
@@ -57,4 +57,9 @@ export const STORE_FRONT_URL = {
   },
 
   HOME: "/",
+
+  PRODUCT: {
+    LIST: "/products",
+    DETAIL: "/products/{id}",
+  },
 }
