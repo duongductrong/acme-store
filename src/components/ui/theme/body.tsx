@@ -6,9 +6,9 @@ import { HTMLAttributes } from "react"
 
 export interface BodyProps extends HTMLAttributes<HTMLBodyElement> {}
 
-const REGEX_ADMIN_PATTERN = /^\/admin\/*/g
-
 const Body = ({ className, ...props }: BodyProps) => {
+  const REGEX_ADMIN_PATTERN = /^(\/admin\/)(.+)/g
+
   const pathname = usePathname()
 
   const isAdmin = REGEX_ADMIN_PATTERN.test(pathname)
