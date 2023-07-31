@@ -10,6 +10,7 @@ import { forwardRef } from "react"
 export interface FormRadioGroupItem {
   label: string
   value: any
+  disabled?: boolean
 }
 
 export interface FormRadioGroupDefaultVariant {
@@ -59,6 +60,7 @@ const FormRadioGroup = forwardRef<HTMLDivElement, FormRadioGroupProps>(
                 key={item.value}
                 value={item.value}
                 className={isChipVariantStyle ? "hidden" : undefined}
+                disabled={item?.disabled}
               />
               <Label htmlFor={inputId}>
                 {isChipVariantStyle ? (
@@ -66,6 +68,7 @@ const FormRadioGroup = forwardRef<HTMLDivElement, FormRadioGroupProps>(
                     variant="outline"
                     size={customStyle.size}
                     active={item.value === props.value}
+                    disabled={item?.disabled}
                   >
                     {item.label}
                   </Chip>

@@ -50,6 +50,7 @@ const ProductDetail = (props: ProductDetailProps) => {
                 {
                   label: "Green",
                   value: "1",
+                  disabled: true,
                 },
                 {
                   label: "Red",

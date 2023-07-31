@@ -4,6 +4,7 @@ import { HTMLAttributes } from "react"
 
 const chipVariants = cva(
   cn(
+    "relative overflow-hidden",
     "inline-flex items-center justify-center",
     "rounded-full text-sm font-medium ring-offset-background transition-colors",
     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
@@ -25,10 +26,19 @@ const chipVariants = cva(
       active: {
         true: "border-primary",
       },
+      disabled: {
+        true: cn(
+          "after:absolute after:w-full after:h-[2px] after:bg-foreground/30",
+          "after:transform after:-rotate-12",
+          "pointer-events-none opacity-80 select-none",
+          "text-foreground/80"
+        ),
+      },
     },
     defaultVariants: {
       variant: "default",
       size: "default",
+      disabled: false,
     },
   }
 )
@@ -37,11 +47,20 @@ export interface ChipProps
   extends HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof chipVariants> {}
 
-const Chip = ({ className, size, variant, active, ...props }: ChipProps) => {
+const Chip = ({
+  className,
+  size,
+  variant,
+  active,
+  disabled,
+  ...props
+}: ChipProps) => {
   return (
     <div
       {...props}
-      className={cn(chipVariants({ variant, size, active, className }))}
+      className={cn(
+        chipVariants({ variant, size, active, disabled, className })
+      )}
     />
   )
 }
