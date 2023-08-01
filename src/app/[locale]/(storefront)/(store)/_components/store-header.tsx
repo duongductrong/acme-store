@@ -8,7 +8,7 @@ export interface StoreHeaderProps {}
 const StoreHeader = (props: StoreHeaderProps) => {
   return (
     <div className="py-4 px-6 flex items-center justify-between gap-6">
-      <div className="flex gap-6">
+      <div className="flex items-center gap-6">
         <StoreHeaderLogo />
         <StoreHeaderCatalog />
       </div>

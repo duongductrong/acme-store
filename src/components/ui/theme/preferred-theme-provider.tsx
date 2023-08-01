@@ -3,11 +3,11 @@
 import { ThemeProvider as NextThemeProvider } from "next-themes"
 import { ReactNode } from "react"
 
-export interface ThemeProviderProps {
+export interface PreferredThemeProviderProps {
   children?: ReactNode
 }
 
-const ThemeProvider = ({ children, ...props }: ThemeProviderProps) => {
+const PreferredThemeProvider = ({ children, ...props }: PreferredThemeProviderProps) => {
   return (
     <NextThemeProvider
       {...props}
@@ -20,4 +20,4 @@ const ThemeProvider = ({ children, ...props }: ThemeProviderProps) => {
   )
 }
 
-export default ThemeProvider
+export default PreferredThemeProvider

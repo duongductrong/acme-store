@@ -1,7 +1,8 @@
 import AuthProvider from "@/components/auth-provider/auth-provider"
 import TrpcProvider from "@/components/trpc-provider"
-import ThemeProvider from "@/components/ui/theme"
-import Body from "@/components/ui/theme/body"
+import PreferredBody from "@/components/ui/theme/preferred-body"
+import PreferredHTML from "@/components/ui/theme/preferred-html"
+import PreferredThemeProvider from "@/components/ui/theme/preferred-theme-provider"
 import { Toaster } from "@/components/ui/toaster"
 import { cn } from "@/lib/utils"
 import { Metadata } from "next"
@@ -71,17 +72,22 @@ export default async function RootLayout({
   const directories = await getDirectories(locale)
 
   return (
-    <html lang={locale} suppressHydrationWarning>
-      <ThemeProvider>
-        <Body className={cn(inter.className)}>
+    <PreferredHTML lang={locale}>
+      <PreferredBody
+        ifRegexMatch={"^(/admin/)(.+)"}
+        then={{ className: "" }}
+        otherwise={{ className: "storefront" }}
+        className={cn(inter.className)}
+      >
+        <PreferredThemeProvider>
           <TrpcProvider>
             <NextIntlClientProvider locale={locale} messages={directories}>
               <AuthProvider>{children}</AuthProvider>
               <Toaster />
             </NextIntlClientProvider>
           </TrpcProvider>
-        </Body>
-      </ThemeProvider>
-    </html>
+        </PreferredThemeProvider>
+      </PreferredBody>
+    </PreferredHTML>
   )
 }

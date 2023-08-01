@@ -46,7 +46,7 @@ const AuthLayout = ({ children }: AuthLayoutProps) => {
           {currentCtaContent?.title}
         </Link>
         <div className="relative h-full hidden lg:flex flex-col bg-muted p-10 text-white dark:border-r">
-          <div className="absolute inset-0 bg-zinc-900" />
+          <div className="absolute inset-0 bg-zinc-800" />
           <div className="relative z-20 flex items-center text-lg font-medium">
             <Command className="mr-2 h-6 w-6" /> {t("TITLE")}
           </div>

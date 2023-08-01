@@ -1,11 +1,11 @@
 "use client"
 
+import CartProductCard from "@/components/carts/cart-product-card"
 import { Button } from "@/components/ui/button"
 import {
   Sheet,
   SheetClose,
   SheetContent,
-  SheetDescription,
   SheetFooter,
   SheetHeader,
   SheetTitle,
@@ -19,20 +19,23 @@ const StoreHeaderCart = (props: StoreHeaderCartProps) => {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="outline" size="sm">
+        <Button variant="outline" size="sm" className="h-10">
           <ShoppingBag className="w-4 h-4" />
         </Button>
       </SheetTrigger>
-      <SheetContent className="h-screen">
+      <SheetContent className="flex flex-col h-screen">
         <SheetHeader>
           <SheetTitle>My cart</SheetTitle>
-          {/* <SheetDescription>
-            Make changes to your profile here. Click save when you're done.
-          </SheetDescription> */}
         </SheetHeader>
-        <div className="grid gap-4 py-4"></div>
-        <SheetFooter>
-          <SheetClose className="w-full" asChild>
+        <div className="grid gap-4 py-4">
+          <CartProductCard />
+          <CartProductCard />
+          <CartProductCard />
+          <CartProductCard />
+          <CartProductCard />
+        </div>
+        <SheetFooter className="mt-auto">
+          <SheetClose className="w-full mt-auto" asChild>
             <Button type="submit" rounded="full">
               Proceed to Checkout
             </Button>
