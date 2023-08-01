@@ -18,13 +18,13 @@ const Link = ({
   scroll,
   ...props
 }: LinkProps) => {
-  const { navigate, dynamicNavigate } = useAssistantNavigation()
+  const { push, dynamicNavigate } = useAssistantNavigation()
 
   return (
     <NextLink
       {...props}
       href={href}
-      onClick={dynamic ? (dynamicNavigate as any) : (event) => navigate(event)}
+      onClick={dynamic ? (dynamicNavigate as any) : (event) => push(event)}
     >
       {children}
     </NextLink>

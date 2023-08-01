@@ -1,14 +1,34 @@
 "use client"
 
-import { NavigateOptions } from "next/dist/shared/lib/app-router-context"
+import {
+  AppRouterInstance,
+  NavigateOptions,
+} from "next/dist/shared/lib/app-router-context"
 import { useRouter } from "next/navigation"
 import { MouseEvent } from "react"
 import { revalidateByCookie } from "../actions"
 import { useAssistantRouter } from "./use-assistant-router"
 
-export interface Navigation {}
+export interface AssistantNavigationInstance {
+  push: (
+    event: MouseEvent<HTMLAnchorElement> | string,
+    scroll?: boolean
+  ) => void
 
-export const useAssistantNavigation = () => {
+  refresh: () => void
+
+  prefetch: AppRouterInstance["prefetch"]
+
+  back: AppRouterInstance["back"]
+
+  forward: AppRouterInstance["forward"]
+
+  replace: AppRouterInstance["replace"]
+
+  dynamicNavigate: (href: string, options?: NavigateOptions) => void
+}
+
+export const useAssistantNavigation = (): AssistantNavigationInstance => {
   const router = useRouter()
   const { startNavigation } = useAssistantRouter()
 
@@ -31,6 +51,36 @@ export const useAssistantNavigation = () => {
     })
   }
 
+  const handleRefresh = () => {
+    startNavigation(() => {
+      router.refresh()
+    })
+  }
+
+  const handlePrefetch: AppRouterInstance["prefetch"] = (...args) => {
+    startNavigation(() => {
+      router.prefetch(...args)
+    })
+  }
+
+  const handleBack: AppRouterInstance["back"] = (...args) => {
+    startNavigation(() => {
+      router.back(...args)
+    })
+  }
+
+  const handleForward: AppRouterInstance["forward"] = (...args) => {
+    startNavigation(() => {
+      router.forward(...args)
+    })
+  }
+
+  const handleReplace: AppRouterInstance["replace"] = (...args) => {
+    startNavigation(() => {
+      router.replace(...args)
+    })
+  }
+
   const handleDynamicNavigate = (href: string, options?: NavigateOptions) => {
     startNavigation(() => {
       revalidateByCookie()
@@ -40,7 +90,12 @@ export const useAssistantNavigation = () => {
   }
 
   return {
-    navigate: handleNavigation,
+    push: handleNavigation,
+    refresh: handleRefresh,
+    prefetch: handlePrefetch,
+    back: handleBack,
+    forward: handleForward,
+    replace: handleReplace,
     dynamicNavigate: handleDynamicNavigate,
   }
 }
