@@ -1,4 +1,4 @@
-# Nex ECommerce
+# Acme Store
 ![Image](public/ecommerce.png)
 
 ## Tech Stack
