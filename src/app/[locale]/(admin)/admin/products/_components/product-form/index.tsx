@@ -18,8 +18,6 @@ import ProductCategoryField from "./product-category-field"
 import ProductCollectionField from "./product-collection-field"
 import ProductAttributeGroup from "./product-attribute-group"
 import { useRouter } from "next/navigation"
-import { Table } from "@/components/ui/table"
-import { DataTable } from "@/components/ui/data-table"
 import ProductVariantTable from "./product-variant-table"
 
 export interface ProductFormProps {

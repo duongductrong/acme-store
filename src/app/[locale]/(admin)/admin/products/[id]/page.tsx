@@ -25,7 +25,7 @@ const EditProduct = ({ params: { id } }: EditProductProps) => {
   })
 
   const { mutate: updateProduct, error } = trpc.product.update.useMutation({
-    onSuccess(data) {
+    onSuccess() {
       t.toast({
         title: "Success",
         description: "Updated a product successfully",

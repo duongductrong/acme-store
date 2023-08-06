@@ -276,7 +276,6 @@ export const productRouter = router({
               }
 
             if (currentProductVariant.id) {
-              console.log(omit(productVariantData, ["productId"]))
               return prisma.productVariant.update({
                 data: omit(productVariantData, ["productId"]),
                 where: {

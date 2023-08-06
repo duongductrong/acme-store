@@ -27,8 +27,6 @@ const PreferredBody = ({
 
   const isMatchedRegex = REGEX_PATTERN.test(pathname)
 
-  console.log(isMatchedRegex)
-
   return (
     <body
       {...props}

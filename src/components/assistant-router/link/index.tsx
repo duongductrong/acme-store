@@ -24,7 +24,7 @@ const Link = ({
     <NextLink
       {...props}
       href={href}
-      onClick={dynamic ? (dynamicNavigate as any) : (event) => push(event)}
+      onClick={dynamic ? () => (dynamicNavigate as any)(href) : (event) => push(event)}
     >
       {children}
     </NextLink>
