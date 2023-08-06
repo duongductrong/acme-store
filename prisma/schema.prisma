@@ -42,6 +42,8 @@ model Product {
   attributeGroup   ProductAttributeGroup? @relation(fields: [attributeGroupId], references: [id])
   attributeGroupId String?                @db.VarChar(25)
 
+  variants ProductVariant[]
+
   @@map("products")
 }
 
@@ -151,8 +153,8 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  role   Role @relation(fields: [roleId], references: [id])
-  roleId String    @db.VarChar(25)
+  role   Role   @relation(fields: [roleId], references: [id])
+  roleId String @db.VarChar(25)
 
   @@index([id, code])
   @@map("users")
@@ -236,12 +238,12 @@ model OrderProduct {
 }
 
 model ProductAttribute {
-  id        String               @id @default(cuid()) @db.VarChar(25)
+  id        String                   @id @default(cuid()) @db.VarChar(25)
   name      String
-  code      String               @unique
-  type      ProductAttributeType @default(Select)
-  options   Json?                @db.Json
-  sortOrder Int                  @db.Int
+  code      String                   @unique
+  type      ProductAttributeType     @default(Select)
+  options   ProductAttributeOption[]
+  sortOrder Int                      @db.Int
 
   isRequired       Boolean @default(true)
   isFilterable     Boolean @default(true)
@@ -253,6 +255,20 @@ model ProductAttribute {
   groups ProductAttributesOnGroups[]
 
   @@map("product_attributes")
+}
+
+model ProductAttributeOption {
+  id String @id @default(cuid()) @db.VarChar(25)
+
+  name String
+  code String
+
+  attribute   ProductAttribute @relation(fields: [attributeId], references: [id])
+  attributeId String           @db.VarChar(25)
+
+  productVariantAttributes ProductVariantAttribute[]
+
+  @@map("product_attribute_options")
 }
 
 model ProductAttributeGroup {
@@ -289,7 +305,31 @@ enum ProductAttributeType {
 model ProductVariant {
   id String @id @default(cuid()) @db.VarChar(25)
 
+  photo             String?
+  quantity          Int     @default(0)
+  SKU               String  @unique
+  stockAvailability Boolean @default(true)
+  visible           Boolean @default(true)
+  price             Float   @db.Double
+
+  productId String  @db.VarChar(25)
+  product   Product @relation(fields: [productId], references: [id])
+
+  attributes ProductVariantAttribute[]
+
   @@map("product_variants")
+}
+
+model ProductVariantAttribute {
+  id String @id @default(cuid()) @db.VarChar(25)
+
+  productVariantId String
+  productVariant   ProductVariant @relation(fields: [productVariantId], references: [id])
+
+  productAttributeOptionId String
+  productAttributeOption   ProductAttributeOption @relation(fields: [productAttributeOptionId], references: [id])
+
+  @@map("product_variant_attributes")
 }
 
 model Role {
@@ -299,7 +339,7 @@ model Role {
   description String?
 
   privileges Json?  @db.Json
-  users    User[]
+  users      User[]
 
   @@map("roles")
 }

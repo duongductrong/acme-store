@@ -1,6 +1,7 @@
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
+import { VariantProps, cva } from "class-variance-authority"
 
 const Table = React.forwardRef<
   HTMLTableElement,
@@ -52,16 +53,28 @@ const TableFooter = React.forwardRef<
 ))
 TableFooter.displayName = "TableFooter"
 
+export const tableRowVariants = cva(
+  "border-b transition-colors hover:bg-muted/50 ",
+  {
+    variants: {
+      enableSelectedStyle: {
+        true: "data-[state=selected]:bg-muted",
+      },
+    },
+    defaultVariants: {
+      enableSelectedStyle: true,
+    },
+  }
+)
+
 const TableRow = React.forwardRef<
   HTMLTableRowElement,
-  React.HTMLAttributes<HTMLTableRowElement>
->(({ className, ...props }, ref) => (
+  React.HTMLAttributes<HTMLTableRowElement> &
+    VariantProps<typeof tableRowVariants>
+>(({ className, enableSelectedStyle, ...props }, ref) => (
   <tr
     ref={ref}
-    className={cn(
-      "border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted",
-      className
-    )}
+    className={cn(tableRowVariants({ enableSelectedStyle, className }))}
     {...props}
   />
 ))

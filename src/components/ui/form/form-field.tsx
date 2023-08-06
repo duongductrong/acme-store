@@ -19,6 +19,7 @@ import FormItem from "./form-item"
 import FormLabel from "./form-label"
 import FormMessage from "./form-message"
 import { Asterisk } from "lucide-react"
+import { FormNumberProps } from "./components/form-number"
 
 const FormInput = dynamic(() => import("./components/form-input"), {
   ssr: true,
@@ -87,7 +88,8 @@ export interface FormFieldSelectInfiniteVariantProps
 }
 
 export interface FormFieldNumberVariantProps
-  extends Omit<FormFieldTextVariantProps, "variant"> {
+  extends Omit<FormFieldTextVariantProps, "variant">,
+    FormNumberProps {
   variant: "NUMBER"
 }
 

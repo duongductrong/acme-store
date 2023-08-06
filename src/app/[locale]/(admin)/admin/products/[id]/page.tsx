@@ -25,7 +25,7 @@ const EditProduct = ({ params: { id } }: EditProductProps) => {
   })
 
   const { mutate: updateProduct, error } = trpc.product.update.useMutation({
-    onSuccess() {
+    onSuccess(data) {
       t.toast({
         title: "Success",
         description: "Updated a product successfully",
@@ -36,6 +36,9 @@ const EditProduct = ({ params: { id } }: EditProductProps) => {
       // Invalidate queries
       trpcUtils.product.list.invalidate()
       trpcUtils.product.detail.invalidate()
+
+      trpcUtils.attributeGroup.detail.invalidate()
+      trpcUtils.attributeGroup.invalidate()
     },
     onError() {
       t.toast({
@@ -48,11 +51,24 @@ const EditProduct = ({ params: { id } }: EditProductProps) => {
 
   if (!product) return <Loader2 className="w-4 h-4 animate-spin" />
 
+  const defaultValues = {
+    ...product,
+    variants: product.variants.map((pVariant) => {
+      const _attributes = pVariant.attributes
+        .map((pVariantAttribute) => pVariantAttribute.productAttributeOption)
+        .flat(1)
+
+      return { ...pVariant, attributes: _attributes }
+    }),
+  } as ProductSchemaType
+
   return (
     <ProductForm
       title="Edit a product"
-      defaultValues={product as any as ProductSchemaType}
-      onSubmit={(data) => updateProduct(data as Required<ProductSchemaType>)}
+      defaultValues={defaultValues}
+      onSubmit={(data) => {
+        updateProduct(data as Required<ProductSchemaType>)
+      }}
       error={error}
     />
   )

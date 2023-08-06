@@ -1,16 +1,20 @@
-import prisma from "@/lib/prisma"
+import { router, shieldedProcedure } from "@/app/(trpc)/bootstrap/trpc"
 import { inputQueryFilterSchema } from "@/app/(trpc)/lib/trpc/schemas"
-import { shieldedProcedure, router } from "@/app/(trpc)/bootstrap/trpc"
 import {
   trpcHandleQueryFilterPagination,
   trpcOutputQueryWithPagination,
 } from "@/app/(trpc)/lib/trpc/utils"
+import { VALIDATION_MESSAGES } from "@/constant/messages"
+import { RESOURCE_KEYS } from "@/constant/resources"
+import prisma from "@/lib/prisma"
 import { attributeSchema } from "@/schemas/attribute"
-import { Prisma, ProductAttributeType } from "@prisma/client"
+import {
+  Prisma,
+  ProductAttributeOption,
+  ProductAttributeType,
+} from "@prisma/client"
 import difference from "lodash/difference"
 import { z } from "zod"
-import { RESOURCE_KEYS } from "@/constant/resources"
-import { VALIDATION_MESSAGES } from "@/constant/messages"
 
 export const attributeShieldedProcedure = shieldedProcedure({
   resource: RESOURCE_KEYS.ATTRIBUTE,
@@ -62,18 +66,16 @@ export const attributeRouter = router({
     .query(async ({ input: id }) => {
       const attribute = await prisma.productAttribute.findFirst({
         where: { id },
-        include: { groups: true },
+        include: { groups: true, options: true },
       })
 
-      return Object.assign(
-        {
-          groupIds:
-            attribute?.groups.map(
-              (attrGroup) => attrGroup.productAttributeGroupId
-            ) ?? [],
-        },
-        attribute
-      )
+      return {
+        groupIds:
+          attribute?.groups.map(
+            (attrGroup) => attrGroup.productAttributeGroupId
+          ) ?? [],
+        ...attribute,
+      }
     }),
 
   // groups: attributeShieldedProcedure
@@ -115,7 +117,14 @@ export const attributeRouter = router({
         data: {
           name: input.name,
           code: input.code,
-          options: input.options as any,
+          options: {
+            createMany: {
+              data: input.options.map((option) => ({
+                code: option?.code as string,
+                name: option?.name as string,
+              })),
+            },
+          },
           sortOrder: 1,
           type: input.type as ProductAttributeType,
           isFilterable: input.isFilterable,
@@ -164,7 +173,6 @@ export const attributeRouter = router({
         data: {
           name: input.name,
           code: input.code,
-          options: input.options as any,
           sortOrder: 1,
           type: input.type as ProductAttributeType,
           isFilterable: input.isFilterable,
@@ -172,6 +180,45 @@ export const attributeRouter = router({
           isShowToCustomer: input.isShowToCustomer,
         },
       })
+
+      const attrOptionsUpdateOrCreates = input.options.reduce(
+        (group, option) => {
+          if (option?.id || option?.attributeId)
+            group.updates.push({
+              id: option.id as string,
+              code: option?.code as string,
+              name: option?.name as string,
+            })
+          else
+            group.creates.push({
+              code: option?.code as string,
+              name: option?.name as string,
+              attributeId: updatedAttribute.id,
+            })
+          return group
+        },
+        { creates: [], updates: [] } as {
+          creates: Omit<ProductAttributeOption, "id">[]
+          updates: Omit<ProductAttributeOption, "attributeId">[]
+        }
+      )
+
+      console.log(attrOptionsUpdateOrCreates)
+
+      // Update product attribute options (creates or updates)
+      await prisma.$transaction([
+        prisma.productAttributeOption.createMany({
+          data: attrOptionsUpdateOrCreates.creates,
+        }),
+        ...attrOptionsUpdateOrCreates.updates.map((option) =>
+          prisma.productAttributeOption.update({
+            where: {
+              id: option.id,
+            },
+            data: option,
+          })
+        ),
+      ])
 
       if (input.groupIds?.length) {
         const requestGroupIds = input.groupIds
@@ -214,11 +261,18 @@ export const attributeRouter = router({
     .input(z.string())
     .mutation(async ({ input: id }) => {
       // Delete relationships
-      await prisma.productAttributesOnGroups.deleteMany({
-        where: {
-          productAttributeId: id,
-        },
-      })
+      await prisma.$transaction([
+        prisma.productAttributesOnGroups.deleteMany({
+          where: {
+            productAttributeId: id,
+          },
+        }),
+        prisma.productAttributeOption.deleteMany({
+          where: {
+            attributeId: id,
+          },
+        }),
+      ])
 
       return prisma.productAttribute.delete({
         where: { id },

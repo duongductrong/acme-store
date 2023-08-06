@@ -9,11 +9,11 @@ import { ChevronDown, ChevronUp } from "lucide-react"
 import "./form-number.scss"
 
 export interface FormNumberProps extends InputProps {
-  toFixed: number
+  toFixed?: number
 }
 
 const FormNumber = forwardRef<HTMLInputElement, FormNumberProps>(
-  ({ toFixed, ...props }, ref) => {
+  ({ toFixed = 0, ...props }, ref) => {
     const { onChange, step = 1, value = 0, min, max } = props
     const handleUp = () => {
       if (onChange) {
@@ -24,9 +24,8 @@ const FormNumber = forwardRef<HTMLInputElement, FormNumberProps>(
             : Number(max)
           : // continue minus value
             Number(value) + Number(step)
-        const fixedValueIf =
-          newValue % 1 === 0 ? newValue : newValue.toFixed(toFixed || 1)
-        onChange(fixedValueIf as any)
+        const fixedValue = Number(newValue.toFixed(toFixed || 0))
+        onChange(fixedValue as any)
       }
     }
 
@@ -39,9 +38,8 @@ const FormNumber = forwardRef<HTMLInputElement, FormNumberProps>(
             : Number(min)
           : // continue minus value
             Number(value) - Number(step)
-        const fixedValueIf =
-          newValue % 1 === 0 ? newValue : newValue.toFixed(toFixed || 1)
-        onChange(fixedValueIf as any)
+        const fixedValue = Number(newValue.toFixed(toFixed || 0))
+        onChange(fixedValue as any)
       }
     }
 

@@ -1,5 +1,5 @@
-import { inputQueryFilterSchema } from "@/app/(trpc)/lib/trpc/schemas"
 import { router, shieldedProcedure } from "@/app/(trpc)/bootstrap/trpc"
+import { inputQueryFilterSchema } from "@/app/(trpc)/lib/trpc/schemas"
 import {
   trpcHandleQueryFilterPagination,
   trpcOutputQueryWithPagination,
@@ -7,8 +7,9 @@ import {
 import { VALIDATION_MESSAGES } from "@/constant/messages"
 import { RESOURCE_KEYS } from "@/constant/resources"
 import prisma from "@/lib/prisma"
-import { productSchema } from "@/schemas/product"
+import { ProductSchemaType, productSchema } from "@/schemas/product"
 import { Prisma, ProductVisibility, Status } from "@prisma/client"
+import { omit } from "lodash"
 import { z } from "zod"
 
 export const productShieldedProcedure = shieldedProcedure({
@@ -63,10 +64,21 @@ export const productRouter = router({
         ),
       })
     )
-    .query(({ input }) => {
+    .query(async ({ input }) => {
       return prisma.product.findFirst({
         where: { id: input.id },
-        include: input.includes,
+        include: {
+          ...input.includes,
+          variants: {
+            include: {
+              attributes: {
+                include: {
+                  productAttributeOption: true,
+                },
+              },
+            },
+          },
+        },
       })
     }),
 
@@ -111,18 +123,69 @@ export const productRouter = router({
 
       // run create product metadata in background
       setTimeout(async () => {
-        await prisma.productMetadata.create({
-          data: {
-            metaTitle: input.metadata.metaTitle,
-            metaDescription: input.metadata.metaDescription,
-            metaKeyword: input.metadata.metaKeyword,
-            Product: {
-              connect: {
-                id: productCreated.id,
+        await prisma.$transaction(async (prismaAsyncTransaction) => {
+          // Create metadata for seo
+          await prismaAsyncTransaction.productMetadata.create({
+            data: {
+              metaTitle: input.metadata.metaTitle,
+              metaDescription: input.metadata.metaDescription,
+              metaKeyword: input.metadata.metaKeyword,
+              Product: {
+                connect: {
+                  id: productCreated.id,
+                },
               },
             },
-          },
+          })
         })
+
+        // Make object attributes request from SKU
+        const objectVariantAttributesReq = input.variants.reduce(
+          (totalVariants, variant) => ({
+            ...totalVariants,
+            [variant.SKU]: variant.attributes,
+          }),
+          {} as Record<string, ProductSchemaType["variants"][0]["attributes"]>
+        )
+
+        // Create product variants with many attributes of the variant
+        prisma
+          .$transaction(
+            input.variants.map((productVariantReq) => {
+              const createVariantData = {
+                SKU: productVariantReq.SKU,
+                photo: productVariantReq.photo,
+                price: productVariantReq.price,
+                visible: productVariantReq.visible,
+                quantity: productVariantReq.quantity,
+                productId: productCreated.id,
+                stockAvailability: productVariantReq.stockAvailability,
+              }
+
+              return prisma.productVariant.create({
+                data: {
+                  ...createVariantData,
+                },
+              })
+            })
+          )
+          .then(async (productVariantCreatedResults) => {
+            await prisma.$transaction(
+              productVariantCreatedResults.map((productVariantResultItem) => {
+                const attributes =
+                  objectVariantAttributesReq[productVariantResultItem.SKU]
+
+                return prisma.productVariantAttribute.createMany({
+                  data: attributes.map((attributeReq) => {
+                    return {
+                      productAttributeOptionId: attributeReq.id,
+                      productVariantId: productVariantResultItem.id,
+                    }
+                  }),
+                })
+              })
+            )
+          })
       })
 
       return productCreated
@@ -166,7 +229,6 @@ export const productRouter = router({
         })
     )
     .mutation(async ({ input }) => {
-      console.log(input)
       const productUpdated = await prisma.product.update({
         data: {
           title: input.title,
@@ -187,6 +249,7 @@ export const productRouter = router({
       })
 
       setTimeout(async () => {
+        // Handling product meta SEO
         await prisma.productMetadata.update({
           where: {
             id: productUpdated.metadataId as string,
@@ -197,6 +260,36 @@ export const productRouter = router({
             metaKeyword: input.metadata.metaKeyword,
           },
         })
+
+        // Handling product variants
+        await prisma.$transaction(
+          input.variants.map((currentProductVariant) => {
+            const productVariantData: Prisma.ProductVariantCreateArgs["data"] =
+              {
+                productId: productUpdated.id,
+                SKU: currentProductVariant.SKU,
+                price: currentProductVariant.price,
+                photo: currentProductVariant.photo,
+                visible: currentProductVariant.visible,
+                quantity: currentProductVariant.quantity,
+                stockAvailability: currentProductVariant.stockAvailability,
+              }
+
+            if (currentProductVariant.id) {
+              console.log(omit(productVariantData, ["productId"]))
+              return prisma.productVariant.update({
+                data: omit(productVariantData, ["productId"]),
+                where: {
+                  id: currentProductVariant.id,
+                },
+              })
+            }
+
+            return prisma.productVariant.create({
+              data: productVariantData,
+            })
+          })
+        )
       })
 
       return productUpdated

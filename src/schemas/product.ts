@@ -46,6 +46,31 @@ export const productSchema = z.object({
     (value) => (typeof value === "string" && value === "yes") || !!value,
     z.boolean()
   ),
+  variants: z.array(
+    z.object({
+      id: z.string().nullish(),
+      photo: z.string().nullish(),
+      SKU: z.string(),
+      attributes: z.array(
+        z.object({
+          id: z.string(),
+          attributeId: z.string(),
+          name: z.string().optional(),
+          code: z.string().optional(),
+        })
+      ),
+      price: z.preprocess((value) => Number(value), z.number().default(0.0)),
+      quantity: z.number().default(0),
+      stockAvailability: z.preprocess(
+        (value) => (typeof value === "string" && value === "yes") || !!value,
+        z.boolean()
+      ),
+      visible: z.preprocess(
+        (value) => (typeof value === "string" && value === "yes") || !!value,
+        z.boolean()
+      ),
+    })
+  ),
   quantity: z.preprocess((v) => Number(v), z.number().positive()),
   metadata: z.object({
     metaTitle: z

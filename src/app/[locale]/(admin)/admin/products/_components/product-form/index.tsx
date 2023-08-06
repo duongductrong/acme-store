@@ -18,6 +18,9 @@ import ProductCategoryField from "./product-category-field"
 import ProductCollectionField from "./product-collection-field"
 import ProductAttributeGroup from "./product-attribute-group"
 import { useRouter } from "next/navigation"
+import { Table } from "@/components/ui/table"
+import { DataTable } from "@/components/ui/data-table"
+import ProductVariantTable from "./product-variant-table"
 
 export interface ProductFormProps {
   title: string
@@ -41,6 +44,7 @@ const ProductForm = ({
       status: Status.Enabled,
       visibility: ProductVisibility.Visible,
       stockAvailability: true,
+      variants: [],
       ...defaultValues,
     },
   })
@@ -227,6 +231,10 @@ const ProductForm = ({
                 <ProductAttributeGroup />
               </SectionPaper>
             </div>
+
+            <SectionPaper className="col-span-12" title="Variants">
+              <ProductVariantTable />
+            </SectionPaper>
           </div>
         </SectionDetail>
       </form>

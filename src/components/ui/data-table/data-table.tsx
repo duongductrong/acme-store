@@ -2,8 +2,11 @@
 "use client"
 
 import {
+  CellContext,
   ColumnDef,
   ColumnFiltersState,
+  HeaderContext,
+  Row,
   SortingState,
   VisibilityState,
   flexRender,
@@ -32,11 +35,11 @@ import {
   ChevronRight,
   ChevronsLeft,
   ChevronsRight,
-  Loader,
   LucideIcon,
   PackageSearch,
   Plus,
 } from "lucide-react"
+import Spin from "../loadings/spin"
 import {
   Select,
   SelectContent,
@@ -45,7 +48,7 @@ import {
   SelectValue,
 } from "../select"
 import { getCanNextPageBasedType, getCanPreviousPageBasedType } from "./utils"
-import Spin from "../loadings/spin"
+import { Checkbox } from "../checkbox"
 
 export interface DataTableOffsetPagination {
   type: "offset"
@@ -72,22 +75,34 @@ export type DataTablePagination =
   | DataTableSelfPagination
 
 export interface DataTableProps<TData = any, TValue = any> {
-  columns: ColumnDef<TData, TValue>[]
   data: TData[]
+  columns: ColumnDef<TData, TValue>[]
 
   searchable?: boolean
   searchPlaceholder?: string
 
   rows?: number[]
+
+  emptyIcon?: LucideIcon
+  emptyContent?: string
+
+  createNewEntryText?: string
+
+  pagination?: DataTablePagination
+
+  defaultRowSelection?: { [k: string]: any }
+  defaultColumnVisibility?: VisibilityState
+
   loading?: boolean
+  enableCreateNewEntry?: boolean
+  enableEmpty?: boolean
+  enableRowSelection?: boolean
+  enableRowSelectionStyle?: boolean
+  enableHiding?: boolean
 
   onCreateNewEntry?: () => void
-  createNewEntryEnable?: boolean
-  createNewEntryText?: string
-  emptyContent?: string
-  emptyIcon?: LucideIcon
-  emptyEnable?: boolean
-  pagination?: DataTablePagination
+  onRowSelection?: (data: { [k: string]: any }) => void
+  onRowClicked?: (data: Row<any>) => void
 }
 
 export const DataTable = ({
@@ -97,13 +112,22 @@ export const DataTable = ({
   searchable,
   pagination,
   searchPlaceholder,
-  emptyEnable = true,
+  defaultRowSelection,
+  defaultColumnVisibility,
   rows = [10, 20, 30, 50, 100],
-  emptyContent = "No results found.",
   emptyIcon: EmptyIcon = PackageSearch,
-  createNewEntryEnable = true,
+  emptyContent = "No results found.",
   createNewEntryText = "Create new entry",
+
+  enableEmpty = true,
+  enableRowSelection = false,
+  enableRowSelectionStyle = false,
+  enableCreateNewEntry = true,
+  enableHiding = true,
+
   onCreateNewEntry,
+  onRowSelection,
+  onRowClicked,
 }: DataTableProps) => {
   const isManualPaginationOrSorting =
     !!pagination?.type && pagination.type !== "self"
@@ -119,8 +143,8 @@ export const DataTable = ({
     []
   )
   const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({})
-  const [rowSelection, setRowSelection] = React.useState({})
+    React.useState<VisibilityState>(defaultColumnVisibility ?? {})
+  const [rowSelection, setRowSelection] = React.useState(defaultRowSelection)
 
   const manualOffsetPagination =
     pagination?.type === "offset"
@@ -139,9 +163,33 @@ export const DataTable = ({
         }
       : undefined
 
+  const ROW_SELECTION_DATA = {
+    columns: {
+      accessorKey: `select-${cid}`,
+      header: ({ table }: HeaderContext<unknown, any>) => (
+        <input
+          type="checkbox"
+          checked={table.getIsAllRowsSelected()}
+          onChange={table.getToggleAllRowsSelectedHandler()}
+        />
+      ),
+      cell: ({ row }: CellContext<unknown, any>) => (
+        <input
+          type="checkbox"
+          checked={row.getIsSelected()}
+          onChange={row.getToggleSelectedHandler()}
+        />
+      ),
+    },
+  }
+
+  const columnDefReactTable = enableRowSelection
+    ? [ROW_SELECTION_DATA.columns, ...columns]
+    : columns
+
   const table = useReactTable({
     data,
-    columns,
+    columns: columnDefReactTable,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
@@ -172,6 +220,9 @@ export const DataTable = ({
 
     manualPagination: isManualPaginationOrSorting,
     manualSorting: isManualPaginationOrSorting,
+
+    enableHiding,
+    enableRowSelection,
   })
 
   const pageCount =
@@ -262,20 +313,34 @@ export const DataTable = ({
     }
   }, selfPaginationDependencies)
 
+  React.useEffect(() => {
+    if (onRowSelection) {
+      onRowSelection(rowSelection ?? {})
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(Object.keys(rowSelection ?? {}))])
+
+  React.useEffect(() => {
+    setRowSelection(defaultRowSelection)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(Object.keys(defaultRowSelection ?? {}))])
+
   return (
     <div className="w-full">
-      <div className="flex items-center py-4">
-        {searchable ? (
-          <Input
-            placeholder={searchPlaceholder}
-            // value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-            // onChange={(event) =>
-            //   table.getColumn("name")?.setFilterValue(event.target.value)
-            // }
-            className="max-w-sm"
-          />
-        ) : null}
-      </div>
+      {searchable && (
+        <div className="flex items-center py-4">
+          {searchable ? (
+            <Input
+              placeholder={searchPlaceholder}
+              // value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+              // onChange={(event) =>
+              //   table.getColumn("name")?.setFilterValue(event.target.value)
+              // }
+              className="max-w-sm"
+            />
+          ) : null}
+        </div>
+      )}
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -301,7 +366,9 @@ export const DataTable = ({
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
+                  enableSelectedStyle={enableRowSelectionStyle}
                   data-state={row.getIsSelected() && "selected"}
+                  onClick={() => onRowClicked && onRowClicked(row)}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
@@ -313,7 +380,7 @@ export const DataTable = ({
                   ))}
                 </TableRow>
               ))
-            ) : emptyEnable ? (
+            ) : enableEmpty ? (
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
@@ -323,7 +390,7 @@ export const DataTable = ({
                     <>
                       <EmptyIcon className="w-10 h-10 block text-center mx-auto mb-4" />
                       <p className="font-semibold mb-4">{emptyContent}</p>
-                      {createNewEntryEnable ? (
+                      {enableCreateNewEntry ? (
                         <Button
                           size="sm"
                           className="text-xs"

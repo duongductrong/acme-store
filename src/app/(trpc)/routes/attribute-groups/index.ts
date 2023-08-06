@@ -14,9 +14,27 @@ export const attributeGroupRouter = router({
   }),
 
   detail: attributeGroupShieldedProcedure
-    .input(z.string())
-    .query(({ input: id }) => {
-      return prisma.productAttributeGroup.findFirst({ where: { id } })
+    .input(
+      z.object({
+        id: z.string(),
+        includes: z.record(z.enum(["attributes"]), z.boolean()).nullish(),
+      })
+    )
+    .query(({ input: { id, includes } }) => {
+      return prisma.productAttributeGroup.findFirst({
+        where: { id },
+        include: {
+          attributes: {
+            include: {
+              productAttribute: {
+                include: {
+                  options: includes?.attributes,
+                },
+              },
+            },
+          },
+        },
+      })
     }),
 
   create: attributeGroupShieldedProcedure

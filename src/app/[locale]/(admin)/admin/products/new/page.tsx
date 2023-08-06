@@ -24,6 +24,7 @@ const NewProduct = (props: NewProductProps) => {
 
       // Invalidate queries
       trpcUtils.product.list.invalidate()
+      trpcUtils.attributeGroup.detail.invalidate()
     },
   })
 

@@ -41,6 +41,12 @@ const AttributeOptions = (props: AttributeOptionsProps) => {
           return (
             <div key={option.id} className="flex items-center w-full gap-base">
               <FormField
+                type="hidden"
+                variant="TEXT"
+                name={`options.${index}.id`}
+                value={option.id}
+              />
+              <FormField
                 variant="TEXT"
                 name={`options.${index}.name`}
                 wrapperClassName="flex-1 max-w-[200px]"
