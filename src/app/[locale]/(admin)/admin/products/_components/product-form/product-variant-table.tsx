@@ -61,14 +61,23 @@ const ProductVariantTable = (props: ProductVariantTableProps) => {
   const productVariants = generateCombinations<ProductAttributeOption>(
     (flattenAttributeOptionCodes as any) || []
   ).map((variant): ProductVariantCustom => {
+    const currentVariantData = variants.find((prodVariant) => {
+      return prodVariant.attributes.every((prodVariantAttr) => {
+        return variant.find(
+          (simulateVariant) => simulateVariant.code === prodVariantAttr.code
+        )
+      })
+    })
+
     return {
-      photo: "",
-      attributes: variant,
-      SKU: "",
-      quantity: 1,
+      photo: "NONE",
+      SKU: "NONE",
+      quantity: 0,
       price: 0.0,
       visible: true,
       stockAvailability: true,
+      ...currentVariantData,
+      attributes: variant,
     }
   })
 
@@ -189,9 +198,6 @@ const ProductVariantTable = (props: ProductVariantTableProps) => {
         onRowSelection={handleRowVisible}
         enableRowSelection
       />
-      <Button type="button" variant="default" className="mt-4">
-        Add variant
-      </Button>
     </div>
   )
 }

@@ -19,6 +19,7 @@ import ProductCollectionField from "./product-collection-field"
 import ProductAttributeGroup from "./product-attribute-group"
 import { useRouter } from "next/navigation"
 import ProductVariantTable from "./product-variant-table"
+import { useEffect } from "react"
 
 export interface ProductFormProps {
   title: string

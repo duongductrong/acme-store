@@ -260,36 +260,35 @@ export const productRouter = router({
             metaKeyword: input.metadata.metaKeyword,
           },
         })
-
-        // Handling product variants
-        await prisma.$transaction(
-          input.variants.map((currentProductVariant) => {
-            const productVariantData: Prisma.ProductVariantCreateArgs["data"] =
-              {
-                productId: productUpdated.id,
-                SKU: currentProductVariant.SKU,
-                price: currentProductVariant.price,
-                photo: currentProductVariant.photo,
-                visible: currentProductVariant.visible,
-                quantity: currentProductVariant.quantity,
-                stockAvailability: currentProductVariant.stockAvailability,
-              }
-
-            if (currentProductVariant.id) {
-              return prisma.productVariant.update({
-                data: omit(productVariantData, ["productId"]),
-                where: {
-                  id: currentProductVariant.id,
-                },
-              })
-            }
-
-            return prisma.productVariant.create({
-              data: productVariantData,
-            })
-          })
-        )
       })
+
+      // Handling product variants
+      await prisma.$transaction(
+        input.variants.map((currentProductVariant) => {
+          const productVariantData: Prisma.ProductVariantCreateArgs["data"] = {
+            productId: productUpdated.id,
+            SKU: currentProductVariant.SKU,
+            price: currentProductVariant.price,
+            photo: currentProductVariant.photo,
+            visible: currentProductVariant.visible,
+            quantity: currentProductVariant.quantity,
+            stockAvailability: currentProductVariant.stockAvailability,
+          }
+
+          if (currentProductVariant.id) {
+            return prisma.productVariant.update({
+              data: omit(productVariantData, ["productId"]),
+              where: {
+                id: currentProductVariant.id,
+              },
+            })
+          }
+
+          return prisma.productVariant.create({
+            data: productVariantData,
+          })
+        })
+      )
 
       return productUpdated
     }),
