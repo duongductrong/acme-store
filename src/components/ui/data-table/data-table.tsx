@@ -48,7 +48,6 @@ import {
   SelectValue,
 } from "../select"
 import { getCanNextPageBasedType, getCanPreviousPageBasedType } from "./utils"
-import { Checkbox } from "../checkbox"
 
 export interface DataTableOffsetPagination {
   type: "offset"
@@ -187,21 +186,17 @@ export const DataTable = ({
     ? [ROW_SELECTION_DATA.columns, ...columns]
     : columns
 
+  const _getPaginationRowModel = isManualPaginationOrSorting
+    ? undefined
+    : getPaginationRowModel
+  const _getSortedRowModel = isManualPaginationOrSorting
+    ? undefined
+    : getSortedRowModel
+
   const table = useReactTable({
     data,
     columns: columnDefReactTable,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
-    getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getSortedRowModel: isManualPaginationOrSorting
-      ? undefined
-      : getSortedRowModel(),
-    getPaginationRowModel: isManualPaginationOrSorting
-      ? undefined
-      : getPaginationRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
-    onRowSelectionChange: setRowSelection,
+
     state: omitBy(
       {
         sorting,
@@ -223,6 +218,18 @@ export const DataTable = ({
 
     enableHiding,
     enableRowSelection,
+
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
+    onColumnVisibilityChange: setColumnVisibility,
+    onRowSelectionChange: setRowSelection,
+
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getSortedRowModel: _getSortedRowModel?.(),
+    getPaginationRowModel: _getPaginationRowModel?.(),
+
+    debugTable: true,
   })
 
   const pageCount =
@@ -270,7 +277,6 @@ export const DataTable = ({
       return
     }
 
-    console.log("next page")
     table.nextPage()
   }
 
@@ -447,6 +453,7 @@ export const DataTable = ({
         </p>
         <div className="space-x-2">
           <Button
+            type="button"
             variant="outline"
             size="icon"
             onClick={handleGotoFirstPage}
@@ -455,6 +462,7 @@ export const DataTable = ({
             <ChevronsLeft className="w-4 h-4" />
           </Button>
           <Button
+            type="button"
             variant="outline"
             size="icon"
             onClick={handlePreviousPage}
@@ -464,6 +472,7 @@ export const DataTable = ({
           </Button>
 
           <Button
+            type="button"
             variant="outline"
             size="icon"
             onClick={handleNextPage}
@@ -472,6 +481,7 @@ export const DataTable = ({
             <ChevronRight className="w-4 h-4" />
           </Button>
           <Button
+            type="button"
             variant="outline"
             size="icon"
             onClick={handleGotoLatestPage}
@@ -479,6 +489,7 @@ export const DataTable = ({
           >
             <ChevronsRight className="w-4 h-4" />
           </Button>
+          {JSON.stringify(table.getState().pagination, null, 2)}
         </div>
       </div>
     </div>
