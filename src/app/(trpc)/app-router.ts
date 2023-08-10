@@ -1,12 +1,13 @@
 import { router } from "@/app/(trpc)/bootstrap/trpc"
-import { productRouter } from "./routes/products"
+import { inferRouterInputs, inferRouterOutputs } from "@trpc/server"
+import { attributeGroupRouter } from "./routes/attribute-groups"
+import { attributeRouter } from "./routes/attributes"
+import { authRouter } from "./routes/auth"
 import { categoryRouter } from "./routes/categories"
 import { collectionRouter } from "./routes/collections"
-import { attributeRouter } from "./routes/attributes"
-import { attributeGroupRouter } from "./routes/attribute-groups"
 import { customerRouter } from "./routes/customers"
 import { orderRouter } from "./routes/orders"
-import { authRouter } from "./routes/auth"
+import { productRouter } from "./routes/products"
 import { roleRouter } from "./routes/settings/roles"
 
 export const appRouter = router({
@@ -22,3 +23,5 @@ export const appRouter = router({
 })
 
 export type AppRouter = typeof appRouter
+export type RouterInput = inferRouterInputs<AppRouter>
+export type RouterOutput = inferRouterOutputs<AppRouter>

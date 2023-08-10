@@ -178,6 +178,7 @@ export const productRouter = router({
                 return prisma.productVariantAttribute.createMany({
                   data: attributes.map((attributeReq) => {
                     return {
+                      productAttributeId :attributeReq.attributeId,
                       productAttributeOptionId: attributeReq.id,
                       productVariantId: productVariantResultItem.id,
                     }

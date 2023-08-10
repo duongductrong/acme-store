@@ -6,6 +6,7 @@ import {
   ColumnDef,
   ColumnFiltersState,
   HeaderContext,
+  PaginationState,
   Row,
   SortingState,
   VisibilityState,
@@ -137,6 +138,10 @@ export const DataTable = ({
     throw new Error("Not implemented 'cursor' pagination yet.")
 
   const cid = React.useId()
+  const [selfPagination, setSelfPagination] = React.useState<PaginationState>({
+    pageIndex: Number(pagination?.page || 1) - 1,
+    pageSize: Number(pagination?.pageSize || 0),
+  })
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -208,7 +213,7 @@ export const DataTable = ({
               pageIndex: Number(manualOffsetPagination?.page) - 1,
               pageSize: Number(manualOffsetPagination?.pageSize),
             }
-          : undefined,
+          : pagination?.type === "self" ? selfPagination : undefined,
       },
       isNil
     ),
@@ -223,6 +228,7 @@ export const DataTable = ({
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
+    onPaginationChange: setSelfPagination,
 
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -489,7 +495,6 @@ export const DataTable = ({
           >
             <ChevronsRight className="w-4 h-4" />
           </Button>
-          {JSON.stringify(table.getState().pagination, null, 2)}
         </div>
       </div>
     </div>

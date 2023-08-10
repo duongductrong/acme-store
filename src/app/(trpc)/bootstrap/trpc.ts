@@ -30,6 +30,8 @@ const t = initTRPC
 export const permissionsMiddleware = t.middleware(async (opts) => {
   const { ctx, meta, next } = opts
 
+  if (!ctx.session) throw new TRPCError({ code: "UNAUTHORIZED" })
+
   const currentUserRole = await prisma.role.findFirst({
     where: { id: ctx.session?.user.roleId },
   })

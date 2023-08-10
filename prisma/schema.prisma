@@ -252,7 +252,8 @@ model ProductAttribute {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  groups ProductAttributesOnGroups[]
+  groups                   ProductAttributesOnGroups[]
+  productVariantAttributes ProductVariantAttribute[]
 
   @@map("product_attributes")
 }
@@ -325,6 +326,9 @@ model ProductVariantAttribute {
 
   productVariantId String
   productVariant   ProductVariant @relation(fields: [productVariantId], references: [id])
+
+  productAttributeId String?
+  productAttribute   ProductAttribute? @relation(fields: [productAttributeId], references: [id])
 
   productAttributeOptionId String
   productAttributeOption   ProductAttributeOption @relation(fields: [productAttributeOptionId], references: [id])

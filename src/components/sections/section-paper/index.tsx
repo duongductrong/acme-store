@@ -17,9 +17,7 @@ const SectionPaper = forwardRef<HTMLDivElement, SectionPaperProps>(
           className
         )}
       >
-        {title ? (
-          <h3 className="text-base font-semibold mb-5">{title}</h3>
-        ) : null}
+        {title ? <h3 className="text-base font-semibold">{title}</h3> : null}
         {children}
       </div>
     )

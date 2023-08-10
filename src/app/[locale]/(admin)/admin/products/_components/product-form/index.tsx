@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client"
 
+import { useTRPCTransformerFieldErrorsWithRHF } from "@/app/(trpc)/lib/trpc/hooks"
 import SectionDetail from "@/components/sections/section-detail"
 import SectionPaper from "@/components/sections/section-paper"
 import { Button } from "@/components/ui/button"
@@ -8,18 +9,18 @@ import Form from "@/components/ui/form"
 import FormField from "@/components/ui/form/form-field"
 import { Separator } from "@/components/ui/separator"
 import { ADMIN_URL } from "@/constant/urls"
-import { useTRPCTransformerFieldErrorsWithRHF } from "@/app/(trpc)/lib/trpc/hooks"
 import { ProductSchemaType, productSchema } from "@/schemas/product"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { ProductVisibility, Status } from "@prisma/client"
 import { TRPCClientErrorLike } from "@trpc/client"
+import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
+import ProductAttributeGroup from "./product-attribute-group"
 import ProductCategoryField from "./product-category-field"
 import ProductCollectionField from "./product-collection-field"
-import ProductAttributeGroup from "./product-attribute-group"
-import { useRouter } from "next/navigation"
+import ProductVariantInformation from "./product-variant-information"
+import ProductVariantSection from "./product-variant-section"
 import ProductVariantTable from "./product-variant-table"
-import { useEffect } from "react"
 
 export interface ProductFormProps {
   title: string
@@ -231,9 +232,10 @@ const ProductForm = ({
               </SectionPaper>
             </div>
 
-            <SectionPaper className="col-span-12" title="Variants">
+            <ProductVariantSection>
+              <ProductVariantInformation />
               <ProductVariantTable />
-            </SectionPaper>
+            </ProductVariantSection>
           </div>
         </SectionDetail>
       </form>

@@ -1,27 +1,21 @@
 "use client"
 
-import { Button } from "@/components/ui/button"
 import { DataTable, DataTableProps } from "@/components/ui/data-table"
 import { FormField } from "@/components/ui/form"
-import trpc from "@/lib/trpc-client"
-import { generateCombinations } from "@/lib/utils"
-
 import { ProductSchemaType } from "@/schemas/product"
-import { ProductAttributeOption, ProductVariant } from "@prisma/client"
 import { ColumnDef } from "@tanstack/react-table"
 import { isNil, omitBy } from "lodash"
 import { useMemo } from "react"
 import { useFormContext, useWatch } from "react-hook-form"
+import { ProductVariantCustom } from "./product-variant-section"
+import { useProductVariantSection } from "./use-product-variant-section"
 
 export interface ProductVariantTableProps {}
 
-export interface ProductVariantCustom
-  extends Omit<ProductVariant, "attributes" | "id" | "productId" | "product"> {
-  attributes: ProductAttributeOption[]
-}
-
 const ProductVariantTable = (props: ProductVariantTableProps) => {
   const methods = useFormContext<ProductSchemaType>()
+
+  const { variants: productVariants } = useProductVariantSection()
 
   const attributeGroupId = useWatch({
     control: methods.control,
@@ -44,42 +38,6 @@ const ProductVariantTable = (props: ProductVariantTableProps) => {
       ),
     {} as Record<string, boolean>
   )
-
-  const attributeGroup = trpc.attributeGroup.detail.useQuery({
-    id: attributeGroupId as string,
-    includes: {
-      attributes: true,
-    },
-  })
-
-  const flattenAttributeOptionCodes = attributeGroup.data?.attributes.map(
-    (attribute) => {
-      return attribute.productAttribute.options
-    }
-  )
-
-  const productVariants = generateCombinations<ProductAttributeOption>(
-    (flattenAttributeOptionCodes as any) || []
-  ).map((variant): ProductVariantCustom => {
-    const currentVariantData = variants.find((prodVariant) => {
-      return prodVariant.attributes.every((prodVariantAttr) => {
-        return variant.find(
-          (simulateVariant) => simulateVariant.code === prodVariantAttr.code
-        )
-      })
-    })
-
-    return {
-      photo: "NONE",
-      SKU: "NONE",
-      quantity: 0,
-      price: 0.0,
-      visible: true,
-      stockAvailability: true,
-      ...currentVariantData,
-      attributes: variant,
-    }
-  })
 
   const columns: ColumnDef<ProductVariantCustom>[] = useMemo(
     () => [
@@ -189,16 +147,19 @@ const ProductVariantTable = (props: ProductVariantTableProps) => {
   }
 
   return (
-    <div>
-      <DataTable
-        columns={columns}
-        data={productVariants}
-        enableCreateNewEntry={false}
-        defaultRowSelection={defaultRowSelection}
-        onRowSelection={handleRowVisible}
-        enableRowSelection
-      />
-    </div>
+    <DataTable
+      columns={columns}
+      data={productVariants}
+      enableCreateNewEntry={false}
+      defaultRowSelection={defaultRowSelection}
+      pagination={{
+        type: "self",
+        page: 10,
+        pageSize: 999,
+      }}
+      onRowSelection={handleRowVisible}
+      enableRowSelection
+    />
   )
 }
 
