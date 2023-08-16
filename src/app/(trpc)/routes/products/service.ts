@@ -1,18 +1,24 @@
 import prisma from "@/lib/prisma"
 import { ProductSchemaType } from "@/schemas/product"
-import { ProductVisibility, Status } from "@prisma/client"
-import { RouterInput } from "../../app-router"
+import {
+  Prisma,
+  ProductVariant,
+  ProductVariantAttribute,
+  ProductVisibility,
+  Status,
+} from "@prisma/client"
+import { ProductCreateInputSchema, ProductUpdateInputSchema } from "./input"
 
 export interface UpdateProductVariantsResult {}
 
 export interface UpdateProductVariantsReduceResult {
   creates: ProductSchemaType["variants"]
   updates: ProductSchemaType["variants"]
-  deletes: Record<string, boolean>
+  deletes: Record<string, ProductVariant & { attributes: ProductVariantAttribute[] }>
 }
 
 class ProductService {
-  createMetadata(metadata: ProductSchemaType["metadata"], stickWithProductId: string) {
+  createMetadata(metadata: ProductCreateInputSchema["metadata"], stickWithProductId: string) {
     return prisma.productMetadata.create({
       data: {
         metaTitle: metadata.metaTitle,
@@ -27,13 +33,13 @@ class ProductService {
     })
   }
 
-  async createVariants(variants: ProductSchemaType["variants"], belongsToProductId: string) {
+  async createVariants(variants: ProductCreateInputSchema["variants"], belongsToProductId: string) {
     const objectVariantAttributesReq = variants.reduce(
       (totalVariants, variant) => ({
         ...totalVariants,
         [variant.SKU]: variant.attributes,
       }),
-      {} as Record<string, ProductSchemaType["variants"][0]["attributes"]>
+      {} as Record<string, ProductCreateInputSchema["variants"][0]["attributes"]>
     )
 
     return prisma
@@ -75,7 +81,7 @@ class ProductService {
       })
   }
 
-  create(input: Omit<ProductSchemaType, "variants">) {
+  create(input: Omit<ProductCreateInputSchema, "variants">) {
     return prisma.product.create({
       data: {
         title: input.title,
@@ -95,26 +101,92 @@ class ProductService {
     })
   }
 
-  async updateProductVariants(
-    productId: string,
-    submittedVariants: RouterInput["product"]["update"]["variants"]
+  updateVariantAttributes(
+    variantRecords: ProductUpdateInputSchema["variants"],
+    recordProductVariants: Record<
+      string,
+      ProductVariant & { attributes: ProductVariantAttribute[] }
+    >
+  ) {
+    return prisma.$transaction(
+      variantRecords.map((variant) => {
+        const currentVariantData = recordProductVariants[variant.id as string]
+
+        const isSameAllAttributes = variant.attributes.every((requestAttributeFromClient) => {
+          const variantAttribute = currentVariantData?.attributes.find(
+            (currentVariantAttribute) => {
+              const isEqualOptionId =
+                currentVariantAttribute.productAttributeOptionId === requestAttributeFromClient.id
+              const isEqualAttributeId =
+                requestAttributeFromClient.attributeId ===
+                currentVariantAttribute.productAttributeId
+
+              return isEqualAttributeId && isEqualOptionId
+            }
+          )
+
+          return !!variantAttribute
+        })
+
+        const productVariantAttributesUpdateConnection = {} as
+          | Prisma.ProductVariantAttributeUncheckedUpdateManyWithoutProductVariantNestedInput
+          | Prisma.ProductVariantAttributeUpdateManyWithoutProductVariantNestedInput
+
+        if (!isSameAllAttributes) {
+          productVariantAttributesUpdateConnection.deleteMany = {
+            productVariantId: variant.id as string,
+          }
+
+          productVariantAttributesUpdateConnection.createMany = {
+            data: variant.attributes.map((variantAttribute) => {
+              return {
+                // productVariantId: variant.id as string,
+                productAttributeId: variantAttribute.attributeId as string,
+                productAttributeOptionId: variantAttribute.id as string,
+              }
+            }),
+          }
+        }
+
+        return prisma.productVariant.update({
+          where: { id: variant.id as string },
+          data: {
+            SKU: variant.SKU,
+            price: variant.price,
+            photo: variant.photo,
+            visible: variant.visible,
+            quantity: variant.quantity,
+            stockAvailability: variant.stockAvailability,
+            attributes: productVariantAttributesUpdateConnection,
+          },
+        })
+      })
+    )
+  }
+
+  async updateVariants(
+    changesVariants: ProductUpdateInputSchema["variants"],
+    productId: string
   ): Promise<UpdateProductVariantsResult> {
     const currentProductVariants = await prisma.productVariant.findMany({
       where: { productId: productId },
+      include: {
+        attributes: true,
+      },
     })
 
-    const objectProductVariantIds = currentProductVariants.reduce(
-      (objectProductVariants, productVariant) => ({
-        ...objectProductVariants,
-        [productVariant.id]: true,
+    const objectProductVariants = currentProductVariants.reduce(
+      (objectProductVariantsShadow, productVariant) => ({
+        ...objectProductVariantsShadow,
+        [productVariant.id]: productVariant,
       }),
-      {} as Record<string, boolean>
+      {} as Record<string, ProductVariant & { attributes: ProductVariantAttribute[] }>
     )
 
-    const { creates, updates, deletes } = submittedVariants.reduce(
+    const { creates, updates, deletes } = changesVariants.reduce(
       (results, variant) => {
         if (variant.id) {
-          const includedVariant = Object.keys(objectProductVariantIds).includes(variant.id)
+          const includedVariant = Object.keys(objectProductVariants).includes(variant.id)
 
           if (includedVariant) {
             results.updates.push(variant)
@@ -131,19 +203,63 @@ class ProductService {
       {
         creates: [],
         updates: [],
-        deletes: objectProductVariantIds,
+        deletes: objectProductVariants,
       } as UpdateProductVariantsReduceResult
     )
 
-    console.log({ creates, updates, deletes })
+    const deleteVariantIds = Object.keys(deletes)
+
+    await this.deleteVariants(deleteVariantIds)
+    await this.createVariants(creates, productId)
+    await this.updateVariantAttributes(updates, objectProductVariants)
+
     return {}
   }
 
-  async deleteVariants(productId: string) {
-    const productVariantSelectIds = await prisma.productVariant.findMany({
+  updateMetadata(metadata: ProductUpdateInputSchema["metadata"], metadataId: string) {
+    return prisma.productMetadata.update({
       where: {
-        productId,
+        id: metadataId as string,
       },
+      data: {
+        metaTitle: metadata.metaTitle,
+        metaDescription: metadata.metaDescription,
+        metaKeyword: metadata.metaKeyword,
+      },
+    })
+  }
+
+  update(input: Omit<ProductUpdateInputSchema, "variants">) {
+    return prisma.product.update({
+      data: {
+        title: input.title,
+        description: input.description,
+        price: input.price,
+        quantity: input.quantity,
+        SKU: input.SKU,
+        slug: input.slug,
+        thumbnail: input.thumbnail,
+        categoryId: input.categoryId,
+        content: input.content,
+        status: input.status as Status,
+        stockAvailability: input.stockAvailability,
+        visibility: input.visibility as ProductVisibility,
+        attributeGroupId: input.attributeGroupId,
+      },
+      where: { id: input.id },
+    })
+  }
+
+  async deleteVariants(productIdOrSelfIds: string | string[]) {
+    const conditionFindManyVariants: Prisma.Enumerable<Prisma.ProductVariantWhereInput> =
+      Array.isArray(productIdOrSelfIds)
+        ? {
+            id: { in: productIdOrSelfIds },
+          }
+        : { productId: productIdOrSelfIds }
+
+    const productVariantSelectIds = await prisma.productVariant.findMany({
+      where: conditionFindManyVariants,
       select: { id: true },
     })
 

@@ -4,14 +4,16 @@ import {
   trpcHandleQueryFilterPagination,
   trpcOutputQueryWithPagination,
 } from "@/app/(trpc)/lib/trpc/utils"
-import { VALIDATION_MESSAGES } from "@/constant/messages"
 import { RESOURCE_KEYS } from "@/constant/resources"
 import prisma from "@/lib/prisma"
-import { ProductSchemaType, productSchema } from "@/schemas/product"
 import { Prisma, ProductVisibility, Status } from "@prisma/client"
 import { omit } from "lodash"
 import { z } from "zod"
-import { productCreateInputSchema, productDetailInputSchema } from "./input"
+import {
+  productCreateInputSchema,
+  productDetailInputSchema,
+  productUpdateInputSchema,
+} from "./input"
 import productService from "./service"
 
 export const productShieldedProcedure = shieldedProcedure({
@@ -83,109 +85,14 @@ export const productRouter = router({
     return productCreated
   }),
 
-  update: productShieldedProcedure
-    .input(
-      z
-        .object({
-          ...productSchema.shape,
-          id: z.string(),
-          slug: productSchema.shape.slug,
-        })
-        .superRefine(async ({ slug, id, attributeGroupId }, ctx) => {
-          const [product, attributeGroup] = await prisma.$transaction([
-            prisma.product.findFirst({
-              where: { slug, NOT: { id } },
-            }),
-            prisma.productAttributeGroup.findFirst({
-              where: { id: attributeGroupId?.toString() },
-            }),
-          ])
+  update: productShieldedProcedure.input(productUpdateInputSchema).mutation(async ({ input }) => {
+    const productUpdated = await productService.update(input)
 
-          if (product) {
-            ctx.addIssue({
-              message: VALIDATION_MESSAGES.ALREADY_EXISTS("Slug"),
-              code: "custom",
-              path: ["slug"],
-            })
-          }
+    await productService.updateMetadata(input.metadata, productUpdated.metadataId as string)
+    await productService.updateVariants(input.variants, productUpdated.id)
 
-          if (!attributeGroup) {
-            ctx.addIssue({
-              message: VALIDATION_MESSAGES.NOT_EXISTS("Attribute Group"),
-              code: "custom",
-              path: ["attributeGroupId"],
-            })
-          }
-
-          return ctx
-        })
-    )
-    .mutation(async ({ input }) => {
-      const productUpdated = await prisma.product.update({
-        data: {
-          title: input.title,
-          description: input.description,
-          price: input.price,
-          quantity: input.quantity,
-          SKU: input.SKU,
-          slug: input.slug,
-          thumbnail: input.thumbnail,
-          categoryId: input.categoryId,
-          content: input.content,
-          status: input.status as Status,
-          stockAvailability: input.stockAvailability,
-          visibility: input.visibility as ProductVisibility,
-          attributeGroupId: input.attributeGroupId,
-        },
-        where: { id: input.id },
-      })
-
-      setTimeout(async () => {
-        // Handling product meta SEO
-        await prisma.productMetadata.update({
-          where: {
-            id: productUpdated.metadataId as string,
-          },
-          data: {
-            metaTitle: input.metadata.metaTitle,
-            metaDescription: input.metadata.metaDescription,
-            metaKeyword: input.metadata.metaKeyword,
-          },
-        })
-      })
-
-      productService.updateProductVariants(productUpdated.id, input.variants)
-
-      // Handling product variants
-      await prisma.$transaction(
-        input.variants.map((currentProductVariant) => {
-          const productVariantData: Prisma.ProductVariantCreateArgs["data"] = {
-            productId: productUpdated.id,
-            SKU: currentProductVariant.SKU,
-            price: currentProductVariant.price,
-            photo: currentProductVariant.photo,
-            visible: currentProductVariant.visible,
-            quantity: currentProductVariant.quantity,
-            stockAvailability: currentProductVariant.stockAvailability,
-          }
-
-          if (currentProductVariant.id) {
-            return prisma.productVariant.update({
-              data: omit(productVariantData, ["productId"]),
-              where: {
-                id: currentProductVariant.id,
-              },
-            })
-          }
-
-          return prisma.productVariant.create({
-            data: productVariantData,
-          })
-        })
-      )
-
-      return productUpdated
-    }),
+    return productUpdated
+  }),
 
   permanentlyDelete: productShieldedProcedure.input(z.string()).mutation(async ({ input: id }) => {
     const deleteProductVariantsResult = await productService.deleteVariants(id)

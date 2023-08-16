@@ -1,8 +1,8 @@
 import { VALIDATION_MESSAGES } from "@/constant/messages"
 import prisma from "@/lib/prisma"
 import { productSchema, productVariantAttributeSchema } from "@/schemas/product"
-import { uniq } from "lodash"
 import { z } from "zod"
+import { checkRuleUniqueProductVariantSku } from "./rules"
 
 export const productDetailInputSchema = z.object({
   id: z.string(),
@@ -29,43 +29,47 @@ export const productCreateInputSchema = z
     variants: z.array(productVariantAttributeSchema),
   })
   .superRefine(async (values, ctx) => {
-    const variantSKUs = values.variants.reduce((reducedVariantSKUs, variant, index) => {
-      return {
-        ...reducedVariantSKUs,
-        [variant.SKU]: index,
-      }
-    }, {} as Record<string, number>)
+    checkRuleUniqueProductVariantSku({ variants: values.variants }, ctx, {})
+    return ctx
+  })
 
-    const variantSKUIds = Object.keys(variantSKUs)
-   
-    const isNotUniqueVariantSKU = variantSKUIds.length !== values.variants.length
-    
-    if (isNotUniqueVariantSKU) {
+export const productUpdateInputSchema = z
+  .object({
+    ...productSchema.shape,
+    id: z.string(),
+    slug: productSchema.shape.slug,
+  })
+  .superRefine(async ({ slug, id, attributeGroupId, variants }, ctx) => {
+    checkRuleUniqueProductVariantSku({ variants }, ctx, { excludeProductId: id })
+
+    const [product, attributeGroup] = await prisma.$transaction([
+      prisma.product.findFirst({
+        where: { slug, NOT: { id } },
+      }),
+      prisma.productAttributeGroup.findFirst({
+        where: { id: attributeGroupId?.toString() },
+      }),
+    ])
+
+    if (product) {
       ctx.addIssue({
+        message: VALIDATION_MESSAGES.ALREADY_EXISTS("Slug"),
         code: "custom",
-        path: [`variants.0.SKU`],
-        message: VALIDATION_MESSAGES.UNIQUE("SKU"),
+        path: ["slug"],
       })
-
-      return ctx
     }
 
-    const productVariantsNotUniqueBySKU = await prisma.productVariant.findMany({
-      where: { SKU: { in: Object.keys(variantSKUs) } },
-      select: { SKU: true },
-    })
-
-    if (productVariantsNotUniqueBySKU.length) {
-      productVariantsNotUniqueBySKU.forEach((productVariant) => {
-        const variantIndex = variantSKUs[productVariant.SKU]
-
-        ctx.addIssue({
-          code: "custom",
-          path: [`variants.${variantIndex}.SKU`],
-          message: VALIDATION_MESSAGES.ALREADY_EXISTS("SKU"),
-        })
+    if (!attributeGroup) {
+      ctx.addIssue({
+        message: VALIDATION_MESSAGES.NOT_EXISTS("Attribute Group"),
+        code: "custom",
+        path: ["attributeGroupId"],
       })
     }
 
     return ctx
   })
+
+export type ProductDetailInputSchema = z.infer<typeof productDetailInputSchema>
+export type ProductCreateInputSchema = z.infer<typeof productCreateInputSchema>
+export type ProductUpdateInputSchema = z.infer<typeof productUpdateInputSchema>

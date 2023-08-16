@@ -17,7 +17,7 @@ const EditProduct = ({ params: { id } }: EditProductProps) => {
   const t = useToast()
   const trpcUtils = trpc.useContext()
 
-  const { data: product } = trpc.product.detail.useQuery({
+  const { data: product, isLoading } = trpc.product.detail.useQuery({
     id: id,
     includes: {
       metadata: true,
@@ -66,6 +66,7 @@ const EditProduct = ({ params: { id } }: EditProductProps) => {
     <ProductForm
       title="Edit a product"
       defaultValues={defaultValues}
+      loading={isLoading}
       onSubmit={(data) => {
         updateProduct(data as Required<ProductSchemaType>)
       }}
