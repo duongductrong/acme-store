@@ -1,10 +1,13 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client"
 
+import { Button } from "@/components/ui/button"
 import { DataTable, DataTableProps } from "@/components/ui/data-table"
 import { FormField } from "@/components/ui/form"
 import { ProductSchemaType } from "@/schemas/product"
 import { ColumnDef } from "@tanstack/react-table"
 import { isNil, omitBy } from "lodash"
+import { X } from "lucide-react"
 import { useMemo } from "react"
 import { useFormContext, useWatch } from "react-hook-form"
 import { ProductVariantCustom } from "./product-variant-section"
@@ -15,7 +18,13 @@ export interface ProductVariantTableProps {}
 const ProductVariantTable = (props: ProductVariantTableProps) => {
   const methods = useFormContext<ProductSchemaType>()
 
-  const { variants: productVariants } = useProductVariantSection()
+  const {
+    variants: productVariants,
+    variantAttributeOptions,
+    variantAttributeCombinations,
+
+    sharedFieldControls: { variants: fieldControlVariants },
+  } = useProductVariantSection()
 
   const attributeGroupId = useWatch({
     control: methods.control,
@@ -27,7 +36,7 @@ const ProductVariantTable = (props: ProductVariantTableProps) => {
     name: "variants",
   })
 
-  const defaultRowSelection = variants.reduce(
+  const defaultRowSelection = variants?.reduce(
     (pVariants, pVariant, index) =>
       omitBy(
         {
@@ -39,49 +48,38 @@ const ProductVariantTable = (props: ProductVariantTableProps) => {
     {} as Record<string, boolean>
   )
 
+  const handleRowVisible: DataTableProps["onRowSelection"] = (rowSelected) => {
+    productVariants.map((variant, index) => {
+      const currentVariantItem = fieldControlVariants?.fields[index]
+      if (currentVariantItem) {
+        fieldControlVariants?.update(index, {
+          ...currentVariantItem,
+          visible: !!rowSelected?.[index.toString()],
+        })
+      }
+    })
+  }
+
   const columns: ColumnDef<ProductVariantCustom>[] = useMemo(
     () => [
       {
         accessorKey: "photo",
         header: () => "Photo",
-        cell: () => (
-          <div className="w-[35px] h-[35px] rounded-lg bg-neutral-500"></div>
-        ),
+        cell: () => <div className="w-[35px] h-[35px] rounded-lg bg-neutral-500"></div>,
       },
       {
         accessorKey: "attributes",
         header: () => "Variant",
-        cell: ({ row: { index, original } }) => {
+        cell: ({ row: { index } }) => {
           return (
-            <div className="w-[200px] flex items-center gap-2 font-medium">
-              {original.attributes
-                .map((attribute) => attribute.name)
-                .join(" / ")}
-
-              {original.attributes.map((attribute, attrIndex) => {
-                return (
-                  <div className="hidden" key={attribute.id}>
-                    <input
-                      type="hidden"
-                      {...methods.register(
-                        `variants.${index}.attributes.${attrIndex}.id`,
-                        {
-                          value: attribute.id,
-                        }
-                      )}
-                    />
-                    <input
-                      type="hidden"
-                      {...methods.register(
-                        `variants.${index}.attributes.${attrIndex}.attributeId`,
-                        {
-                          value: attribute.attributeId,
-                        }
-                      )}
-                    />
-                  </div>
-                )
-              })}
+            <div className="w-[220px] flex items-center gap-2 font-medium">
+              <FormField
+                variant="SELECT"
+                wrapperClassName="w-full"
+                placeholder="Select variant"
+                name={`variants.${index}.attributes`}
+                options={variantAttributeOptions}
+              />
             </div>
           )
         },
@@ -89,11 +87,7 @@ const ProductVariantTable = (props: ProductVariantTableProps) => {
       {
         accessorKey: "SKU",
         cell: ({ row: { index } }) => (
-          <FormField
-            name={`variants.${index}.SKU`}
-            variant="TEXT"
-            placeholder="SKU"
-          />
+          <FormField name={`variants.${index}.SKU`} variant="TEXT" placeholder="SKU" />
         ),
       },
       {
@@ -114,11 +108,7 @@ const ProductVariantTable = (props: ProductVariantTableProps) => {
         accessorKey: "quantity",
         header: () => "Quantity",
         cell: ({ row: { index } }) => (
-          <FormField
-            name={`variants.${index}.quantity`}
-            variant="NUMBER"
-            placeholder="0"
-          />
+          <FormField name={`variants.${index}.quantity`} variant="NUMBER" placeholder="0" />
         ),
       },
       {
@@ -132,19 +122,35 @@ const ProductVariantTable = (props: ProductVariantTableProps) => {
           />
         ),
       },
+      {
+        accessorKey: "id",
+        header: () => "Actions",
+        cell: ({
+          cell: {
+            row: { index },
+          },
+        }) => {
+          return (
+            <>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => fieldControlVariants?.remove(index)}
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            </>
+          )
+        },
+      },
     ],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [attributeGroupId]
+    [
+      attributeGroupId,
+      JSON.stringify(variantAttributeCombinations),
+      JSON.stringify(productVariants),
+    ]
   )
-
-  const handleRowVisible: DataTableProps["onRowSelection"] = (rowSelected) => {
-    productVariants.map((variant, index) => {
-      methods.setValue(
-        `variants.${index}.visible`,
-        !!rowSelected?.[index.toString()]
-      )
-    })
-  }
 
   return (
     <DataTable
@@ -154,7 +160,7 @@ const ProductVariantTable = (props: ProductVariantTableProps) => {
       defaultRowSelection={defaultRowSelection}
       pagination={{
         type: "self",
-        page: 10,
+        page: 1,
         pageSize: 999,
       }}
       onRowSelection={handleRowVisible}

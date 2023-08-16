@@ -1,12 +1,14 @@
 import { RouterOutput } from "@/app/(trpc)/app-router"
 import SectionPaper from "@/components/sections/section-paper"
+import { Button } from "@/components/ui/button"
 import trpc from "@/lib/trpc-client"
 import { generateCombinations } from "@/lib/utils"
 import { ProductSchemaType } from "@/schemas/product"
 import { ProductAttributeOption, ProductVariant } from "@prisma/client"
 import { UseTRPCQueryResult } from "@trpc/react-query/shared"
+import { Plus } from "lucide-react"
 import { ReactNode, createContext, useMemo } from "react"
-import { useFormContext, useWatch } from "react-hook-form"
+import { UseFieldArrayReturn, useFieldArray, useFormContext, useWatch } from "react-hook-form"
 
 export interface ProductVariantCustom
   extends Omit<ProductVariant, "attributes" | "id" | "productId" | "product"> {
@@ -15,18 +17,27 @@ export interface ProductVariantCustom
 
 export interface ProductVariantSectionContextShape {
   variants: ProductVariantCustom[]
-  attributeGroup?: UseTRPCQueryResult<
-    RouterOutput["attributeGroup"]["detail"],
-    any
-  >
+  variantAttributeCombinations: ReturnType<typeof generateCombinations<ProductAttributeOption>>
+
+  attributeGroup?: UseTRPCQueryResult<RouterOutput["attributeGroup"]["detail"], any>
+
+  sharedFieldControls: {
+    variants: UseFieldArrayReturn<ProductSchemaType, "variants", "fid"> | null
+  }
 }
 
 export interface ProductVariantSectionProps {
   children: ReactNode
 }
 
-export const ProductVariantSectionContext =
-  createContext<ProductVariantSectionContextShape>({ variants: [] })
+export const ProductVariantSectionContext = createContext<ProductVariantSectionContextShape>({
+  variants: [],
+  variantAttributeCombinations: [],
+
+  sharedFieldControls: {
+    variants: null,
+  },
+})
 
 const ProductVariantSection = ({ children }: ProductVariantSectionProps) => {
   const methods = useFormContext<ProductSchemaType>()
@@ -36,11 +47,6 @@ const ProductVariantSection = ({ children }: ProductVariantSectionProps) => {
     name: "attributeGroupId",
   })
 
-  const variants = useWatch({
-    control: methods.control,
-    name: "variants",
-  })
-
   const attributeGroup = trpc.attributeGroup.detail.useQuery({
     id: attributeGroupId as string,
     includes: {
@@ -48,45 +54,56 @@ const ProductVariantSection = ({ children }: ProductVariantSectionProps) => {
     },
   })
 
-  const flattenAttributeOptionCodes = attributeGroup.data?.attributes.map(
-    (attribute) => {
-      return attribute.productAttribute.options
-    }
+  const flattenAttributeOptionCodes = attributeGroup.data?.attributes.map((attribute) => {
+    return attribute.productAttribute.options
+  })
+
+  const variantAttributeCombinations = generateCombinations<ProductAttributeOption>(
+    (flattenAttributeOptionCodes as any) || []
   )
 
-  const productVariants = generateCombinations<ProductAttributeOption>(
-    (flattenAttributeOptionCodes as any) || []
-  ).map((variant): ProductVariantCustom => {
-    const currentVariantData = variants.find((prodVariant) => {
-      return prodVariant?.attributes?.every((prodVariantAttr) => {
-        return variant.find(
-          (simulateVariant) => simulateVariant.code === prodVariantAttr.code
-        )
-      })
-    })
-
-    return {
-      photo: "NONE",
-      SKU: "NONE",
-      quantity: 0,
-      price: 0.0,
-      visible: true,
-      stockAvailability: true,
-      ...currentVariantData,
-      attributes: variant,
-    }
+  const productVariantsFieldControl = useFieldArray({
+    name: "variants",
+    control: methods.control,
+    keyName: "fid",
   })
 
   const values = useMemo<ProductVariantSectionContextShape>(
-    () => ({ variants: productVariants, attributeGroup: attributeGroup }),
-    [productVariants, attributeGroup]
+    () => ({
+      attributeGroup,
+      variantAttributeCombinations,
+      variants: productVariantsFieldControl.fields as ProductVariantCustom[],
+
+      sharedFieldControls: {
+        variants: productVariantsFieldControl,
+      },
+    }),
+    [attributeGroup, variantAttributeCombinations, productVariantsFieldControl]
   )
+
+  const handleAppendProductVariant = () => {
+    productVariantsFieldControl.append({
+      photo: "",
+      visible: true,
+      attributes: [],
+      price: 0.0,
+      quantity: 0,
+      SKU: "NOPE",
+      stockAvailability: true,
+    })
+  }
 
   return (
     <ProductVariantSectionContext.Provider value={values}>
       <SectionPaper
         className="col-span-12 flex flex-col gap-base"
         title="Variants"
+        headerActions={
+          <Button variant="ghost" type="button" onClick={handleAppendProductVariant}>
+            <Plus className="w-4 h-4 mr-2" />
+            Add variant
+          </Button>
+        }
       >
         {children}
       </SectionPaper>

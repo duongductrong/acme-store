@@ -21,21 +21,18 @@ import ProductCollectionField from "./product-collection-field"
 import ProductVariantInformation from "./product-variant-information"
 import ProductVariantSection from "./product-variant-section"
 import ProductVariantTable from "./product-variant-table"
+import Spinner from "@/components/loadings/spinner"
 
 export interface ProductFormProps {
   title: string
   error: TRPCClientErrorLike<any> | null
   defaultValues?: Partial<ProductSchemaType>
+  loading: boolean
 
   onSubmit: (values: ProductSchemaType) => void
 }
 
-const ProductForm = ({
-  title,
-  error,
-  defaultValues,
-  onSubmit,
-}: ProductFormProps) => {
+const ProductForm = ({ title, error, defaultValues, loading, onSubmit }: ProductFormProps) => {
   const router = useRouter()
 
   const methods = useForm<ProductSchemaType>({
@@ -44,8 +41,24 @@ const ProductForm = ({
       status: Status.Enabled,
       visibility: ProductVisibility.Visible,
       stockAvailability: true,
-      variants: [],
       ...defaultValues,
+      variants: defaultValues?.variants?.flatMap((variant) => {
+        return {
+          ...variant,
+          attributes: variant.attributes.reduce(
+            (option, variantAttribute, variantAttributeIndex) => {
+              const isLastIndex = variantAttributeIndex < variant.attributes.length - 1
+
+              const separateIdSymbol = isLastIndex ? "@" : ""
+
+              option += `[{id}${variantAttribute.id}][{attributeId}${variantAttribute.attributeId}][{code}${variantAttribute.code}][{name}${variantAttribute.name}]${separateIdSymbol}`
+
+              return option
+            },
+            ""
+          ),
+        }
+      }) as any,
     },
   })
 
@@ -65,14 +78,13 @@ const ProductForm = ({
           backTo={ADMIN_URL.PRODUCT.LIST}
           whereTopRight={
             <>
-              <Button
-                type="button"
-                variant="secondary"
-                onClick={handleBackPage}
-              >
+              <Button type="button" variant="secondary" onClick={handleBackPage}>
                 Cancel
               </Button>
-              <Button type="submit">Save</Button>
+              <Button type="submit">
+                {loading ? <Spinner className="mr-2" /> : null}
+                Save
+              </Button>
             </>
           }
         >
@@ -221,11 +233,7 @@ const ProductForm = ({
                 />
               </SectionPaper>
               <SectionPaper title="Thumbnail">
-                <FormField
-                  name="thumbnail"
-                  variant="TEXT"
-                  placeholder="Thumbnail"
-                />
+                <FormField name="thumbnail" variant="TEXT" placeholder="Thumbnail" />
               </SectionPaper>
               <SectionPaper title="Attributes">
                 <ProductAttributeGroup />

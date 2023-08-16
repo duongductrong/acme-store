@@ -1,8 +1,10 @@
 export const VALIDATION_MESSAGES = {
   REQUIRED: (fieldName: string) => `${fieldName} is required.`,
 
-  EMAIL: (fieldName: string) =>
-    `Please enter a valid email address for ${fieldName}.`,
+  EMAIL: (fieldName: string) => `Please enter a valid email address for ${fieldName}.`,
+
+  UNIQUE: (fieldName: string) =>
+    `Please ensure that the value for ${fieldName} is unique, as duplicate values are not allowed`,
 
   MIN_LENGTH: (fieldName: string, min: number) =>
     `${fieldName} must be at least ${min} characters long.`,
@@ -10,8 +12,7 @@ export const VALIDATION_MESSAGES = {
   MAX_LENGTH: (fieldName: string, max: number) =>
     `${fieldName} must be less than or equal to ${max} characters.`,
 
-  SELECT_OPTION: (fieldName: string) =>
-    `Please select an option for ${fieldName}.`,
+  SELECT_OPTION: (fieldName: string) => `Please select an option for ${fieldName}.`,
 
   MIN_VALUE: (fieldName: string, min: number) =>
     `${fieldName} must be greater than or equal to ${min}.`,
@@ -30,23 +31,17 @@ export const VALIDATION_MESSAGES = {
   STRONG_PASSWORD: (fieldName: string = "Password") =>
     `${fieldName} must contain at least one uppercase letter, one lowercase letter, one number, and one special character.`,
 
-  PASSWORDS_NOT_MATCH: (fieldName: string = "Passwords") =>
-    `${fieldName} do not match.`,
+  PASSWORDS_NOT_MATCH: (fieldName: string = "Passwords") => `${fieldName} do not match.`,
 
-  URL_INVALID: (fieldName: string) =>
-    `Please enter a valid URL for ${fieldName}.`,
+  URL_INVALID: (fieldName: string) => `Please enter a valid URL for ${fieldName}.`,
 
-  CREDIT_CARD_INVALID: (fieldName: string) =>
-    `Invalid credit card number for ${fieldName}.`,
+  CREDIT_CARD_INVALID: (fieldName: string) => `Invalid credit card number for ${fieldName}.`,
 
-  POSITIVE_NUMBER: (fieldName: string) =>
-    `Value for ${fieldName} must be a positive number.`,
+  POSITIVE_NUMBER: (fieldName: string) => `Value for ${fieldName} must be a positive number.`,
 
-  LETTERS_ONLY: (fieldName: string) =>
-    `${fieldName} must contain only letters.`,
+  LETTERS_ONLY: (fieldName: string) => `${fieldName} must contain only letters.`,
 
-  ZIP_CODE_INVALID: (fieldName: string) =>
-    `Please enter a valid ZIP code for ${fieldName}.`,
+  ZIP_CODE_INVALID: (fieldName: string) => `Please enter a valid ZIP code for ${fieldName}.`,
 
   ONLY_ALPHA_NUMERIC: (fieldName: string = "This field") =>
     `${fieldName} requires alphanumeric characters without spaces and symbols.`,

@@ -147,9 +147,7 @@ export const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
 
         return options.find((option) => value.includes(option.value))?.label
       } else if (placeholder) {
-        return (
-          <span className="font-normal text-zinc-500">{placeholder}</span>
-        )
+        return <span className="font-normal text-zinc-500">{placeholder}</span>
       }
 
       return <span className="w-full" />
@@ -178,10 +176,11 @@ export const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
           style={style}
           key={option.value}
           onSelect={() => handleSelectOption(option.value)}
+          className="whitespace-nowrap flex gap-2"
         >
           <Check
             className={cn(
-              "mr-2 h-4 w-4",
+              "h-4 min-w-[16px] max-w-[16px] flex-1",
               value?.includes(option.value) ? "opacity-100" : "opacity-0"
             )}
           />
@@ -197,10 +196,18 @@ export const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className={cn(className, "w-full !gap-2 flex-wrap font-normal")}
+            className={cn(
+              className,
+              "w-full !gap-2 flex-nowrap font-normal whitespace-nowrap"
+            )}
             ref={comboboxTriggerRef}
           >
-            {Placeholder}
+            <p
+              className="w-full text-ellipsis overflow-hidden text-left"
+              style={{ width: comboboxContentWidth }}
+            >
+              {Placeholder}
+            </p>
             <ChevronsUpDown className="ml-auto h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>

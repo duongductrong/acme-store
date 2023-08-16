@@ -11,6 +11,8 @@ import { ProductSchemaType, productSchema } from "@/schemas/product"
 import { Prisma, ProductVisibility, Status } from "@prisma/client"
 import { omit } from "lodash"
 import { z } from "zod"
+import { productCreateInputSchema, productDetailInputSchema } from "./input"
+import productService from "./service"
 
 export const productShieldedProcedure = shieldedProcedure({
   resource: RESOURCE_KEYS.PRODUCT,
@@ -54,143 +56,32 @@ export const productRouter = router({
       }
     }),
 
-  detail: productShieldedProcedure
-    .input(
-      z.object({
-        id: z.string(),
-        includes: z.record(
-          z.enum(["category", "media", "metadata"]),
-          z.boolean()
-        ),
-      })
-    )
-    .query(async ({ input }) => {
-      return prisma.product.findFirst({
-        where: { id: input.id },
-        include: {
-          ...input.includes,
-          variants: {
-            include: {
-              attributes: {
-                include: {
-                  productAttributeOption: true,
-                },
+  detail: productShieldedProcedure.input(productDetailInputSchema).query(async ({ input }) => {
+    return prisma.product.findFirst({
+      where: { id: input.id },
+      include: {
+        ...input.includes,
+        variants: {
+          include: {
+            attributes: {
+              include: {
+                productAttributeOption: true,
               },
             },
           },
         },
-      })
-    }),
+      },
+    })
+  }),
 
-  create: productShieldedProcedure
-    .input(
-      z.object({
-        ...productSchema.shape,
-        slug: productSchema.shape.slug.refine(async (slug) => {
-          const product = await prisma.product.findFirst({
-            where: { slug },
-          })
+  create: productShieldedProcedure.input(productCreateInputSchema).mutation(async ({ input }) => {
+    const productCreated = await productService.create(input)
 
-          return !product
-        }, VALIDATION_MESSAGES.ALREADY_EXISTS("slug")),
-        SKU: productSchema.shape.SKU.refine(async (SKU) => {
-          const product = await prisma.product.findFirst({
-            where: { SKU },
-          })
+    await productService.createMetadata(input.metadata, productCreated.id)
+    await productService.createVariants(input.variants, productCreated.id)
 
-          return !product
-        }, VALIDATION_MESSAGES.ALREADY_EXISTS("SKU")),
-      })
-    )
-    .mutation(async ({ input }) => {
-      const productCreated = await prisma.product.create({
-        data: {
-          title: input.title,
-          description: input.description,
-          price: input.price,
-          quantity: input.quantity,
-          SKU: input.SKU,
-          slug: input.slug,
-          thumbnail: input.thumbnail,
-          categoryId: input.categoryId,
-          content: input.content,
-          status: input.status as Status,
-          stockAvailability: input.stockAvailability,
-          visibility: input.visibility as ProductVisibility,
-          attributeGroupId: input.attributeGroupId,
-        },
-      })
-
-      // run create product metadata in background
-      setTimeout(async () => {
-        await prisma.$transaction(async (prismaAsyncTransaction) => {
-          // Create metadata for seo
-          await prismaAsyncTransaction.productMetadata.create({
-            data: {
-              metaTitle: input.metadata.metaTitle,
-              metaDescription: input.metadata.metaDescription,
-              metaKeyword: input.metadata.metaKeyword,
-              Product: {
-                connect: {
-                  id: productCreated.id,
-                },
-              },
-            },
-          })
-        })
-
-        // Make object attributes request from SKU
-        const objectVariantAttributesReq = input.variants.reduce(
-          (totalVariants, variant) => ({
-            ...totalVariants,
-            [variant.SKU]: variant.attributes,
-          }),
-          {} as Record<string, ProductSchemaType["variants"][0]["attributes"]>
-        )
-
-        // Create product variants with many attributes of the variant
-        prisma
-          .$transaction(
-            input.variants.map((productVariantReq) => {
-              const createVariantData = {
-                SKU: productVariantReq.SKU,
-                photo: productVariantReq.photo,
-                price: productVariantReq.price,
-                visible: productVariantReq.visible,
-                quantity: productVariantReq.quantity,
-                productId: productCreated.id,
-                stockAvailability: productVariantReq.stockAvailability,
-              }
-
-              return prisma.productVariant.create({
-                data: {
-                  ...createVariantData,
-                },
-              })
-            })
-          )
-          .then(async (productVariantCreatedResults) => {
-            await prisma.$transaction(
-              productVariantCreatedResults.map((productVariantResultItem) => {
-                const attributes =
-                  objectVariantAttributesReq[productVariantResultItem.SKU]
-
-                return prisma.productVariantAttribute.createMany({
-                  data: attributes.map((attributeReq) => {
-                    return {
-                      productAttributeId :attributeReq.attributeId,
-                      productAttributeOptionId: attributeReq.id,
-                      productVariantId: productVariantResultItem.id,
-                    }
-                  }),
-                })
-              })
-            )
-          })
-      })
-
-      return productCreated
-    }),
+    return productCreated
+  }),
 
   update: productShieldedProcedure
     .input(
@@ -263,6 +154,8 @@ export const productRouter = router({
         })
       })
 
+      productService.updateProductVariants(productUpdated.id, input.variants)
+
       // Handling product variants
       await prisma.$transaction(
         input.variants.map((currentProductVariant) => {
@@ -294,12 +187,13 @@ export const productRouter = router({
       return productUpdated
     }),
 
-  permanentlyDelete: productShieldedProcedure
-    .input(z.string())
-    .mutation(async ({ input: id }) => {
-      return await prisma.product.delete({
-        where: { id },
-        include: { metadata: true },
-      })
-    }),
+  permanentlyDelete: productShieldedProcedure.input(z.string()).mutation(async ({ input: id }) => {
+    const deleteProductVariantsResult = await productService.deleteVariants(id)
+    const deleteProductResult = await productService.permanentlyDelete(id)
+
+    return {
+      deleteProductVariantsResult,
+      deleteProductResult,
+    }
+  }),
 })

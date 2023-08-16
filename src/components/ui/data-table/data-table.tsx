@@ -213,7 +213,9 @@ export const DataTable = ({
               pageIndex: Number(manualOffsetPagination?.page) - 1,
               pageSize: Number(manualOffsetPagination?.pageSize),
             }
-          : pagination?.type === "self" ? selfPagination : undefined,
+          : pagination?.type === "self"
+          ? selfPagination
+          : undefined,
       },
       isNil
     ),
@@ -395,7 +397,7 @@ export const DataTable = ({
             ) : enableEmpty ? (
               <TableRow>
                 <TableCell
-                  colSpan={columns.length}
+                  colSpan={columns.length + 999}
                   className="h-24 text-center py-10"
                 >
                   {loading ? null : (

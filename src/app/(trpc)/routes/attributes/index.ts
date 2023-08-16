@@ -168,8 +168,15 @@ export const attributeRouter = router({
         })
     )
     .mutation(async ({ input }) => {
+      const currentAttribute = await prisma.productAttribute.findFirst({
+        where: { OR: [{ id: input.id as string }, { code: input.code }] },
+        include: {
+          options: true,
+        },
+      })
+
       const updatedAttribute = await prisma.productAttribute.update({
-        where: { id: input.id as string },
+        where: { id: currentAttribute?.id },
         data: {
           name: input.name,
           code: input.code,
@@ -181,36 +188,78 @@ export const attributeRouter = router({
         },
       })
 
-      const attrOptionsUpdateOrCreates = input.options.reduce(
+      const deleteAttributeOptIds = currentAttribute?.options.reduce(
+        (totalIds, { id }) => ({ ...totalIds, [id]: true }),
+        {} as Record<string, boolean>
+      )
+      const attrOptionsUpdateOrCreatesOrDeletes = input.options.reduce(
         (group, option) => {
-          if (option?.id || option?.attributeId)
+          if (option?.id || option?.attributeId) {
             group.updates.push({
               id: option.id as string,
               code: option?.code as string,
               name: option?.name as string,
             })
-          else
+
+            delete group.deletes?.[option?.id as string]
+          } else {
             group.creates.push({
               code: option?.code as string,
               name: option?.name as string,
               attributeId: updatedAttribute.id,
             })
+
+            delete group.deletes?.[option?.id as string]
+          }
+
           return group
         },
-        { creates: [], updates: [] } as {
+        { creates: [], updates: [], deletes: deleteAttributeOptIds } as {
           creates: Omit<ProductAttributeOption, "id">[]
           updates: Omit<ProductAttributeOption, "attributeId">[]
+          deletes: Record<string, boolean>
         }
       )
 
-      console.log(attrOptionsUpdateOrCreates)
-
       // Update product attribute options (creates or updates)
+      const {
+        creates: attributeOptionCreates,
+        updates: attributeOptionUpdates,
+        deletes: attributeOptionDeletes,
+      } = attrOptionsUpdateOrCreatesOrDeletes
+
+      const getIdsAttributeOptionDeletes = Object.keys(attributeOptionDeletes)
+
+      console.log("getIdsAttributeOptionDeletes", getIdsAttributeOptionDeletes)
+      const getDeleteVariantAttributeIds =
+        await prisma.productVariantAttribute.findMany({
+          where: {
+            productAttributeOptionId: {
+              in: getIdsAttributeOptionDeletes,
+            },
+          },
+          select: { id: true },
+        })
+      console.log("getDeleteVariantAttributeIds", getDeleteVariantAttributeIds)
+      const getDeletesProductVariants = await prisma.productVariant.findMany({
+        where: {
+          attributes: {
+            some: {
+              id: { in: getDeleteVariantAttributeIds.map(({ id }) => id) },
+            },
+          },
+        },
+      })
+      console.log("deletesProductVariants", getDeletesProductVariants)
+
+      throw new Error("asdadjhs")
+
       await prisma.$transaction([
         prisma.productAttributeOption.createMany({
-          data: attrOptionsUpdateOrCreates.creates,
+          data: attributeOptionCreates,
         }),
-        ...attrOptionsUpdateOrCreates.updates.map((option) =>
+
+        ...attributeOptionUpdates.map((option) =>
           prisma.productAttributeOption.update({
             where: {
               id: option.id,
@@ -218,6 +267,28 @@ export const attributeRouter = router({
             data: option,
           })
         ),
+
+        // Delete product attribute options
+        prisma.productAttributeOption.deleteMany({
+          where: {
+            id: {
+              in: getIdsAttributeOptionDeletes,
+            },
+          },
+        }),
+
+        // Delete many product variants includes attribute options id removed
+        // prisma.productVariant.deleteMany({
+        //   where: {
+        //     attributes: {
+        //       some: {
+        //         productAttributeOptionId: {
+        //           in: getIdsAttributeOptionDeletes,
+        //         },
+        //       },
+        //     },
+        //   },
+        // }),
       ])
 
       if (input.groupIds?.length) {
