@@ -11,11 +11,7 @@ import {
   CommandInput,
   CommandItem,
 } from "@/components/ui/command"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { cn } from "@/lib/utils"
 import {
   FC,
@@ -48,6 +44,7 @@ export interface ComboboxProps {
   contentClassName?: string
 
   closeMenuOnSelect?: boolean
+  exceptItemValues?: string[]
 }
 
 export const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
@@ -63,14 +60,14 @@ export const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
       closeMenuOnSelect = true,
       className,
       contentClassName,
+      exceptItemValues = [],
     },
     ref
   ) => {
     // Check props.isMulti with defaultValue
     if (isMulti && !Array.isArray(defaultValue)) {
       throw new Error(
-        "The combobox with isMulti='true' should received array instead of " +
-          typeof defaultValue
+        "The combobox with isMulti='true' should received array instead of " + typeof defaultValue
       )
     }
 
@@ -92,8 +89,7 @@ export const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
 
     // Virtualize
     const itemSize = 34
-    const itemListSize =
-      filterOptions.length < 10 ? filterOptions.length * itemSize : 300
+    const itemListSize = filterOptions.length < 10 ? filterOptions.length * itemSize : 300
     const itemCount = filterOptions.length
 
     const handleSelectOption = (selectedValue: string) => {
@@ -102,9 +98,7 @@ export const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
 
         // Remove existed option
         if (isIncludedCurrentValue) {
-          const withoutCurrentValue = value.filter(
-            (_value, index) => _value !== selectedValue
-          )
+          const withoutCurrentValue = value.filter((_value, index) => _value !== selectedValue)
 
           setValue(withoutCurrentValue)
         }
@@ -122,14 +116,16 @@ export const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
 
     const handleSearchOption = (search: string) => {
       setFilterOptions(() =>
-        options.filter((option) =>
-          option.label.toLowerCase().includes(search.toLowerCase())
+        options.filter(
+          (option) =>
+            option.label.toLowerCase().includes(search.toLowerCase()) &&
+            !exceptItemValues.includes(option?.value)
         )
       )
     }
 
     useEffect(() => {
-      setFilterOptions(options)
+      setFilterOptions(options.filter((option) => !exceptItemValues.includes(option?.value)))
     }, [options])
 
     useEffect(() => {
@@ -155,20 +151,17 @@ export const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
 
     useEffect(() => {
       if (comboboxTriggerRef.current) {
-        setComboboxContentWidth(
-          comboboxTriggerRef.current.getBoundingClientRect().width
-        )
+        setComboboxContentWidth(comboboxTriggerRef.current.getBoundingClientRect().width)
       }
     }, [comboboxTriggerRef])
 
-    useImperativeHandle(
-      ref,
-      () => comboboxTriggerRef.current as HTMLButtonElement
-    )
+    useImperativeHandle(ref, () => comboboxTriggerRef.current as HTMLButtonElement)
 
     // eslint-disable-next-line react/display-name
     const Row = memo<ListChildComponentProps>(({ index, style }) => {
-      const option = filterOptions?.[index]
+      const option = filterOptions.filter((option) => !exceptItemValues.includes(option?.value))?.[
+        index
+      ]
       if (!option) return <></>
 
       return (
@@ -196,10 +189,7 @@ export const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className={cn(
-              className,
-              "w-full !gap-2 flex-nowrap font-normal whitespace-nowrap"
-            )}
+            className={cn(className, "w-full !gap-2 flex-nowrap font-normal whitespace-nowrap")}
             ref={comboboxTriggerRef}
           >
             <p
@@ -216,13 +206,8 @@ export const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
           style={{ width: comboboxContentWidth }}
         >
           <Command shouldFilter={false}>
-            <CommandInput
-              placeholder="Search..."
-              onValueChange={handleSearchOption}
-            />
-            <CommandEmpty>
-              {notFound ? notFound : "No option found."}
-            </CommandEmpty>
+            <CommandInput placeholder="Search..." onValueChange={handleSearchOption} />
+            <CommandEmpty>{notFound ? notFound : "No option found."}</CommandEmpty>
             <CommandGroup>
               <ScrollArea>
                 <FixedSizeList

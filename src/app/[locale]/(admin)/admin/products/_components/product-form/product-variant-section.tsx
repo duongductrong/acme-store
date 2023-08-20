@@ -82,15 +82,20 @@ const ProductVariantSection = ({ children }: ProductVariantSectionProps) => {
   )
 
   const handleAppendProductVariant = () => {
-    productVariantsFieldControl.append({
-      photo: "",
-      visible: true,
-      attributes: [],
-      price: 0.0,
-      quantity: 0,
-      SKU: "NOPE",
-      stockAvailability: true,
-    })
+    const currentVariants = methods.getValues().variants
+
+    methods.setValue(
+      "variants",
+      currentVariants.concat({
+        photo: "",
+        visible: true,
+        attributes: [],
+        price: 0.0,
+        quantity: 0,
+        SKU: "NOPE",
+        stockAvailability: true,
+      })
+    )
   }
 
   return (

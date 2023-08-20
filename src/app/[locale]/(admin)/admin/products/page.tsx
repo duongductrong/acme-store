@@ -6,10 +6,7 @@ import SectionView from "@/components/sections/section-view"
 import StatusPoint from "@/components/status-point"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
-import {
-  DataTable,
-  useDataTableManualOffsetPagination,
-} from "@/components/ui/data-table"
+import { DataTable, useDataTableManualOffsetPagination } from "@/components/ui/data-table"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -34,8 +31,10 @@ const ProductList = (props: ProductListProps) => {
   const router = useRouter()
   const trpcUtils = trpc.useContext()
 
-  const { page, pageSize, setPage, setPageSize } =
-    useDataTableManualOffsetPagination({ page: 1, pageSize: 10 })
+  const { page, pageSize, setPage, setPageSize } = useDataTableManualOffsetPagination({
+    page: 1,
+    pageSize: 10,
+  })
 
   const { data, isLoading: isProductQuerying } = trpc.product.list.useQuery({
     paginationType: "offset",
@@ -46,24 +45,23 @@ const ProductList = (props: ProductListProps) => {
   const products = data?.items || []
   const productPagination = data?.pagination
 
-  const { mutate, isLoading: isProductMutating } =
-    trpc.product.permanentlyDelete.useMutation({
-      onSuccess() {
-        t.toast({
-          title: "Success",
-          description: "Deleted a product successfully",
-        })
+  const { mutate, isLoading: isProductMutating } = trpc.product.permanentlyDelete.useMutation({
+    onSuccess() {
+      t.toast({
+        title: "Success",
+        description: "Deleted a product successfully",
+      })
 
-        trpcUtils.product.list.invalidate()
-      },
-      onError() {
-        t.toast({
-          title: "Error",
-          description: "Has an error when delete a product",
-          variant: "destructive",
-        })
-      },
-    })
+      trpcUtils.product.list.invalidate()
+    },
+    onError() {
+      t.toast({
+        title: "Error",
+        description: "Has an error when delete a product",
+        variant: "destructive",
+      })
+    },
+  })
 
   const handlePermanentlyDelete = (id: string) => mutate(id)
 
@@ -92,15 +90,15 @@ const ProductList = (props: ProductListProps) => {
       accessorKey: "title",
       header: () => "Product Name",
       cell: ({ getValue, row }) => (
-        <>
+        <div className="w-[250px]">
           <Link
             href={ADMIN_URL.PRODUCT.EDIT.replace(/{id}/, row.original.id)}
             className="hover:underline underline-offset-2 font-semibold mb-3"
           >
             {getValue<string>()}
           </Link>
-          <span className="text-xs block">path:({row.original.SKU})</span>
-        </>
+          <span className="text-xs block">path:({row.original.slug})</span>
+        </div>
       ),
     },
     {
@@ -109,14 +107,6 @@ const ProductList = (props: ProductListProps) => {
       header: () => "Price",
       cell: ({ getValue }) => {
         return formatCurrency(getValue<number>(), "en-US")
-      },
-    },
-    {
-      id: "sku",
-      accessorKey: "SKU",
-      header: () => "SKU",
-      cell: ({ getValue }) => {
-        return getValue<string>().toUpperCase()
       },
     },
     {
@@ -152,15 +142,9 @@ const ProductList = (props: ProductListProps) => {
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem asChild>
-                <Link
-                  href={ADMIN_URL.PRODUCT.EDIT.replace(/{id}/g, product.id)}
-                >
-                  Edit product
-                </Link>
+                <Link href={ADMIN_URL.PRODUCT.EDIT.replace(/{id}/g, product.id)}>Edit product</Link>
               </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => handlePermanentlyDelete(product.id)}
-              >
+              <DropdownMenuItem onClick={() => handlePermanentlyDelete(product.id)}>
                 Delete product
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -174,10 +158,7 @@ const ProductList = (props: ProductListProps) => {
     <SectionView
       title="Products"
       whereTopRight={
-        <Gate
-          privileges={["create", "create:any", "create:own"]}
-          resource="products"
-        >
+        <Gate privileges={["create", "create:any", "create:own"]} resource="products">
           <Button asChild>
             <Link href={ADMIN_URL.PRODUCT.NEW}>
               <Plus className="w-4 h-4 mr-2" />

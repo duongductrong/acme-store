@@ -110,14 +110,6 @@ const ProductForm = ({ title, error, defaultValues, loading, onSubmit }: Product
                   />
 
                   <FormField
-                    variant="TEXT"
-                    label="SKU"
-                    name="SKU"
-                    wrapperClassName="col-span-2"
-                    placeholder="SKU"
-                  />
-
-                  <FormField
                     variant="NUMBER"
                     label="Price"
                     name="price"

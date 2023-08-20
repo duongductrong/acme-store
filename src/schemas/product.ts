@@ -65,9 +65,6 @@ export const productSchema = z.object({
     .string({ required_error: VALIDATION_MESSAGES.REQUIRED("Slug") })
     .min(1, VALIDATION_MESSAGES.REQUIRED("Slug"))
     .regex(UNIQUE_IDENTIFIED, VALIDATION_MESSAGES.URL_INVALID("slug")),
-  SKU: z
-    .string({ required_error: VALIDATION_MESSAGES.REQUIRED("SKU") })
-    .min(1, VALIDATION_MESSAGES.REQUIRED("SKU")),
   thumbnail: z
     .string({ required_error: VALIDATION_MESSAGES.REQUIRED("Thumbnail") })
     .min(1, VALIDATION_MESSAGES.REQUIRED("Thumbnail")),

@@ -19,13 +19,6 @@ export const productCreateInputSchema = z
 
       return !product
     }, VALIDATION_MESSAGES.ALREADY_EXISTS("slug")),
-    SKU: productSchema.shape.SKU.refine(async (SKU) => {
-      const product = await prisma.product.findFirst({
-        where: { SKU },
-      })
-
-      return !product
-    }, VALIDATION_MESSAGES.ALREADY_EXISTS("SKU")),
     variants: z.array(productVariantAttributeSchema),
   })
   .superRefine(async (values, ctx) => {

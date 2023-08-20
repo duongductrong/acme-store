@@ -36,6 +36,10 @@ const ProductVariantTable = (props: ProductVariantTableProps) => {
     name: "variants",
   })
 
+  const variantAttributesSelected = variants.map(
+    ({ attributes }) => attributes as unknown as string
+  )
+
   const defaultRowSelection = variants?.reduce(
     (pVariants, pVariant, index) =>
       omitBy(
@@ -79,6 +83,7 @@ const ProductVariantTable = (props: ProductVariantTableProps) => {
                 placeholder="Select variant"
                 name={`variants.${index}.attributes`}
                 options={variantAttributeOptions}
+                exceptItemValues={variantAttributesSelected}
               />
             </div>
           )
@@ -147,6 +152,7 @@ const ProductVariantTable = (props: ProductVariantTableProps) => {
     ],
     [
       attributeGroupId,
+      variantAttributesSelected.join("@"),
       JSON.stringify(variantAttributeCombinations),
       JSON.stringify(productVariants),
     ]

@@ -15,7 +15,6 @@ model Product {
   id                String            @id @default(cuid()) @db.VarChar(25)
   title             String
   slug              String            @unique
-  SKU               String            @unique
   price             Int
   quantity          Int
   stockAvailability Boolean?          @default(true)
