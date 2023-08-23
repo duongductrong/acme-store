@@ -6,8 +6,7 @@ import {
 } from "@/app/(trpc)/lib/trpc/utils"
 import { RESOURCE_KEYS } from "@/constant/resources"
 import prisma from "@/lib/prisma"
-import { Prisma, ProductVisibility, Status } from "@prisma/client"
-import { omit } from "lodash"
+import { Prisma } from "@prisma/client"
 import { z } from "zod"
 import {
   productCreateInputSchema,
