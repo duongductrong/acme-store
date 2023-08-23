@@ -5,6 +5,7 @@ import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin"
 import { EditorState } from "lexical"
 import AutoFocusPlugin from "./auto-focus-plugin"
 import ImagePlugin from "./image-plugin"
+import CodeHighlightPlugin from "./code-highlight-plugin"
 // import { TreeViewPlugin } from "./tree-view-plugin"
 // import { TRANSFORMERS } from "@lexical/markdown"
 // import { MarkdownShortcutPlugin } from "@lexical/react/LexicalMarkdownShortcutPlugin"
@@ -21,6 +22,7 @@ const LexicalEditorPlugins = ({ onChange }: LexicalEditorPluginsProps) => {
       <AutoFocusPlugin />
       <CheckListPlugin />
       <ImagePlugin />
+      <CodeHighlightPlugin />
       {/* <MarkdownShortcutPlugin transformers={TRANSFORMERS} /> */}
       {/* <TreeViewPlugin /> */}
     </>

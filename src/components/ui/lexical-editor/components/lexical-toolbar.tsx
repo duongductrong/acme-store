@@ -154,6 +154,8 @@ const LexicalToolbar = (props: LexicalToolbarProps) => {
           editor={editor}
         />
 
+        <LexicalToolbarFormatAlign editor={editor} />
+
         <LexicalToolbarDivider />
 
         <LexicalToolbarFormatText variant="bold" active={isBold} editor={activeEditor} />
@@ -169,8 +171,6 @@ const LexicalToolbar = (props: LexicalToolbarProps) => {
         <LexicalToolbarDivider />
 
         <LexicalToolbarSpecializedNode variant="image" editor={activeEditor} />
-
-        <LexicalToolbarFormatAlign editor={editor} />
       </header>
     </ScrollArea>
   )

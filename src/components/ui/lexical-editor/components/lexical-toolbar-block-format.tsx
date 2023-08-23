@@ -203,7 +203,7 @@ const LexicalToolbarBlockFormat = ({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button size="sm" variant="ghost" className="whitespace-nowrap">
+        <Button size="sm" variant="ghost" className="whitespace-nowrap" type="button">
           <CurrentBlockIcon className="w-4 h-4 mr-2" />
           {BLOCK_TYPE_TO_BLOCK_NAME[blockType]}
           <ChevronDown className="ml-2 w-4 h-4" />

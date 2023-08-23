@@ -47,6 +47,7 @@ const LexicalToolbarFormatText = ({
   return (
     <Button
       size="sm"
+      type="button"
       variant={active ? "secondary" : "ghost"}
       onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, formatTextCommand)}
       className={cn(className)}

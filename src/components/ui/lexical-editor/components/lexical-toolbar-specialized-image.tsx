@@ -33,7 +33,7 @@ const LexicalToolbarSpecializedImageNode = ({
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="ghost" size="sm">
+        <Button variant="ghost" size="sm" type="button">
           <Image className="w-4 h-4 cursor-pointer" />
           {children}
         </Button>

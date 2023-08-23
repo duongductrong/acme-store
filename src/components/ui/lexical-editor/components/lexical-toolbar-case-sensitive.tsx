@@ -25,7 +25,7 @@ const LexicalToolbarCaseSensitive = ({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button className="whitespace-nowrap" variant="ghost" size="sm">
+        <Button className="whitespace-nowrap" variant="ghost" size="sm" type="button">
           <CaseSensitive className="w-5 h-5" />
           <ChevronDown className="ml-2 w-4 h-4" />
         </Button>

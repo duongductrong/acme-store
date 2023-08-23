@@ -14,59 +14,63 @@
   @apply text-zinc-600 dark:text-zinc-400;
 }
 .PlaygroundEditorTheme__h1 {
-  @apply text-2xl font-semibold m-0;
+  @apply text-3xl font-semibold m-0;
 }
 .PlaygroundEditorTheme__h2 {
-  @apply text-xl font-semibold m-0;
+  @apply text-2xl font-semibold m-0;
 }
 .PlaygroundEditorTheme__h3 {
+  @apply text-xl font-semibold m-0;
+}
+.PlaygroundEditorTheme__h4 {
   @apply text-lg font-semibold m-0;
+}
+.PlaygroundEditorTheme__h5 {
+  @apply text-base font-semibold m-0;
+}
+.PlaygroundEditorTheme__h6 {
+  @apply text-base font-medium m-0;
 }
 .PlaygroundEditorTheme__indent {
   --lexical-indent-base-value: 40px;
 }
 .PlaygroundEditorTheme__textBold {
-  font-weight: bold;
+  @apply font-bold;
 }
 .PlaygroundEditorTheme__textItalic {
-  font-style: italic;
+  @apply italic;
 }
 .PlaygroundEditorTheme__textUnderline {
-  text-decoration: underline;
-  text-underline-offset: 4px;
+  @apply underline underline-offset-4;
 }
 .PlaygroundEditorTheme__textStrikethrough {
-  text-decoration: line-through;
+  @apply line-through;
 }
 .PlaygroundEditorTheme__textUnderlineStrikethrough {
-  text-decoration: underline line-through;
+  @apply underline line-through;
 }
 .PlaygroundEditorTheme__textSubscript {
-  font-size: 0.8em;
+  @apply text-[0.8em];
   vertical-align: sub !important;
 }
 .PlaygroundEditorTheme__textSuperscript {
-  font-size: 0.8em;
+  @apply text-[0.8em];
   vertical-align: super;
 }
 .PlaygroundEditorTheme__textCode {
-  @apply px-1.5 py-1 bg-zinc-200 dark:bg-zinc-800 rounded-md;
-  // background-color: rgb(240, 242, 245);
-  // padding: 1px 0.25rem;
+  @apply px-1.5 py-1 bg-zinc-200 dark:bg-zinc-800 rounded-md text-[94%];
   font-family: Menlo, Consolas, Monaco, monospace;
-  font-size: 94%;
 }
 .PlaygroundEditorTheme__hashtag {
-  background-color: rgba(88, 144, 255, 0.15);
-  border-bottom: 1px solid rgba(88, 144, 255, 0.3);
+  @apply bg-blue-400;
+  @apply border-b border-solid border-blue-500;
 }
 .PlaygroundEditorTheme__link {
-  color: rgb(33, 111, 219);
-  text-decoration: none;
-}
-.PlaygroundEditorTheme__link:hover {
-  text-decoration: underline;
-  cursor: pointer;
+  @apply text-blue-500 decoration-inherit;
+
+  &:hover {
+    @apply underline underline-offset-4 cursor-pointer;
+  }
 }
 
 .PlaygroundEditorTheme__code {
@@ -78,20 +82,6 @@
   font-family: Menlo, Consolas, Monaco, monospace;
   tab-size: 2;
 }
-
-// .PlaygroundEditorTheme__code:before {
-//   content: attr(data-gutter);
-//   position: absolute;
-//   // background-color: #eee;
-//   left: 0;
-//   top: 0;
-//   border-right: 1px solid #ccc;
-//   padding: 8px;
-//   color: #777;
-//   white-space: pre-wrap;
-//   text-align: right;
-//   min-width: 25px;
-// }
 
 .PlaygroundEditorTheme__table {
   border-collapse: collapse;

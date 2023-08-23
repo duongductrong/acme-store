@@ -51,7 +51,7 @@ const LexicalToolbarFormatAlign = ({ editor }: LexicalToolbarFormatAlignProps) =
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button size="sm" variant="ghost" className="whitespace-nowrap">
+        <Button size="sm" variant="ghost" className="whitespace-nowrap" type="button">
           <AlignLeft className="w-4 h-4 mr-2" />
           Align
         </Button>
