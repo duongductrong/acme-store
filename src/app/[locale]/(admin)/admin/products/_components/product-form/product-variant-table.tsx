@@ -36,7 +36,7 @@ const ProductVariantTable = (props: ProductVariantTableProps) => {
     name: "variants",
   })
 
-  const variantAttributesSelected = variants.map(
+  const variantAttributesSelected = variants?.map(
     ({ attributes }) => attributes as unknown as string
   )
 
@@ -152,7 +152,7 @@ const ProductVariantTable = (props: ProductVariantTableProps) => {
     ],
     [
       attributeGroupId,
-      variantAttributesSelected.join("@"),
+      variantAttributesSelected?.join("@"),
       JSON.stringify(variantAttributeCombinations),
       JSON.stringify(productVariants),
     ]
