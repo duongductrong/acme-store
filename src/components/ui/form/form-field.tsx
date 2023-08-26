@@ -11,6 +11,7 @@ import { InputProps } from "../input"
 import { TextareaProps } from "../textarea"
 import { FormNumberProps } from "./components/form-number"
 import { FormRadioGroupProps } from "./components/form-radio-group"
+import { FormRichTextProps } from "./components/form-rich-text"
 import { FormSelectProps } from "./components/form-select"
 import { FormSelectInfiniteProps } from "./components/form-select-infinite"
 import { FormUIDProps } from "./components/form-uid"
@@ -61,6 +62,11 @@ const FormNumber = dynamic(() => import("./components/form-number"), {
   loading: () => <Skeleton className="h-[40px] w-full" />,
 })
 
+const FormRichText = dynamic(() => import("./components/form-rich-text"), {
+  ssr: true,
+  loading: () => <Skeleton className="h-[200px] w-full" />,
+})
+
 export interface FormFieldTextVariantProps
   extends InputProps,
     React.RefAttributes<HTMLInputElement> {
@@ -99,6 +105,10 @@ export interface FormFieldNumberVariantProps
   variant: "NUMBER"
 }
 
+export interface FormFieldRichTextVariantProps extends FormRichTextProps {
+  variant: "RICH_TEXT"
+}
+
 export type FormFieldVariantBaseProps =
   | FormFieldTextVariantProps
   | FormFieldTextareaVariantProps
@@ -108,6 +118,7 @@ export type FormFieldVariantBaseProps =
   | FormFieldUIDVariantProps
   | FormFieldSelectInfiniteVariantProps
   | FormFieldNumberVariantProps
+  | FormFieldRichTextVariantProps
 
 export interface FormFieldStandardBaseProps {
   type?: HTMLInputTypeAttribute
@@ -132,6 +143,7 @@ const FORM_UNIFIED_VARIANT_LOADER = {
   [FORM_UNIFIED_VARIANT.UID]: FormUID,
   [FORM_UNIFIED_VARIANT.NUMBER]: FormNumber,
   [FORM_UNIFIED_VARIANT.SELECT_INFINITE]: FormSelectInfinite,
+  [FORM_UNIFIED_VARIANT.RICH_TEXT]: FormRichText
 }
 
 const FormField = forwardRef<

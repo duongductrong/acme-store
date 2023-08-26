@@ -2,6 +2,7 @@
 "use client"
 
 import { useTRPCTransformerFieldErrorsWithRHF } from "@/app/(trpc)/lib/trpc/hooks"
+import Spinner from "@/components/loadings/spinner"
 import SectionDetail from "@/components/sections/section-detail"
 import SectionPaper from "@/components/sections/section-paper"
 import { Button } from "@/components/ui/button"
@@ -21,8 +22,6 @@ import ProductCollectionField from "./product-collection-field"
 import ProductVariantInformation from "./product-variant-information"
 import ProductVariantSection from "./product-variant-section"
 import ProductVariantTable from "./product-variant-table"
-import Spinner from "@/components/loadings/spinner"
-import LexicalEditor from "@/components/ui/lexical-editor"
 
 export interface ProductFormProps {
   title: string
@@ -131,15 +130,15 @@ const ProductForm = ({ title, error, defaultValues, loading, onSubmit }: Product
                     placeholder="Description"
                   />
 
-                  <LexicalEditor className="col-span-4" placeholder="Enter your content here..." />
+                  <FormField variant="RICH_TEXT" name="content" wrapperClassName="col-span-4" />
 
-                  <FormField
+                  {/* <FormField
                     variant="TEXTAREA"
                     label="Content"
                     name="content"
                     wrapperClassName="col-span-4"
                     placeholder="Content"
-                  />
+                  /> */}
                 </div>
               </SectionPaper>
               <SectionPaper title="Media">Building....</SectionPaper>

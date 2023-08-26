@@ -1,0 +1,35 @@
+.tiptap.ProseMirror {
+  @apply p-4 focus:outline-none border dark:border-zinc-800 rounded-md text-sm;
+  @apply min-h-[200px] max-h-[500px] overflow-y-auto;
+
+  h1 {
+    @apply text-3xl font-semibold;
+    line-height: 2 !important;
+  }
+
+  h2 {
+    @apply text-2xl font-semibold;
+    line-height: 2 !important;
+  }
+
+  h3 {
+    @apply text-xl font-semibold;
+    line-height: 2 !important;
+  }
+
+  h4 {
+    @apply text-lg font-semibold;
+    line-height: 2 !important;
+  }
+
+  h5 {
+    @apply text-base font-semibold;
+    line-height: 2 !important;
+  }
+
+  pre {
+    @apply bg-zinc-100 dark:bg-zinc-900;
+    @apply p-4 rounded-md overflow-x-auto;
+    @apply text-sm my-4;
+  }
+}
