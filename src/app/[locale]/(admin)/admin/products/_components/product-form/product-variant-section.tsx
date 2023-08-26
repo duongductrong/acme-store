@@ -101,10 +101,10 @@ const ProductVariantSection = ({ children }: ProductVariantSectionProps) => {
   return (
     <ProductVariantSectionContext.Provider value={values}>
       <SectionPaper
-        className="col-span-12 flex flex-col gap-base"
+        className="col-span-12"
         title="Variants"
         headerActions={
-          <Button variant="ghost" type="button" onClick={handleAppendProductVariant}>
+          <Button variant="outline" type="button" onClick={handleAppendProductVariant}>
             <Plus className="w-4 h-4 mr-2" />
             Add variant
           </Button>

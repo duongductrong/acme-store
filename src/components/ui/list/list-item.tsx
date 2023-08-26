@@ -1,14 +1,11 @@
 import { cn } from "@/lib/utils"
-import { Slot } from "@radix-ui/react-slot"
+import { AsComponentGenericType, AsComponentProps, AsProps } from "@/types/as-component-generic"
 import { VariantProps, cva } from "class-variance-authority"
-import { HTMLAttributes } from "react"
+import { LucideIcon, LucideProps } from "lucide-react"
+import { ForwardRefExoticComponent, HTMLAttributes, RefAttributes, SVGAttributes } from "react"
 
 const listItemVariants = cva(
-  cn(
-    "relative justify-start h-10 px-4",
-    "flex items-center text-sm",
-    "rounded-lg"
-  ),
+  cn("relative justify-start h-10 px-4", "flex items-center text-sm", "rounded-lg font-medium"),
   {
     variants: {
       hover: {
@@ -26,29 +23,30 @@ const listItemVariants = cva(
   }
 )
 
-export interface ListPropsProps
+export interface ListItemProps<T extends AsComponentGenericType>
   extends HTMLAttributes<HTMLElement>,
-    VariantProps<typeof listItemVariants> {
-  asChild?: boolean
+    VariantProps<typeof listItemVariants>,
+    AsProps<T> {
+  prefixIcon?: ForwardRefExoticComponent<
+    SVGAttributes<SVGSVGElement> & RefAttributes<SVGSVGElement>
+  >
 }
 
-const ListItem = ({
+const ListItem = <T extends AsComponentGenericType = "div">({
   active,
   children,
   className,
   asChild,
   hover,
+  as: AsComponent = "div",
+  prefixIcon: PrefixIcon,
   ...props
-}: ListPropsProps) => {
-  const Comp = asChild ? Slot : "div"
-
+}: AsComponentProps<T, ListItemProps<T>>) => {
   return (
-    <Comp
-      {...props}
-      className={cn(listItemVariants({ className, active, hover }))}
-    >
+    <AsComponent {...props} className={cn(listItemVariants({ className, active, hover }))}>
+      {PrefixIcon ? <PrefixIcon className="w-4 h-4 mr-base" /> : null}
       {children}
-    </Comp>
+    </AsComponent>
   )
 }
 

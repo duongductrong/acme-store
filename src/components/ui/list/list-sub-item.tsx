@@ -1,13 +1,10 @@
 import { cn } from "@/lib/utils"
-import { Slot } from "@radix-ui/react-slot"
+import { AsComponentGenericType, AsComponentProps, AsProps } from "@/types/as-component-generic"
 import { VariantProps, cva } from "class-variance-authority"
 import { HTMLAttributes } from "react"
 
 export const listSubItemVariants = cva(
-  cn(
-    "flex items-center justify-start",
-    "h-10 hover:bg-transparent ml-6 px-0 text-[13px]"
-  ),
+  cn("flex items-center justify-start", "h-10 hover:bg-transparent ml-6 px-0 text-[13px]"),
   {
     variants: {
       active: {
@@ -21,24 +18,23 @@ export const listSubItemVariants = cva(
   }
 )
 
-export interface ListSubItemProps
-  extends HTMLAttributes<HTMLElement>,
-    VariantProps<typeof listSubItemVariants> {
+export interface ListSubItemProps<T extends AsComponentGenericType>
+  extends AsProps<T, HTMLAttributes<HTMLElement> & VariantProps<typeof listSubItemVariants>> {
   asChild?: boolean
 }
 
-const ListSubItem = ({
+const ListSubItem = <T extends AsComponentGenericType = "div">({
   children,
   className,
   active,
   asChild,
+  as: AsComponent = "div",
   ...props
-}: ListSubItemProps) => {
-  const Comp = asChild ? Slot : "div"
+}: AsComponentProps<T, ListSubItemProps<T>>) => {
   return (
-    <Comp {...props} className={cn(listSubItemVariants({ className, active }))}>
+    <AsComponent {...props} className={cn(listSubItemVariants({ className, active }))}>
       {children}
-    </Comp>
+    </AsComponent>
   )
 }
 

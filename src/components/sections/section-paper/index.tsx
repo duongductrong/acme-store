@@ -13,10 +13,8 @@ const SectionPaper = forwardRef<HTMLDivElement, SectionPaperProps>(
     const renderHeader = useMemo(
       () =>
         title || headerActions ? (
-          <div className="flex items-center justify-between mb-4">
-            {title ? (
-              <h3 className="text-base font-semibold">{title}</h3>
-            ) : null}
+          <div className="flex items-center justify-between mb-2">
+            {title ? <h3 className="text-lg font-medium">{title}</h3> : null}
 
             {headerActions ? headerActions : null}
           </div>
@@ -24,16 +22,15 @@ const SectionPaper = forwardRef<HTMLDivElement, SectionPaperProps>(
       [title, headerActions]
     )
     return (
-      <div
-        {...props}
-        ref={ref}
-        className={cn(
-          "border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-5 rounded-lg",
-          className
-        )}
-      >
+      <div ref={ref} {...props} className={className}>
         {renderHeader}
-        {children}
+        <div
+          className={cn(
+            "border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-5 rounded-lg"
+          )}
+        >
+          {children}
+        </div>
       </div>
     )
   }

@@ -1,6 +1,5 @@
 "use client"
 
-import { Button } from "@/components/ui/button"
 import { Moon, Sun } from "lucide-react"
 import { useTheme } from "next-themes"
 
@@ -13,11 +12,7 @@ const ToggleDarkLightMode = () => {
 
   const IconMode = theme === "dark" ? Moon : Sun
 
-  return (
-    <Button size="sm" variant="ghost" onClick={handleToggleThemeMode}>
-      <IconMode className="w-4 h-4" />
-    </Button>
-  )
+  return <IconMode role="button" className="w-4 h-4" onClick={handleToggleThemeMode} />
 }
 
 export default ToggleDarkLightMode

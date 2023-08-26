@@ -26,6 +26,7 @@ module.exports = {
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
+        body: "hsl(var(--body))",
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
@@ -54,6 +55,10 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        asidebar: {
+          background: "hsl(var(--asidebar))",
+          foreground: "hsl(var(--asidebar-foreground))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -76,12 +81,15 @@ module.exports = {
       },
       padding: {
         base: "1rem",
+        lg: "2rem",
       },
       margin: {
         base: "1rem",
+        lg: "2rem",
       },
       gap: {
         base: "1rem",
+        lg: "2rem",
       },
     },
   },

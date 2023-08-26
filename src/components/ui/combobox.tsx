@@ -189,7 +189,13 @@ export const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className={cn(className, "w-full !gap-2 flex-nowrap font-normal whitespace-nowrap")}
+            className={cn(
+              className,
+              "w-full !gap-2 flex-nowrap font-normal whitespace-nowrap",
+              "focus:border-primary focus:ring-4 focus:ring-primary/10",
+              "focus-within:border-primary focus:ring-4 focus:ring-primary/10",
+              "focus:bg-transparent hover:bg-transparent"
+            )}
             ref={comboboxTriggerRef}
           >
             <p

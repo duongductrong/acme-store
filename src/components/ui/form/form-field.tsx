@@ -143,7 +143,7 @@ const FORM_UNIFIED_VARIANT_LOADER = {
   [FORM_UNIFIED_VARIANT.UID]: FormUID,
   [FORM_UNIFIED_VARIANT.NUMBER]: FormNumber,
   [FORM_UNIFIED_VARIANT.SELECT_INFINITE]: FormSelectInfinite,
-  [FORM_UNIFIED_VARIANT.RICH_TEXT]: FormRichText
+  [FORM_UNIFIED_VARIANT.RICH_TEXT]: FormRichText,
 }
 
 const FormField = forwardRef<
@@ -179,6 +179,7 @@ const FormField = forwardRef<
               <InputComp
                 {...field}
                 {...baseProps}
+                hasError={!!_error?.message}
                 className={cn(
                   className,
                   _error?.message ? "!border-destructive" : null,

@@ -13,7 +13,7 @@ export interface FormNumberProps extends InputProps {
 }
 
 const FormNumber = forwardRef<HTMLInputElement, FormNumberProps>(
-  ({ toFixed = 0, ...props }, ref) => {
+  ({ toFixed = 0, hasError, ...props }, ref) => {
     const { onChange, step = 1, value = 0, min, max } = props
     const handleUp = () => {
       if (onChange) {
@@ -44,42 +44,51 @@ const FormNumber = forwardRef<HTMLInputElement, FormNumberProps>(
     }
 
     return (
-      <div className="relative overflow-hidden">
+      <div className="relative group">
         <Input
           {...props}
           ref={ref}
           type="number"
           className={cn(props.className, "form-number")}
+          hasError={hasError}
         />
         <div
           className={cn(
             "w-8",
             "flex flex-col items-center justify-center",
-            "absolute top-1/2 transform -translate-y-1/2 right-0 h-full"
+            "absolute top-1/2 transform -translate-y-1/2 right-[1px] h-[calc(100%-2px)]"
           )}
         >
-          <span
-            role="button"
+          <button
+            type="button"
             className={cn(
               "w-full flex items-center justify-center flex-1",
-              "border border-b-0 border-solid border-zinc-200 dark:border-zinc-800",
-              "rounded-tr-[7px] cursor-pointer"
+              "border border-t-0 border-b-0 border-r-0 border-solid border-input",
+              "rounded-tr-[7px] cursor-pointer",
+              "hover:bg-accent",
+              hasError
+                ? "border-destructive group-focus-within:border-destructive"
+                : "group-focus-within:border-primary"
             )}
             onClick={handleUp}
           >
-            <ChevronUp className="w-3 h-3" />
-          </span>
-          <span
-            role="button"
+            <ChevronUp className="w-3 h-3 hover:text-primary" />
+          </button>
+          <button
+            type="button"
             className={cn(
               "w-full flex items-center justify-center flex-1",
-              "border border-solid border-zinc-200 dark:border-zinc-800",
-              "rounded-br-[7px] cursor-pointer"
+              "border border-solid border-b-0 border-r-0 border-input",
+              "rounded-br-[7px] cursor-pointer",
+              "hover:bg-accent",
+              hasError
+                ? "border-destructive group-focus-within:border-destructive"
+                : "group-focus-within:border-primary"
             )}
             onClick={handleDown}
           >
-            <ChevronDown className="w-3 h-3" />
-          </span>
+            <ChevronDown className="w-3 h-3 hover:text-primary" />
+          </button>
         </div>
       </div>
     )

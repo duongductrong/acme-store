@@ -6,7 +6,6 @@ import { Separator } from "@/components/ui/separator"
 import { ADMIN_URL } from "@/constant/urls"
 import { AttributeSchemaType, attributeSchema } from "@/schemas/attribute"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { ProductAttributeType } from "@prisma/client"
 import { useForm, useWatch } from "react-hook-form"
 import AttributeOptions from "../attribute-options"
 import { Button } from "@/components/ui/button"
@@ -21,31 +20,11 @@ export interface AttributeFormProps {
   onSubmit: (values: AttributeSchemaType) => void
 }
 
-const AttributeForm = ({
-  title,
-  error,
-  defaultValues,
-  onSubmit,
-}: AttributeFormProps) => {
+const AttributeForm = ({ title, error, defaultValues, onSubmit }: AttributeFormProps) => {
   const methods = useForm<AttributeSchemaType>({
     resolver: zodResolver(attributeSchema),
     defaultValues: defaultValues,
   })
-
-  const watchType = useWatch({
-    control: methods.control,
-    name: "type",
-  })
-
-  const isShowAttributeOptions = [
-    ProductAttributeType.Multiselect,
-    ProductAttributeType.Select,
-  ].includes(watchType as any)
-
-  const transformTypes = Object.values(ProductAttributeType).map((value) => ({
-    label: value,
-    value: value,
-  }))
 
   const handleSubmit = methods.handleSubmit(onSubmit)
 
@@ -67,12 +46,7 @@ const AttributeForm = ({
             <div className="col-span-8">
               <SectionPaper title="General">
                 <div className="flex flex-col gap-base">
-                  <FormField
-                    label="Name"
-                    name="name"
-                    variant="TEXT"
-                    placeholder="Name"
-                  />
+                  <FormField label="Name" name="name" variant="TEXT" placeholder="Name" />
                   <FormField
                     label="Attribute code"
                     name="code"
@@ -80,16 +54,10 @@ const AttributeForm = ({
                     variant="UID"
                     placeholder="Attribute code"
                   />
-                  <FormField
-                    label="Type"
-                    name="type"
-                    variant="RADIO_GROUP"
-                    items={transformTypes}
-                  />
                 </div>
 
-                {isShowAttributeOptions && <Separator className="my-base" />}
-                {isShowAttributeOptions && <AttributeOptions />}
+                <Separator className="my-base" />
+                <AttributeOptions />
 
                 <Separator className="my-base" />
                 <AttributeGroup />

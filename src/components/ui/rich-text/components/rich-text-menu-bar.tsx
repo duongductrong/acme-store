@@ -3,7 +3,6 @@ import { useCurrentEditor } from "@tiptap/react"
 import { Bold, Code, Italic, Redo, Strikethrough, Undo } from "lucide-react"
 import { ScrollArea } from "../../scroll-area"
 import RichTextMenuBarFormat from "./rich-text-menu-bar-format"
-import Heading from "@tiptap/extension-heading"
 
 export interface RichTextMenubarProps {}
 
@@ -39,7 +38,7 @@ const RichTextMenubar = (props: RichTextMenubarProps) => {
         <RichTextMenuBarFormat />
 
         <Button
-          variant="ghost"
+          variant={editor.isActive("bold") ? "secondary" : "ghost"}
           size="sm"
           type="button"
           onClick={() => editor.chain().focus().toggleBold().run()}
@@ -49,7 +48,7 @@ const RichTextMenubar = (props: RichTextMenubarProps) => {
           <Bold className="w-4 h-4" />
         </Button>
         <Button
-          variant="ghost"
+          variant={editor.isActive("italic") ? "secondary" : "ghost"}
           size="sm"
           type="button"
           onClick={() => editor.chain().focus().toggleItalic().run()}
@@ -59,7 +58,7 @@ const RichTextMenubar = (props: RichTextMenubarProps) => {
           <Italic className="w-4 h-4" />
         </Button>
         <Button
-          variant="ghost"
+          variant={editor.isActive("strike") ? "secondary" : "ghost"}
           size="sm"
           type="button"
           onClick={() => editor.chain().focus().toggleStrike().run()}
@@ -69,7 +68,7 @@ const RichTextMenubar = (props: RichTextMenubarProps) => {
           <Strikethrough className="w-4 h-4" />
         </Button>
         <Button
-          variant="ghost"
+          variant={editor.isActive("code") ? "secondary" : "ghost"}
           size="sm"
           type="button"
           onClick={() => editor.chain().focus().toggleCode().run()}

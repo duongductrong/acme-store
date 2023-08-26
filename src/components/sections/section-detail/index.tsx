@@ -30,25 +30,22 @@ const SectionDetail = forwardRef<HTMLDivElement, SectionDetailProps>(
     ref
   ) => {
     return (
-      <section
-        {...props}
-        ref={ref}
-        className={cn("max-w-[940px] mx-auto", wrapperClassName)}
-      >
-        <header className="flex items-center mb-base">
+      <section {...props} ref={ref} className={cn("max-w-[940px] mx-auto", wrapperClassName)}>
+        <header className="flex items-center mb-lg">
           <div className="flex items-center gap-2">
-            <Button type="button" variant="outline" className="mr-base" asChild>
+            <Button type="button" variant="outline" className="mr-base h-12 w-12" asChild>
               <Link href={backTo}>
-                <ArrowLeft className="w-5 h-5" />
+                <ArrowLeft className="w-8 h-8" />
               </Link>
             </Button>
-            <h2 className="text-xl font-semibold">{title}</h2>
+            <div className="flex flex-col gap-1">
+              <p className="text-muted-foreground text-xs">Back to previous page</p>
+              <h2 className="text-xl font-semibold">{title}</h2>
+            </div>
           </div>
 
           {whereTopRight && (
-            <div className={cn("ml-auto flex gap-2", whereTopRightClassName)}>
-              {whereTopRight}
-            </div>
+            <div className={cn("ml-auto flex gap-2", whereTopRightClassName)}>{whereTopRight}</div>
           )}
         </header>
         <main className={cn("w-full h-full", mainClassName)}>{children}</main>

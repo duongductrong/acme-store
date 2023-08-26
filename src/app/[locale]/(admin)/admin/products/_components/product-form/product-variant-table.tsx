@@ -164,12 +164,13 @@ const ProductVariantTable = (props: ProductVariantTableProps) => {
       data={productVariants}
       enableCreateNewEntry={false}
       defaultRowSelection={defaultRowSelection}
+      onRowSelection={handleRowVisible}
+      className="mt-4"
       pagination={{
         type: "self",
         page: 1,
         pageSize: 999,
       }}
-      onRowSelection={handleRowVisible}
       enableRowSelection
     />
   )

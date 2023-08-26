@@ -5,13 +5,7 @@ export interface AdminMainBarProps extends HTMLAttributes<HTMLElement> {}
 
 const AdminMainBar = ({ className, children, ...props }: AdminMainBarProps) => {
   return (
-    <main
-      {...props}
-      className={cn(
-        "w-full ml-[250px] bg-white dark:bg-black min-h-[calc(100vh-64px)]",
-        className
-      )}
-    >
+    <main {...props} className={cn("w-full ml-[250px] min-h-[calc(100vh-64px)]", className)}>
       {children}
     </main>
   )

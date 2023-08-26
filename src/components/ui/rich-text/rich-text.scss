@@ -32,4 +32,9 @@
     @apply p-4 rounded-md overflow-x-auto;
     @apply text-sm my-4;
   }
+
+  code {
+    @apply bg-zinc-100 dark:bg-zinc-900 p-1;
+    font-family: monospace;
+  }
 }

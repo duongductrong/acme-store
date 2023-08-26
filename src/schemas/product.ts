@@ -75,8 +75,9 @@ export const productSchema = z.object({
     .min(1, VALIDATION_MESSAGES.REQUIRED("Description")),
   categoryId: z
     .string({ required_error: VALIDATION_MESSAGES.REQUIRED("Category") })
-    .nullable()
-    .optional(),
+    .min(1, VALIDATION_MESSAGES.REQUIRED("Description")),
+  // .nullable()
+  // .optional(),
   attributeGroupId: z
     .string({ required_error: VALIDATION_MESSAGES.REQUIRED("Attribute Group") })
     .nullable()

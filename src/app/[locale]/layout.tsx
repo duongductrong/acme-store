@@ -31,9 +31,7 @@ export async function getDirectories(locale: string) {
 //   return Object.values(LOCALES).map((locale) => ({ locale }))
 // }
 
-export async function generateMetadata({
-  params: { locale },
-}: RootLayoutProps): Promise<Metadata> {
+export async function generateMetadata({ params: { locale } }: RootLayoutProps): Promise<Metadata> {
   const messages = await getDirectories(locale)
 
   // You can use the core (non-React) APIs when you have to use next-intl
@@ -65,17 +63,14 @@ export async function generateMetadata({
   }
 }
 
-export default async function RootLayout({
-  children,
-  params: { locale },
-}: RootLayoutProps) {
+export default async function RootLayout({ children, params: { locale } }: RootLayoutProps) {
   const directories = await getDirectories(locale)
 
   return (
     <PreferredHTML lang={locale}>
       <PreferredBody
         ifRegexMatch={"^(/admin/)(.+)"}
-        then={{ className: "" }}
+        then={{ className: "bg-body" }}
         otherwise={{ className: "storefront" }}
         className={cn(inter.className)}
       >

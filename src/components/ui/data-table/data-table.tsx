@@ -41,14 +41,9 @@ import {
   Plus,
 } from "lucide-react"
 import Spin from "../loadings/spin"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../select"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../select"
 import { getCanNextPageBasedType, getCanPreviousPageBasedType } from "./utils"
+import { cn } from "@/lib/utils"
 
 export interface DataTableOffsetPagination {
   type: "offset"
@@ -100,6 +95,8 @@ export interface DataTableProps<TData = any, TValue = any> {
   enableRowSelectionStyle?: boolean
   enableHiding?: boolean
 
+  className?: string
+
   onCreateNewEntry?: () => void
   onRowSelection?: (data: { [k: string]: any }) => void
   onRowClicked?: (data: Row<any>) => void
@@ -109,6 +106,7 @@ export const DataTable = ({
   data,
   columns,
   loading,
+  className,
   searchable,
   pagination,
   searchPlaceholder,
@@ -129,13 +127,11 @@ export const DataTable = ({
   onRowSelection,
   onRowClicked,
 }: DataTableProps) => {
-  const isManualPaginationOrSorting =
-    !!pagination?.type && pagination.type !== "self"
+  const isManualPaginationOrSorting = !!pagination?.type && pagination.type !== "self"
   const isOffsetPagination = pagination?.type === "offset"
   const isCursorPagination = pagination?.type === "cursor-based"
 
-  if (isCursorPagination)
-    throw new Error("Not implemented 'cursor' pagination yet.")
+  if (isCursorPagination) throw new Error("Not implemented 'cursor' pagination yet.")
 
   const cid = React.useId()
   const [selfPagination, setSelfPagination] = React.useState<PaginationState>({
@@ -143,11 +139,10 @@ export const DataTable = ({
     pageSize: Number(pagination?.pageSize || 0),
   })
   const [sorting, setSorting] = React.useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
+  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>(
+    defaultColumnVisibility ?? {}
   )
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>(defaultColumnVisibility ?? {})
   const [rowSelection, setRowSelection] = React.useState(defaultRowSelection)
 
   const manualOffsetPagination =
@@ -191,12 +186,8 @@ export const DataTable = ({
     ? [ROW_SELECTION_DATA.columns, ...columns]
     : columns
 
-  const _getPaginationRowModel = isManualPaginationOrSorting
-    ? undefined
-    : getPaginationRowModel
-  const _getSortedRowModel = isManualPaginationOrSorting
-    ? undefined
-    : getSortedRowModel
+  const _getPaginationRowModel = isManualPaginationOrSorting ? undefined : getPaginationRowModel
+  const _getSortedRowModel = isManualPaginationOrSorting ? undefined : getSortedRowModel
 
   const table = useReactTable({
     data,
@@ -243,8 +234,7 @@ export const DataTable = ({
   const pageCount =
     pagination?.type === "offset"
       ? Math.ceil(
-          safeParseNumber(pagination.totalRecords, 1) /
-            safeParseNumber(pagination.pageSize, 0)
+          safeParseNumber(pagination.totalRecords, 1) / safeParseNumber(pagination.pageSize, 0)
         )
       : -1
 
@@ -312,9 +302,7 @@ export const DataTable = ({
   }
 
   const selfPaginationDependencies =
-    pagination?.type === "self" || !pagination?.type
-      ? [pagination?.page, pagination?.pageSize]
-      : []
+    pagination?.type === "self" || !pagination?.type ? [pagination?.page, pagination?.pageSize] : []
   React.useEffect(() => {
     if (manualSelfPagination) {
       if (manualSelfPagination.page) {
@@ -340,7 +328,7 @@ export const DataTable = ({
   }, [JSON.stringify(Object.keys(defaultRowSelection ?? {}))])
 
   return (
-    <div className="w-full">
+    <div className={cn("w-full", className)}>
       {searchable && (
         <div className="flex items-center py-4">
           {searchable ? (
@@ -365,10 +353,7 @@ export const DataTable = ({
                     <TableHead key={header.id}>
                       {header.isPlaceholder
                         ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                        : flexRender(header.column.columnDef.header, header.getContext())}
                     </TableHead>
                   )
                 })}
@@ -386,30 +371,20 @@ export const DataTable = ({
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
                 </TableRow>
               ))
             ) : enableEmpty ? (
               <TableRow>
-                <TableCell
-                  colSpan={columns.length + 999}
-                  className="h-24 text-center py-10"
-                >
+                <TableCell colSpan={columns.length + 999} className="h-24 text-center py-10">
                   {loading ? null : (
                     <>
-                      <EmptyIcon className="w-10 h-10 block text-center mx-auto mb-4" />
-                      <p className="font-semibold mb-4">{emptyContent}</p>
+                      <EmptyIcon className="w-10 h-10 block text-center mx-auto mb-4 text-muted-foreground" />
+                      <p className="font-medium text-muted-foreground mb-4">{emptyContent}</p>
                       {enableCreateNewEntry ? (
-                        <Button
-                          size="sm"
-                          className="text-xs"
-                          onClick={onCreateNewEntry}
-                        >
+                        <Button size="sm" className="text-xs" onClick={onCreateNewEntry}>
                           <Plus className="w-4 h-4 mr-2" />
                           {createNewEntryText}
                         </Button>
@@ -422,10 +397,7 @@ export const DataTable = ({
 
             {loading && (
               <TableRow className="absolute top-0 left-0 w-full h-full bg-zinc-100/50 dark:bg-zinc-900/50">
-                <TableCell
-                  colSpan={999}
-                  className="h-full w-full flex items-center justify-center"
-                >
+                <TableCell colSpan={999} className="h-full w-full flex items-center justify-center">
                   <Spin className="w-5 h-5 mx-auto" />
                 </TableCell>
               </TableRow>
@@ -440,10 +412,7 @@ export const DataTable = ({
         </div>
         <div className="flex items-center gap-2">
           <p className="text-sm">Rows per page</p>
-          <Select
-            defaultValue={rows[0].toString()}
-            onValueChange={handleRowsPerPageChange}
-          >
+          <Select defaultValue={rows[0].toString()} onValueChange={handleRowsPerPageChange}>
             <SelectTrigger className="w-[70px] h-8">
               <SelectValue />
             </SelectTrigger>

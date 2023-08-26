@@ -240,7 +240,6 @@ model ProductAttribute {
   id        String                   @id @default(cuid()) @db.VarChar(25)
   name      String
   code      String                   @unique
-  type      ProductAttributeType     @default(Select)
   options   ProductAttributeOption[]
   sortOrder Int                      @db.Int
 
@@ -294,12 +293,6 @@ model ProductAttributesOnGroups {
 
   @@id([productAttributeId, productAttributeGroupId])
   @@map("product_attributes_on_groups")
-}
-
-enum ProductAttributeType {
-  Text
-  Select
-  Multiselect
 }
 
 model ProductVariant {

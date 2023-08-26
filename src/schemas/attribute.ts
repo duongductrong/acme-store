@@ -1,22 +1,8 @@
-import { ProductAttributeType } from "@prisma/client"
 import { z } from "zod"
 
 export const attributeSchema = z.object({
   id: z.string().nullable().optional(),
   name: z.string().min(1),
-  type: z
-    .string()
-    .refine(
-      (type) =>
-        Object.values(ProductAttributeType).includes(
-          type as ProductAttributeType
-        ),
-      {
-        message:
-          "This field should contains in " +
-          Object.values(ProductAttributeType).join(", "),
-      }
-    ),
   code: z.string().min(1),
   sortOrder: z
     .number()

@@ -3,6 +3,7 @@ import { RESOURCE_KEYS } from "@/constant/resources"
 import prisma from "@/lib/prisma"
 import { attributeGroupSchema } from "@/schemas/attribute-group"
 import { z } from "zod"
+import { attributeGroupCreateInputSchema } from "./input"
 
 export const attributeGroupShieldedProcedure = shieldedProcedure({
   resource: RESOURCE_KEYS.ATTRIBUTE_GROUP,
@@ -38,7 +39,7 @@ export const attributeGroupRouter = router({
     }),
 
   create: attributeGroupShieldedProcedure
-    .input(attributeGroupSchema)
+    .input(attributeGroupCreateInputSchema)
     .mutation(async ({ input }) => {
       return prisma.productAttributeGroup.create({ data: { name: input.name } })
     }),
@@ -54,9 +55,7 @@ export const attributeGroupRouter = router({
         },
       })
     }),
-  permanentlyDelete: attributeGroupShieldedProcedure
-    .input(z.string())
-    .mutation(({ input: id }) => {
-      return prisma.productAttributeGroup.delete({ where: { id } })
-    }),
+  permanentlyDelete: attributeGroupShieldedProcedure.input(z.string()).mutation(({ input: id }) => {
+    return prisma.productAttributeGroup.delete({ where: { id } })
+  }),
 })

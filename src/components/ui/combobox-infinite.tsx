@@ -11,26 +11,11 @@ import {
   CommandInput,
   CommandItem,
 } from "@/components/ui/command"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { cn } from "@/lib/utils"
-import {
-  UseTRPCInfiniteQueryOptions,
-  UseTRPCInfiniteQueryResult,
-} from "@trpc/react-query/shared"
+import { UseTRPCInfiniteQueryOptions, UseTRPCInfiniteQueryResult } from "@trpc/react-query/shared"
 import { CommandLoading } from "cmdk"
-import {
-  FC,
-  forwardRef,
-  useEffect,
-  useImperativeHandle,
-  useMemo,
-  useRef,
-  useState,
-} from "react"
+import { FC, forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react"
 import { useDebounce } from "react-use"
 import { FixedSizeList, ListChildComponentProps } from "react-window"
 import InfiniteLoader from "react-window-infinite-loader"
@@ -54,6 +39,8 @@ export interface ComboboxInfiniteProps {
 
   limit?: number
 
+  hasError?: boolean
+
   onChange?: (value: string | string[] | null) => void
   useInfiniteQuery: (
     input: Omit<any, "cursor">,
@@ -61,10 +48,7 @@ export interface ComboboxInfiniteProps {
   ) => UseTRPCInfiniteQueryResult<any, any>
 }
 
-export const ComboboxInfinite = forwardRef<
-  HTMLButtonElement,
-  ComboboxInfiniteProps
->(
+export const ComboboxInfinite = forwardRef<HTMLButtonElement, ComboboxInfiniteProps>(
   (
     {
       notFound,
@@ -80,6 +64,8 @@ export const ComboboxInfinite = forwardRef<
       mapLabelBy,
       mapValueBy,
       limit,
+
+      hasError,
 
       useInfiniteQuery,
     },
@@ -131,9 +117,7 @@ export const ComboboxInfinite = forwardRef<
 
         // Remove existed option
         if (isIncludedCurrentValue) {
-          const withoutCurrentValue = value.filter(
-            (_value, index) => _value !== selectedValue
-          )
+          const withoutCurrentValue = value.filter((_value, index) => _value !== selectedValue)
 
           setValue(withoutCurrentValue)
         }
@@ -158,16 +142,11 @@ export const ComboboxInfinite = forwardRef<
 
     useEffect(() => {
       if (comboboxTriggerRef.current) {
-        setComboboxContentWidth(
-          comboboxTriggerRef.current.getBoundingClientRect().width
-        )
+        setComboboxContentWidth(comboboxTriggerRef.current.getBoundingClientRect().width)
       }
     }, [comboboxTriggerRef])
 
-    useImperativeHandle(
-      ref,
-      () => comboboxTriggerRef.current as HTMLButtonElement
-    )
+    useImperativeHandle(ref, () => comboboxTriggerRef.current as HTMLButtonElement)
 
     useDebounce(
       () => {
@@ -185,9 +164,7 @@ export const ComboboxInfinite = forwardRef<
 
         return options.find((option) => value.includes(option.value))?.label
       } else if (placeholder) {
-        return (
-          <span className="font-normal text-zinc-500">{placeholder}</span>
-        )
+        return <span className="font-normal text-zinc-500">{placeholder}</span>
       }
 
       return <span className="w-full" />
@@ -216,9 +193,7 @@ export const ComboboxInfinite = forwardRef<
 
     const itemSize = 34
     const itemListSize = options.length < 10 ? options.length * itemSize : 300
-    const itemCount = !queryResults?.hasNextPage
-      ? options.length ?? 0
-      : options.length + 1
+    const itemCount = !queryResults?.hasNextPage ? options.length ?? 0 : options.length + 1
     const isItemLoaded = (index: number) =>
       !queryResults?.hasNextPage || index < Number(options?.length)
     const loadMoreItems = () => queryResults?.fetchNextPage()
@@ -230,7 +205,14 @@ export const ComboboxInfinite = forwardRef<
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className={cn(className, "w-full !gap-2 flex-wrap font-normal")}
+            className={cn(
+              className,
+              "w-full !gap-2 flex-wrap font-normal",
+              "focus:border-primary focus:ring-4 focus:ring-primary/10",
+              "focus-within:border-primary focus:ring-4 focus:ring-primary/10",
+              "focus:bg-transparent hover:bg-transparent",
+              hasError ? "border-destructive focus:ring-destructive/10" : ""
+            )}
             ref={comboboxTriggerRef}
           >
             {Placeholder}
@@ -252,9 +234,7 @@ export const ComboboxInfinite = forwardRef<
                 <Loader className="w-4 h-4 mx-auto my-8 animate-spin" />
               </CommandLoading>
             ) : null}
-            <CommandEmpty>
-              {notFound ? notFound : "No option found."}
-            </CommandEmpty>
+            <CommandEmpty>{notFound ? notFound : "No option found."}</CommandEmpty>
             <CommandGroup>
               <InfiniteLoader
                 itemCount={itemCount}

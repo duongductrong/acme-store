@@ -9,7 +9,7 @@ const ProductCollectionField = (props: ProductCollectionFieldProps) => {
       name="collectionId"
       variant="SELECT_INFINITE"
       label="Collection"
-      wrapperClassName="col-span-2"
+      wrapperClassName="col-span-4"
       placeholder="Select collections"
       useInfiniteQuery={trpc.collection.list.useInfiniteQuery}
       mapLabelBy={"name"}

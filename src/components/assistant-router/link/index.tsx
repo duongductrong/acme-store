@@ -11,13 +11,7 @@ export interface LinkProps
   scroll?: boolean
 }
 
-const Link = ({
-  href,
-  children,
-  dynamic = false,
-  scroll,
-  ...props
-}: LinkProps) => {
+const Link = ({ href, children, dynamic = false, scroll, ...props }: LinkProps) => {
   const { push, dynamicNavigate } = useAssistantNavigation()
 
   return (
