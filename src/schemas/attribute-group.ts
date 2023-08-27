@@ -1,4 +1,3 @@
-import { ProductAttributeType } from "@prisma/client"
 import { z } from "zod"
 
 export const attributeGroupSchema = z.object({

@@ -20,7 +20,7 @@ export interface RootLayoutProps {
 
 const inter = Inter({ subsets: ["latin"] })
 
-export async function getDirectories(locale: string) {
+async function getDirectories(locale: string) {
   try {
     return (await import(`../../../directories/${locale}.json`)).default
   } catch (error) {

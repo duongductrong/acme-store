@@ -51,7 +51,7 @@ export const checkRuleUniqueProductVariantSku = async (
 
   if (productVariantsNotUniqueBySKU.length) {
     productVariantsNotUniqueBySKU.forEach((productVariant) => {
-      const variantIndex = variantSKUs[productVariant.SKU]
+      const variantIndex = variantSKUs[productVariant.SKU as string]
 
       ctx.addIssue({
         code: "custom",
