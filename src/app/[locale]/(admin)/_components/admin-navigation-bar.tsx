@@ -1,4 +1,6 @@
+import { Link } from "@/components/router"
 import { Button } from "@/components/ui/button"
+import { STORE_FRONT_URL } from "@/constant/urls"
 import { cn } from "@/lib/utils"
 import { Bell } from "lucide-react"
 import dynamic from "next/dynamic"
@@ -21,7 +23,9 @@ const AdminNavigationBar = ({ className, ...props }: AdminNavigationBarProps) =>
             <AvatarImage src="https://ui.shadcn.com/avatars/01.png" />
             <AvatarFallback />
           </Avatar> */}
-          <Button variant="outline">View shop</Button>
+          <Button variant="outline">
+            <Link href={STORE_FRONT_URL.HOME}>View shop</Link>
+          </Button>
         </div>
       </div>
     </header>
