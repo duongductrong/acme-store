@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "postinstall": "prisma generate",
     "format": "npx prettier --write .",
     "ui": "npx shadcn-ui@latest add",
     "prisma:generate": "npx prisma generate",
@@ -10,7 +11,7 @@
     "prisma:studio": "npx prisma studio",
     "prisma:build": "npx prisma db push & npx prisma generate",
     "dev": "next dev",
-    "build": "next build",
+    "build": "npm run prisma:build && next build",
     "start": "next start",
     "lint": "next lint"
   },
