@@ -39,10 +39,7 @@ export const permissionsMiddleware = t.middleware(async (opts) => {
   const resource = meta?.resource as string
   const privileges = currentUserRole?.privileges || []
 
-  const grantsList = getGrantsFromPrivileges(
-    privileges,
-    currentUserRole?.id as string
-  )
+  const grantsList = getGrantsFromPrivileges(privileges, currentUserRole?.id as string)
 
   const ac = new AccessControl(compact(grantsList))
 
@@ -57,8 +54,7 @@ export const permissionsMiddleware = t.middleware(async (opts) => {
 })
 
 export const publicProcedure = t.procedure
-export const shieldedProcedure = (meta: Meta) =>
-  t.procedure.use(permissionsMiddleware).meta(meta)
+export const shieldedProcedure = (meta: Meta) => t.procedure.use(permissionsMiddleware).meta(meta)
 
 export const router = t.router
 export const middleware = t.middleware

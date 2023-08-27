@@ -53,7 +53,7 @@ const AdminSidebar = ({ className, user, ...props }: AdminSidebarProps) => {
         className
       )}
     >
-      <AdminBrand className="mb-8" />
+      <AdminBrand className="mb-6" />
 
       {ADMIN_SIDEBARS.map((sidebarItem) => (
         <div key={sidebarItem.id}>

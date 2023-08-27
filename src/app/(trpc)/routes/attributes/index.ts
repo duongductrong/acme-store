@@ -16,6 +16,7 @@ import {
   attributeUpdateInputSchema,
 } from "./input"
 import attributeService from "./service"
+import { ERROR_MESSAGES } from "@/constant/messages"
 
 export const attributeShieldedProcedure = shieldedProcedure({
   resource: RESOURCE_KEYS.ATTRIBUTE,
@@ -82,7 +83,8 @@ export const attributeRouter = router({
         },
       })
 
-      if (!attribute) throw new TRPCError({ code: "NOT_FOUND" })
+      if (!attribute)
+        throw new TRPCError({ code: "NOT_FOUND", message: ERROR_MESSAGES.NOT_FOUND() })
 
       await attributeService.updateAttributeOptions(attribute.id, attribute.options, {
         options: input.options,

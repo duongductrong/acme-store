@@ -1,8 +1,10 @@
+import { publicProcedure, router } from "@/app/(trpc)/bootstrap/trpc"
 import { hashPassword } from "@/lib/bcrypt"
 import prisma from "@/lib/prisma"
-import { publicProcedure, router } from "@/app/(trpc)/bootstrap/trpc"
 import { signUpSchema } from "@/schemas/auth"
+import { TRPCError } from "@trpc/server"
 import { z } from "zod"
+import settingService from "../settings/service"
 
 export const authRouter = router({
   signUp: publicProcedure
@@ -24,6 +26,15 @@ export const authRouter = router({
 
       const passwordHashed = await hashPassword(password)
 
+      const setting = await settingService.setting()
+
+      if (!setting?.autoAssignStorefrontRoleId)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message:
+            "New user registration is not possible, as the system is missing the 'autoAssignStorefrontRoleId'.",
+        })
+
       const createdUser = await prisma.user.create({
         data: {
           email,
@@ -31,7 +42,7 @@ export const authRouter = router({
           firstName,
           lastName,
           passwordHashed,
-          roleId: "clkh3cduh0000kjse70uyy6gf",
+          roleId: setting.autoAssignStorefrontRoleId,
         },
       })
 

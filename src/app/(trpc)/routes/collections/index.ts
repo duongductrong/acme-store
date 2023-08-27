@@ -1,18 +1,20 @@
-import {
-  inputQueryFilterSchema,
-  outputQueryFilterResultsSchema,
-} from "@/app/(trpc)/lib/trpc/schemas"
 import { router, shieldedProcedure } from "@/app/(trpc)/bootstrap/trpc"
+import { outputQueryFilterResultsSchema } from "@/app/(trpc)/lib/trpc/schemas"
 import {
   trpcHandleQueryFilterPagination,
   trpcOutputQueryWithPagination,
 } from "@/app/(trpc)/lib/trpc/utils"
 import { RESOURCE_KEYS } from "@/constant/resources"
 import prisma from "@/lib/prisma"
-import { collectionSchema } from "@/schemas/collection"
 import { Prisma } from "@prisma/client"
-import { z } from "zod"
-import { VALIDATION_MESSAGES } from "@/constant/messages"
+import {
+  collectionCreateInputSchema,
+  collectionDeleteInputSchema,
+  collectionDetailInputSchema,
+  collectionListInputSchema,
+  collectionUpdateInputSchema,
+} from "./input"
+import collectionService from "./service"
 
 export const collectionShieldedProcedure = shieldedProcedure({
   resource: RESOURCE_KEYS.COLLECTION,
@@ -20,7 +22,7 @@ export const collectionShieldedProcedure = shieldedProcedure({
 
 export const collectionRouter = router({
   list: collectionShieldedProcedure
-    .input(inputQueryFilterSchema.optional())
+    .input(collectionListInputSchema)
     .output(outputQueryFilterResultsSchema)
     .query(async ({ input }) => {
       const search = input?.search || ""
@@ -64,80 +66,31 @@ export const collectionRouter = router({
       })
     }),
 
-  detail: collectionShieldedProcedure.input(z.string().or(z.string())).query(({ input: id }) => {
-    return prisma.collection.findFirst({ where: { id } })
+  detail: collectionShieldedProcedure.input(collectionDetailInputSchema).query(({ input: id }) => {
+    return collectionService.detail(id)
   }),
 
   create: collectionShieldedProcedure
-    .input(
-      collectionSchema.superRefine(async (values, ctx) => {
-        const collection = await prisma.collection.findFirst({
-          where: {
-            slug: values.slug,
-          },
-        })
-
-        if (collection) {
-          return ctx.addIssue({
-            message: VALIDATION_MESSAGES.ALREADY_EXISTS("Slug"),
-            path: ["slug"],
-            code: "custom",
-          })
-        }
-
-        return ctx
-      })
-    )
+    .input(collectionCreateInputSchema)
     .mutation(async ({ input }) => {
-      return prisma.collection.create({
-        data: {
-          slug: input.slug,
-          name: input.name,
-          description: input.description,
-        },
+      return collectionService.create({
+        name: input.name,
+        description: input.description,
+        slug: input.slug,
       })
     }),
 
-  update: collectionShieldedProcedure
-    .input(
-      z
-        .object({ id: z.string() })
-        .extend(collectionSchema.shape)
-        .superRefine(async (values, ctx) => {
-          const collection = await prisma.collection.findFirst({
-            where: {
-              slug: values.slug,
-              id: {
-                not: values.id as string,
-              },
-            },
-          })
-
-          if (collection) {
-            return ctx.addIssue({
-              message: VALIDATION_MESSAGES.ALREADY_EXISTS("Slug"),
-              path: ["slug"],
-              code: "custom",
-            })
-          }
-
-          return ctx
-        })
-    )
-    .mutation(({ input }) => {
-      return prisma.collection.update({
-        where: {
-          id: input.id as string,
-        },
-        data: {
-          slug: input.slug,
-          name: input.name,
-          description: input.description,
-        },
-      })
-    }),
-
-  permanentlyDelete: collectionShieldedProcedure.input(z.string()).mutation(({ input: id }) => {
-    return prisma.collection.delete({ where: { id } })
+  update: collectionShieldedProcedure.input(collectionUpdateInputSchema).mutation(({ input }) => {
+    return collectionService.update(input.id as string, {
+      name: input.name,
+      slug: input.slug,
+      description: input.description,
+    })
   }),
+
+  permanentlyDelete: collectionShieldedProcedure
+    .input(collectionDeleteInputSchema)
+    .mutation(({ input: id }) => {
+      return collectionService.delete(id)
+    }),
 })

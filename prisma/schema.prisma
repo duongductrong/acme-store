@@ -328,6 +328,11 @@ model ProductVariantAttribute {
   @@map("product_variant_attributes")
 }
 
+enum RoleScope {
+  Storefront
+  Admin
+}
+
 model Role {
   id String @id @default(cuid()) @db.VarChar(25)
 
@@ -337,5 +342,17 @@ model Role {
   privileges Json?  @db.Json
   users      User[]
 
+  scope   RoleScope
+  Setting Setting[]
+
   @@map("roles")
+}
+
+model Setting {
+  id String @id @default(cuid()) @db.VarChar(25)
+
+  autoAssignStorefrontRole   Role   @relation(fields: [autoAssignStorefrontRoleId], references: [id])
+  autoAssignStorefrontRoleId String @db.VarChar(25)
+
+  @@map("settings")
 }

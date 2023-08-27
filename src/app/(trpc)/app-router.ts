@@ -8,7 +8,7 @@ import { collectionRouter } from "./routes/collections"
 import { customerRouter } from "./routes/customers"
 import { orderRouter } from "./routes/orders"
 import { productRouter } from "./routes/products"
-import { roleRouter } from "./routes/settings/roles"
+import { roleRouter } from "./routes/roles"
 
 export const appRouter = router({
   product: productRouter,

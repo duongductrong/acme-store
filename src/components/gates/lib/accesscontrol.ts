@@ -4,7 +4,7 @@ export const getGrantsFromPrivileges = (
   privileges: any,
   role: string
 ): Record<"role" | "action" | "resource" | "attributes", string>[] => {
-  if (!privileges || !role) return []
+  if (!privileges || !role || !Array.isArray(privileges)) return []
 
   return (privileges as RoleSchemaType["privileges"])
     .map((privilege) => {

@@ -15,8 +15,7 @@ import { useTranslations } from "next-intl"
 import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
 
-interface SignUpFormProps
-  extends Omit<React.HTMLAttributes<HTMLDivElement>, "onSubmit"> {
+interface SignUpFormProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "onSubmit"> {
   redirectTo: string
 }
 
@@ -25,24 +24,24 @@ const SignUpForm = ({ className, ...props }: SignUpFormProps) => {
   const { toast } = useToast()
   const t = useTranslations("SIGN_UP")
 
-  const { mutate: createUser, isLoading: loading } =
-    trpc.auth.signUp.useMutation({
-      onSuccess() {
-        toast({
-          title: "Success",
-          description: "Sign up new account successfully",
-        })
+  const { mutate: createUser, isLoading: loading } = trpc.auth.signUp.useMutation({
+    onSuccess() {
+      toast({
+        title: "Success",
+        description: "Sign up new account successfully",
+      })
 
-        router.push(STORE_FRONT_URL.AUTH.SIGN_IN)
-      },
-      onError() {
-        toast({
-          title: "Error",
-          description: "There is an error when signing up for an account.",
-          variant: "destructive",
-        })
-      },
-    })
+      router.push(STORE_FRONT_URL.AUTH.SIGN_IN)
+    },
+    onError(error) {
+      console.log("error", error.message)
+      toast({
+        title: "Error",
+        description: error.message || "There is an error when signing up for an account.",
+        variant: "destructive",
+      })
+    },
+  })
 
   const methods = useForm<SignUpSchemaType>({
     resolver: zodResolver(signUpSchema),

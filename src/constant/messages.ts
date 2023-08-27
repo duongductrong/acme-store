@@ -53,4 +53,6 @@ export const VALIDATION_MESSAGES = {
 
 export const SUCCESS_MESSAGES = {}
 
-export const ERROR_MESSAGES = {}
+export const ERROR_MESSAGES = {
+  NOT_FOUND: (fieldName: string = "The resource") => `${fieldName} not found`,
+}
