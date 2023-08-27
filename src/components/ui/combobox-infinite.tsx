@@ -170,7 +170,7 @@ export const ComboboxInfinite = forwardRef<HTMLButtonElement, ComboboxInfinitePr
       return <span className="w-full" />
     }, [value, placeholder, options, isMulti, JSON.stringify(objectOptions)])
 
-    const Row: FC<ListChildComponentProps> = ({ index, style }) => {
+    const Row: FC<ListChildComponentProps<any>> = ({ index, style }) => {
       const option = options?.[index]
       if (!option) return null
 
