@@ -223,7 +223,7 @@ export const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
                   itemCount={itemCount}
                   itemSize={itemSize}
                 >
-                  {Row}
+                  {Row as any}
                 </FixedSizeList>
               </ScrollArea>
             </CommandGroup>
