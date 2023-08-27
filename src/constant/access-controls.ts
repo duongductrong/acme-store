@@ -19,37 +19,51 @@
 //   },
 // }
 
+export const privilegeType = {
+  READ_ANY: "read:any",
+  READ_OWN: "read:own",
+
+  CREATE_ANY: "create:any",
+  CREATE_OWN: "create:own",
+
+  UPDATE_ANY: "update:any",
+  UPDATE_OWN: "update:own",
+
+  DELETE_ANY: "delete:any",
+  DELETE_OWN: "delete:own",
+} as const
+
 export const privileges = [
   {
-    label: "read:any",
-    value: "read:any",
+    label: privilegeType.READ_ANY,
+    value: privilegeType.READ_ANY,
   },
   {
-    label: "create:any",
-    value: "create:any",
+    label: privilegeType.CREATE_ANY,
+    value: privilegeType.CREATE_ANY,
   },
   {
-    label: "update:any",
-    value: "update:any",
+    label: privilegeType.UPDATE_ANY,
+    value: privilegeType.UPDATE_ANY,
   },
   {
-    label: "delete:any",
-    value: "delete:any",
+    label: privilegeType.DELETE_ANY,
+    value: privilegeType.DELETE_ANY,
   },
   {
-    label: "read:own",
-    value: "read:own",
+    label: privilegeType.READ_OWN,
+    value: privilegeType.READ_OWN,
   },
   {
-    label: "create:own",
-    value: "create:own",
+    label: privilegeType.CREATE_OWN,
+    value: privilegeType.CREATE_OWN,
   },
   {
-    label: "update:own",
-    value: "update:own",
+    label: privilegeType.UPDATE_OWN,
+    value: privilegeType.UPDATE_OWN,
   },
   {
-    label: "delete:own",
-    value: "delete:own",
+    label: privilegeType.DELETE_OWN,
+    value: privilegeType.DELETE_OWN,
   },
 ]

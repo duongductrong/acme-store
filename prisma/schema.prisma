@@ -141,7 +141,7 @@ model Collection {
 }
 
 model User {
-  id   Int    @id @unique @default(autoincrement()) @db.Int
+  id   String @id @unique @default(cuid()) @db.VarChar(25)
   code String @unique @db.Char(16)
 
   firstName      String

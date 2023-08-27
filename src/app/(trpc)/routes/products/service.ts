@@ -17,7 +17,32 @@ export interface UpdateProductVariantsReduceResult {
   deletes: Record<string, ProductVariant & { attributes: ProductVariantAttribute[] }>
 }
 
+export interface ProductServiceDetailOptions {
+  include?: Partial<Record<"media" | "metadata" | "category", boolean>>
+}
+
 class ProductService {
+  detail(id: string, options?: ProductServiceDetailOptions) {
+    return prisma.product.findFirst({
+      where: { id },
+      include: {
+        media: options?.include?.media,
+        category: options?.include?.category,
+        metadata: options?.include?.metadata,
+
+        variants: {
+          include: {
+            attributes: {
+              include: {
+                productAttributeOption: true,
+              },
+            },
+          },
+        },
+      },
+    })
+  }
+
   createMetadata(metadata: ProductCreateInputSchema["metadata"], stickWithProductId: string) {
     return prisma.productMetadata.create({
       data: {

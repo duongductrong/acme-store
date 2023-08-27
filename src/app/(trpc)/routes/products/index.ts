@@ -22,7 +22,7 @@ export const productShieldedProcedure = shieldedProcedure({
 export const productRouter = router({
   list: productShieldedProcedure
     .input(inputQueryFilterSchema.optional())
-    .query(async ({ input }) => {
+    .query(async ({ input, ctx }) => {
       const handledPagination = trpcHandleQueryFilterPagination(input)
 
       const where: Prisma.ProductWhereInput | undefined = undefined
@@ -58,19 +58,11 @@ export const productRouter = router({
     }),
 
   detail: productShieldedProcedure.input(productDetailInputSchema).query(async ({ input }) => {
-    return prisma.product.findFirst({
-      where: { id: input.id },
+    return productService.detail(input.id, {
       include: {
-        ...input.includes,
-        variants: {
-          include: {
-            attributes: {
-              include: {
-                productAttributeOption: true,
-              },
-            },
-          },
-        },
+        category: input.includes.category,
+        media: input.includes.media,
+        metadata: input.includes.metadata,
       },
     })
   }),
