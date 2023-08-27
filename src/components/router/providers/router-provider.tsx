@@ -36,6 +36,8 @@ const RouterProvider = ({ children, enableProgressbar = true }: RouterProviderPr
 
       if (isNavigating) nProgress.start()
       else nProgress.done(true)
+    } else {
+      nProgress.done(true)
     }
   }, [isNavigating, enableProgressbar])
 

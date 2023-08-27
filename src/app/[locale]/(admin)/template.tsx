@@ -1,7 +1,9 @@
 "use client"
 
 import Gate, { GatePrivilege } from "@/components/gates/gate"
+import Text from "@/components/typography/text"
 import { SITE_RESOURCES } from "@/constant/resources"
+import { Ban } from "lucide-react"
 import { usePathname } from "next/navigation"
 
 export interface AdminTemplateProps extends CommonLayoutProps {}
@@ -41,6 +43,13 @@ const AdminTemplate = ({ children }: AdminTemplateProps) => {
     <Gate
       resource={currentResourceFromPathname.key}
       privileges={Object.keys(currentPrivileges) as Array<GatePrivilege>}
+      forbidden={
+        <div className="w-full h-[500px] flex flex-col items-center justify-center">
+          <Ban className="w-10 h-10 mb-4" />
+          <Text className="text-2xl mb-2">Forbidden.</Text>
+          <Text className="text-muted-foreground">You have restricted access.</Text>
+        </div>
+      }
     >
       {children}
     </Gate>
