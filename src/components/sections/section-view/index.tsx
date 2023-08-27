@@ -1,18 +1,34 @@
 import { Skeleton } from "@/components/ui/skeleton"
+import { cn } from "@/lib/utils"
 import { HTMLAttributes, ReactNode, forwardRef } from "react"
 import SectionPaper from "../section-paper"
 
 export interface SectionViewProps extends HTMLAttributes<HTMLDivElement> {
   title: string
+  description?: string
   whereTopRight?: ReactNode
   children?: ReactNode
 
   skeleton?: boolean
+
+  customClassNames?: Partial<{
+    headerClassName: string
+    contentClassName: string
+    paperContentClassName: string
+  }>
 }
 
 const SectionView = forwardRef<HTMLDivElement, SectionViewProps>(
   (
-    { title, whereTopRight, skeleton = false, children }: SectionViewProps,
+    {
+      title,
+      description,
+      whereTopRight,
+      skeleton = false,
+      children,
+      className,
+      customClassNames,
+    }: SectionViewProps,
     ref
   ) => {
     if (skeleton) {
@@ -31,15 +47,26 @@ const SectionView = forwardRef<HTMLDivElement, SectionViewProps>(
     }
 
     return (
-      <div className="w-full h-full" ref={ref}>
-        <div className="mb-base flex items-center justify-between">
-          <h2 className="text-xl font-semibold">{title}</h2>
-          {whereTopRight ? (
-            <div className="ml-auto">{whereTopRight}</div>
-          ) : null}
+      <div className={cn("w-full h-full", className)} ref={ref}>
+        <div
+          className={cn(
+            "mb-base flex items-center justify-between",
+            customClassNames?.headerClassName
+          )}
+        >
+          <div>
+            <h2 className="text-xl font-semibold">{title}</h2>
+            {description ? <p className="text-sm mt-2 text-foreground/60">{description}</p> : null}
+          </div>
+          {whereTopRight ? <div className="ml-auto">{whereTopRight}</div> : null}
         </div>
 
-        <SectionPaper>{children}</SectionPaper>
+        <SectionPaper
+          className={customClassNames?.contentClassName}
+          customClassNames={{ contentClassName: customClassNames?.paperContentClassName }}
+        >
+          {children}
+        </SectionPaper>
       </div>
     )
   }

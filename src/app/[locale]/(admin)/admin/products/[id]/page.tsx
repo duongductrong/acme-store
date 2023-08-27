@@ -60,7 +60,7 @@ const EditProduct = ({ params: { id } }: EditProductProps) => {
 
       return { ...pVariant, attributes: _attributes }
     }),
-  } as ProductSchemaType
+  } as unknown as ProductSchemaType
 
   return (
     <ProductForm
