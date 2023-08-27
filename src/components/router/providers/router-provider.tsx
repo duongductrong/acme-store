@@ -12,26 +12,22 @@ import {
 
 import "nprogress/nprogress.css"
 
-export interface AssistantRouterContextShape {
+export interface RouterContextShape {
   loading: boolean
   startNavigation: TransitionStartFunction
 }
 
-export interface AssistantRouterProviderProps {
+export interface RouterProviderProps {
   children: ReactNode
   enableProgressbar?: boolean
 }
 
-export const AssistantRouterContext =
-  createContext<AssistantRouterContextShape>({
-    loading: false,
-    startNavigation: () => null,
-  })
+export const RouterContext = createContext<RouterContextShape>({
+  loading: false,
+  startNavigation: () => null,
+})
 
-const AssistantRouterProvider = ({
-  children,
-  enableProgressbar = true,
-}: AssistantRouterProviderProps) => {
+const RouterProvider = ({ children, enableProgressbar = true }: RouterProviderProps) => {
   const [isNavigating, startNavigation] = useTransition()
 
   useEffect(() => {
@@ -43,16 +39,12 @@ const AssistantRouterProvider = ({
     }
   }, [isNavigating, enableProgressbar])
 
-  const values = useMemo<AssistantRouterContextShape>(
+  const values = useMemo<RouterContextShape>(
     () => ({ loading: isNavigating, startNavigation }),
     [isNavigating]
   )
 
-  return (
-    <AssistantRouterContext.Provider value={values}>
-      {children}
-    </AssistantRouterContext.Provider>
-  )
+  return <RouterContext.Provider value={values}>{children}</RouterContext.Provider>
 }
 
-export default AssistantRouterProvider
+export default RouterProvider

@@ -64,16 +64,9 @@ export const collectionRouter = router({
       })
     }),
 
-  detail: collectionShieldedProcedure
-    .input(
-      z
-        .number()
-        .or(z.string())
-        .transform((v) => Number(v))
-    )
-    .query(({ input: id }) => {
-      return prisma.collection.findFirst({ where: { id } })
-    }),
+  detail: collectionShieldedProcedure.input(z.string().or(z.string())).query(({ input: id }) => {
+    return prisma.collection.findFirst({ where: { id } })
+  }),
 
   create: collectionShieldedProcedure
     .input(
@@ -108,14 +101,14 @@ export const collectionRouter = router({
   update: collectionShieldedProcedure
     .input(
       z
-        .object({ id: z.number() })
+        .object({ id: z.string() })
         .extend(collectionSchema.shape)
         .superRefine(async (values, ctx) => {
           const collection = await prisma.collection.findFirst({
             where: {
               slug: values.slug,
               id: {
-                not: Number(values.id)
+                not: values.id as string,
               },
             },
           })
@@ -134,7 +127,7 @@ export const collectionRouter = router({
     .mutation(({ input }) => {
       return prisma.collection.update({
         where: {
-          id: input.id as unknown as number,
+          id: input.id as string,
         },
         data: {
           slug: input.slug,
@@ -144,9 +137,7 @@ export const collectionRouter = router({
       })
     }),
 
-  permanentlyDelete: collectionShieldedProcedure
-    .input(z.number())
-    .mutation(({ input: id }) => {
-      return prisma.collection.delete({ where: { id } })
-    }),
+  permanentlyDelete: collectionShieldedProcedure.input(z.string()).mutation(({ input: id }) => {
+    return prisma.collection.delete({ where: { id } })
+  }),
 })

@@ -1,6 +1,6 @@
 "use client"
 
-import { Link } from "@/components/assistant-router"
+import { Link } from "@/components/router"
 import { getGrantsFromPrivileges } from "@/components/gates/lib/accesscontrol"
 import TextLegend from "@/components/typography/text-legend"
 import { Button } from "@/components/ui/button"
@@ -15,7 +15,8 @@ import { ChevronDown, ChevronsUpDown } from "lucide-react"
 import { usePathname } from "next/navigation"
 import { Fragment, HTMLAttributes, MouseEvent, useMemo, useState } from "react"
 import { ADMIN_SIDEBARS } from "../constants"
-import BrandSwitcher from "./brand-switcher"
+import AdminBrand from "./admin-brand"
+import AdminProfile from "./admin-profile"
 
 export interface AdminSidebarProps extends HTMLAttributes<HTMLDivElement> {
   user: {
@@ -52,7 +53,7 @@ const AdminSidebar = ({ className, user, ...props }: AdminSidebarProps) => {
         className
       )}
     >
-      <BrandSwitcher className="mb-8" />
+      <AdminBrand className="mb-8" />
 
       {ADMIN_SIDEBARS.map((sidebarItem) => (
         <div key={sidebarItem.id}>
@@ -141,6 +142,13 @@ const AdminSidebar = ({ className, user, ...props }: AdminSidebarProps) => {
           })}
         </div>
       ))}
+
+      <AdminProfile
+        name="Jonathon Treat"
+        email="jonathontreat@gmail.com"
+        src="https://github.com/shadcn.png"
+        className="mt-auto"
+      />
     </ListRoot>
   )
 }

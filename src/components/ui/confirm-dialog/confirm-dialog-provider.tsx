@@ -11,6 +11,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "../alert-dialog"
+import { AlertTriangle } from "lucide-react"
 
 export interface ConfirmDialogState {
   title?: string
@@ -59,7 +60,7 @@ const ConfirmDialogProvider = ({ children }: ConfirmDialogProviderProps) => {
     <ConfirmDialogContext.Provider value={{ confirm }}>
       {children}
 
-      <AlertDialog open={dialog.isOpen}>
+      <AlertDialog open={dialog.isOpen} onOpenChange={() => dialogRef.current(false)}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>{dialog.title}</AlertDialogTitle>

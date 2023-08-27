@@ -1,6 +1,6 @@
 "use client"
 
-import { Link } from "@/components/assistant-router"
+import { Link } from "@/components/router"
 import SectionView from "@/components/sections/section-view"
 import { Button } from "@/components/ui/button"
 import { useDataTableManualOffsetPagination } from "@/components/ui/data-table"

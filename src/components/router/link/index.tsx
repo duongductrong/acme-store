@@ -2,7 +2,7 @@
 
 import NextLink, { LinkProps as NextLinkProps } from "next/link"
 import { AnchorHTMLAttributes } from "react"
-import { useAssistantNavigation } from "../hooks/use-assistant-navigation"
+import { useRouter } from "../hooks/use-router"
 
 export interface LinkProps
   extends Omit<AnchorHTMLAttributes<HTMLAnchorElement>, keyof NextLinkProps>,
@@ -12,7 +12,7 @@ export interface LinkProps
 }
 
 const Link = ({ href, children, dynamic = false, scroll, ...props }: LinkProps) => {
-  const { push, dynamicNavigate } = useAssistantNavigation()
+  const { push, dynamicNavigate } = useRouter()
 
   return (
     <NextLink

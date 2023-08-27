@@ -1,4 +1,4 @@
-import { Link } from "@/components/assistant-router"
+import { Link } from "@/components/router"
 import Chip from "@/components/ui/chip"
 import { formatCurrency } from "@/lib/currency"
 import { cn } from "@/lib/utils"

@@ -1,4 +1,4 @@
-import AssistantRouterProvider from "@/components/assistant-router/providers/assistant-router-provider"
+import RouterProvider from "@/components/router/providers/router-provider"
 import { Metadata } from "next"
 
 export interface StoreFrontLayoutProps extends CommonLayoutProps {}
@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 }
 
 const StoreFrontLayout = ({ children }: StoreFrontLayoutProps) => {
-  return <AssistantRouterProvider>{children}</AssistantRouterProvider>
+  return <RouterProvider>{children}</RouterProvider>
 }
 
 export default StoreFrontLayout

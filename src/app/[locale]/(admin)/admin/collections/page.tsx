@@ -1,8 +1,9 @@
 "use client"
 
-import { Link } from "@/components/assistant-router"
+import { Link } from "@/components/router"
 import SectionView from "@/components/sections/section-view"
 import { Button } from "@/components/ui/button"
+import { useConfirm } from "@/components/ui/confirm-dialog/use-confirm"
 import { DataTable } from "@/components/ui/data-table/data-table"
 import {
   DropdownMenu,
@@ -23,6 +24,7 @@ export interface CollectionListProps {}
 const CollectionList = (props: CollectionListProps) => {
   const t = useToast()
   const router = useRouter()
+  const confirm = useConfirm()
   const trpcUtils = trpc.useContext()
 
   const { data, isLoading, isFetching } = trpc.collection.list.useQuery({
@@ -32,25 +34,32 @@ const CollectionList = (props: CollectionListProps) => {
   })
   const collections = data?.items || []
 
-  const { mutate: deleteCollectionMutate } =
-    trpc.collection.permanentlyDelete.useMutation({
-      onSuccess() {
-        t.toast({
-          title: "Success",
-          description: "Deleted a collection successfully",
-        })
+  const { mutate: deleteCollectionMutate } = trpc.collection.permanentlyDelete.useMutation({
+    onSuccess() {
+      t.toast({
+        title: "Success",
+        description: "Deleted a collection successfully",
+      })
 
-        // Invalidate queries
-        trpcUtils.collection.list.invalidate()
-      },
-      onError() {
-        t.toast({
-          title: "Error",
-          description: "Has an error when delete a collectionO",
-          variant: "destructive",
-        })
-      },
+      // Invalidate queries
+      trpcUtils.collection.list.invalidate()
+    },
+    onError() {
+      t.toast({
+        title: "Error",
+        description: "Has an error when delete a collectionO",
+        variant: "destructive",
+      })
+    },
+  })
+
+  const handleDeleteCollection = (id: string) => {
+    confirm().then((isConfirmed) => {
+      if (isConfirmed) {
+        deleteCollectionMutate(id)
+      }
     })
+  }
 
   const columns: ColumnDef<Collection>[] = [
     {
@@ -58,10 +67,7 @@ const CollectionList = (props: CollectionListProps) => {
       header: () => "Name",
       cell: ({ row: { original: collection } }) => (
         <Link
-          href={ADMIN_URL.COLLECTION.EDIT.replace(
-            /{id}/,
-            collection.id.toString()
-          )}
+          href={ADMIN_URL.COLLECTION.EDIT.replace(/{id}/, collection.id.toString())}
           className="hover:underline underline-offset-2 font-semibold"
         >
           {collection.name}
@@ -86,7 +92,7 @@ const CollectionList = (props: CollectionListProps) => {
             <DropdownMenuContent>
               <DropdownMenuItem
                 onClick={() => {
-                  deleteCollectionMutate(getValue<number>())
+                  handleDeleteCollection(getValue<string>())
                 }}
               >
                 Delete collection

@@ -129,7 +129,7 @@ model CategoryMetadata {
 }
 
 model Collection {
-  id          Int     @id @default(autoincrement()) @db.Int
+  id          String  @id @default(cuid()) @db.VarChar(25)
   name        String
   slug        String
   description String?

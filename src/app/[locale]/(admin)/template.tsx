@@ -1,10 +1,8 @@
 "use client"
 
 import Gate, { GatePrivilege } from "@/components/gates/gate"
-import { getGrantsFromPrivileges } from "@/components/gates/lib/accesscontrol"
 import { SITE_RESOURCES } from "@/constant/resources"
 import { usePathname } from "next/navigation"
-import { useAdmin } from "./_providers/admin-provider/hooks"
 
 export interface AdminTemplateProps extends CommonLayoutProps {}
 
@@ -12,10 +10,10 @@ const AdminTemplate = ({ children }: AdminTemplateProps) => {
   const resources = SITE_RESOURCES
   const pathname = usePathname()
 
+  // if (!new RegExp("^(/admin/)(.+)").test(pathname)) return "Loading..."
+
   const getPathRegexPattern = (path: string) => {
-    const regexPattern = new RegExp(
-      path.replace(/{id}/g, "([^/]+)").replace(/\//g, "\\/") + "$"
-    )
+    const regexPattern = new RegExp(path.replace(/{id}/g, "([^/]+)").replace(/\//g, "\\/") + "$")
     return regexPattern
   }
 
@@ -27,8 +25,7 @@ const AdminTemplate = ({ children }: AdminTemplateProps) => {
     return isEqualPathname
   })
 
-  if (!currentResourceFromPathname)
-    throw new Error("Resource not found in this pathname.")
+  if (!currentResourceFromPathname) throw new Error("Resource not found in this pathname.")
 
   const pathnameEntities = Object.entries(currentResourceFromPathname.paths)
   const pathnameEntity = pathnameEntities.find(([pathPattern]) =>

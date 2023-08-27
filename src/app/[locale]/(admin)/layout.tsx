@@ -1,4 +1,4 @@
-import AssistantRouterProvider from "@/components/assistant-router/providers/assistant-router-provider"
+import RouterProvider from "@/components/router/providers/router-provider"
 import { getGrantsFromPrivileges } from "@/components/gates/lib/accesscontrol"
 import { authOptions } from "@/lib/next-auth"
 import prisma from "@/lib/prisma"
@@ -27,7 +27,7 @@ const AdminLayout = async ({ children }: AdminLayoutProps) => {
         currentUserRole?.id as string
       )}
     >
-      <AssistantRouterProvider>
+      <RouterProvider>
         <div className="flex">
           <AdminSidebar
             user={{
@@ -40,7 +40,7 @@ const AdminLayout = async ({ children }: AdminLayoutProps) => {
             <div className="px-6 py-8">{children}</div>
           </AdminMainBar>
         </div>
-      </AssistantRouterProvider>
+      </RouterProvider>
     </AdminProvider>
   )
 }

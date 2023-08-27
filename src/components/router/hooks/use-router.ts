@@ -1,18 +1,15 @@
 "use client"
 
-import {
-  AppRouterInstance,
-  NavigateOptions,
-} from "next/dist/shared/lib/app-router-context"
-import { useRouter } from "next/navigation"
+import { AppRouterInstance, NavigateOptions } from "next/dist/shared/lib/app-router-context"
+import { useRouter as useNextRouter } from "next/navigation"
 import { MouseEvent } from "react"
 import { revalidateByCookie } from "../actions"
-import { useAssistantRouter } from "./use-assistant-router"
+import { useInternalRouter } from "./use-internal-router"
 
-export interface AssistantNavigationInstance {
+export interface RouterInstance {
   push: (
     event: MouseEvent<HTMLAnchorElement> | string,
-    scroll?: boolean
+    options?: { scroll?: boolean; dynamic?: boolean }
   ) => void
 
   refresh: () => void
@@ -28,26 +25,30 @@ export interface AssistantNavigationInstance {
   dynamicNavigate: (href: string, options?: NavigateOptions) => void
 }
 
-export const useAssistantNavigation = (): AssistantNavigationInstance => {
-  const router = useRouter()
-  const { startNavigation } = useAssistantRouter()
+export const useRouter = (): RouterInstance => {
+  const router = useNextRouter()
+  const { startNavigation } = useInternalRouter()
 
-  const handleNavigation = (
+  const handleNavigation: RouterInstance["push"] = (
     event: MouseEvent<HTMLAnchorElement> | string,
-    scroll = false
+    options
   ) => {
+    const _options = options?.scroll ? { scroll: options?.scroll } : undefined
+
+    if (options?.dynamic) router.refresh()
+
     if (typeof event !== "string") {
       event.preventDefault()
       const anchorEl = event.currentTarget as HTMLAnchorElement
 
       startNavigation(() => {
-        router.push(anchorEl.href, scroll ? { scroll } : undefined)
+        router.push(anchorEl.href, _options)
       })
       return
     }
 
     startNavigation(() => {
-      router.push(event.toString(), scroll ? { scroll } : undefined)
+      router.push(event.toString(), _options)
     })
   }
 

@@ -1,4 +1,4 @@
-import { Link } from "@/components/assistant-router"
+import { Link } from "@/components/router"
 import { STORE_FRONT_URL } from "@/constant/urls"
 import { useMemo } from "react"
 

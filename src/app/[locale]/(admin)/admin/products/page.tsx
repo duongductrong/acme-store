@@ -1,6 +1,6 @@
 "use client"
 
-import { Link } from "@/components/assistant-router"
+import { Link } from "@/components/router"
 import Gate from "@/components/gates/gate"
 import SectionView from "@/components/sections/section-view"
 import StatusPoint from "@/components/status-point"

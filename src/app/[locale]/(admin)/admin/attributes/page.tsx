@@ -1,9 +1,10 @@
 "use client"
 
-import { Link } from "@/components/assistant-router"
+import { Link } from "@/components/router"
 import SectionView from "@/components/sections/section-view"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { useConfirm } from "@/components/ui/confirm-dialog/use-confirm"
 import { DataTable } from "@/components/ui/data-table/data-table"
 import {
   DropdownMenu,
@@ -23,6 +24,7 @@ export interface AttributeListProps {}
 
 const AttributeList = (props: AttributeListProps) => {
   const t = useToast()
+  const confirm = useConfirm()
   const trpcUtils = trpc.useContext()
 
   const { data, isLoading, isFetching } = trpc.attribute.list.useQuery({
@@ -36,27 +38,32 @@ const AttributeList = (props: AttributeListProps) => {
 
   const attributes = data?.items || []
 
-  const { mutate: permanentlyDeleteAttribute } =
-    trpc.attribute.permanentlyDelete.useMutation({
-      onSuccess() {
-        t.toast({
-          title: "Success",
-          description: "Deleted a attribute successfully",
-        })
+  const { mutate: permanentlyDeleteAttribute } = trpc.attribute.permanentlyDelete.useMutation({
+    onSuccess() {
+      t.toast({
+        title: "Success",
+        description: "Deleted a attribute successfully",
+      })
 
-        // Invalidate queries
-        trpcUtils.attribute.list.invalidate()
-      },
-      onError() {
-        t.toast({
-          title: "Error",
-          description: "Has an error when delete a attribute",
-          variant: "destructive",
-        })
-      },
+      // Invalidate queries
+      trpcUtils.attribute.list.invalidate()
+    },
+    onError() {
+      t.toast({
+        title: "Error",
+        description: "Has an error when delete a attribute",
+        variant: "destructive",
+      })
+    },
+  })
+
+  const handleDeleteAttribute = (id: string) => {
+    return confirm().then((result) => {
+      if (result) {
+        permanentlyDeleteAttribute(id)
+      }
     })
-
-  const handleDeleteAttribute = (id: string) => permanentlyDeleteAttribute(id)
+  }
 
   const columns: ColumnDef<
     ProductAttribute & {
@@ -67,15 +74,9 @@ const AttributeList = (props: AttributeListProps) => {
       accessorKey: "name",
       header: "Name",
       cell({ row: { original: attribute } }) {
-        const url = ADMIN_URL.ATTRIBUTE.EDIT.replace(
-          /{id}/,
-          attribute.id.toString()
-        )
+        const url = ADMIN_URL.ATTRIBUTE.EDIT.replace(/{id}/, attribute.id.toString())
         return (
-          <Link
-            href={url}
-            className="hover:underline underline-offset-2 font-semibold"
-          >
+          <Link href={url} className="hover:underline underline-offset-2 font-semibold">
             {attribute.name}
           </Link>
         )
@@ -99,9 +100,7 @@ const AttributeList = (props: AttributeListProps) => {
               const productAttrGroup =
                 relatedBetweenAttrGroup.productAttributeGroup as ProductAttributeGroup
 
-              return (
-                <Badge key={productAttrGroup.id}>{productAttrGroup.name}</Badge>
-              )
+              return <Badge key={productAttrGroup.id}>{productAttrGroup.name}</Badge>
             })}
           </div>
         )
@@ -119,9 +118,7 @@ const AttributeList = (props: AttributeListProps) => {
           </DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => handleDeleteAttribute(getValue<string>())}
-            >
+            <DropdownMenuItem onClick={() => handleDeleteAttribute(getValue<string>())}>
               Delete attribute
             </DropdownMenuItem>
           </DropdownMenuContent>

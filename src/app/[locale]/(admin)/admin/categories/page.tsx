@@ -1,9 +1,10 @@
 "use client"
 
-import { Link } from "@/components/assistant-router"
+import { Link } from "@/components/router"
 import SectionView from "@/components/sections/section-view"
 import StatusPoint from "@/components/status-point"
 import { Button } from "@/components/ui/button"
+import { useConfirm } from "@/components/ui/confirm-dialog/use-confirm"
 import { DataTable } from "@/components/ui/data-table/data-table"
 import {
   DropdownMenu,
@@ -25,6 +26,7 @@ export interface CategoryListProps {}
 function CategoryList({}: CategoryListProps) {
   const t = useToast()
   const router = useRouter()
+  const confirm = useConfirm()
   const trpcUtils = trpc.useContext()
 
   const { data, isLoading, isFetching } = trpc.category.list.useQuery({
@@ -53,7 +55,13 @@ function CategoryList({}: CategoryListProps) {
     },
   })
 
-  const handleDeleteCategory = (id: string) => mutate(id)
+  const handleDeleteCategory = (id: string) => {
+    confirm().then((isConfirmed) => {
+      if (isConfirmed) {
+        mutate(id)
+      }
+    })
+  }
 
   const columns: ColumnDef<Category>[] = [
     {
@@ -93,9 +101,7 @@ function CategoryList({}: CategoryListProps) {
             </DropdownMenuTrigger>
             <DropdownMenuContent>
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem
-                onClick={() => handleDeleteCategory(category.id)}
-              >
+              <DropdownMenuItem onClick={() => handleDeleteCategory(category.id)}>
                 Delete category
               </DropdownMenuItem>
             </DropdownMenuContent>

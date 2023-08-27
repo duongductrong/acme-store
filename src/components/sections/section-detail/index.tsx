@@ -1,4 +1,4 @@
-import { Link } from "@/components/assistant-router"
+import { Link } from "@/components/router"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { ArrowLeft } from "lucide-react"

@@ -25,11 +25,7 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import {
   Select,
   SelectContent,
@@ -68,14 +64,12 @@ type Team = (typeof groups)[number]["teams"][number]
 
 type PopoverTriggerProps = React.ComponentPropsWithoutRef<typeof PopoverTrigger>
 
-interface BrandSwitcherProps extends PopoverTriggerProps {}
+interface AdminBrandProps extends PopoverTriggerProps {}
 
-export default function BrandSwitcher({ className }: BrandSwitcherProps) {
+export default function AdminBrand({ className }: AdminBrandProps) {
   const [open, setOpen] = React.useState(false)
   const [showNewTeamDialog, setShowNewTeamDialog] = React.useState(false)
-  const [selectedTeam, setSelectedTeam] = React.useState<Team>(
-    groups[0].teams[0]
-  )
+  const [selectedTeam, setSelectedTeam] = React.useState<Team>(groups[0].teams[0])
 
   return (
     <Dialog open={showNewTeamDialog} onOpenChange={setShowNewTeamDialog}>
@@ -128,9 +122,7 @@ export default function BrandSwitcher({ className }: BrandSwitcherProps) {
                       <Check
                         className={cn(
                           "ml-auto h-4 w-4",
-                          selectedTeam.value === team.value
-                            ? "opacity-100"
-                            : "opacity-0"
+                          selectedTeam.value === team.value ? "opacity-100" : "opacity-0"
                         )}
                       />
                     </CommandItem>
@@ -160,9 +152,7 @@ export default function BrandSwitcher({ className }: BrandSwitcherProps) {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Create team</DialogTitle>
-          <DialogDescription>
-            Add a new team to manage products and customers.
-          </DialogDescription>
+          <DialogDescription>Add a new team to manage products and customers.</DialogDescription>
         </DialogHeader>
         <div>
           <div className="space-y-4 py-2 pb-base">
@@ -179,15 +169,11 @@ export default function BrandSwitcher({ className }: BrandSwitcherProps) {
                 <SelectContent>
                   <SelectItem value="free">
                     <span className="font-medium">Free</span> -{" "}
-                    <span className="text-muted-foreground">
-                      Trial for two weeks
-                    </span>
+                    <span className="text-muted-foreground">Trial for two weeks</span>
                   </SelectItem>
                   <SelectItem value="pro">
                     <span className="font-medium">Pro</span> -{" "}
-                    <span className="text-muted-foreground">
-                      $9/month per user
-                    </span>
+                    <span className="text-muted-foreground">$9/month per user</span>
                   </SelectItem>
                 </SelectContent>
               </Select>
