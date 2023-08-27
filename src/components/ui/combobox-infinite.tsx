@@ -172,7 +172,7 @@ export const ComboboxInfinite = forwardRef<HTMLButtonElement, ComboboxInfinitePr
 
     const Row: FC<ListChildComponentProps<any>> = ({ index, style }) => {
       const option = options?.[index]
-      if (!option) return null
+      if (!option) return <></>
 
       return (
         <CommandItem
@@ -254,7 +254,7 @@ export const ComboboxInfinite = forwardRef<HTMLButtonElement, ComboboxInfinitePr
                       itemSize={itemSize}
                       onItemsRendered={onItemsRendered}
                     >
-                      {Row}
+                      {Row as any}
                     </FixedSizeList>
                   )
                 }}
