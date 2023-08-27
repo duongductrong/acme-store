@@ -65,7 +65,7 @@ class ProductService {
       .then(async (productVariantCreatedResults) => {
         await prisma.$transaction(
           productVariantCreatedResults.map((productVariantResultItem) => {
-            const attributes = objectVariantAttributesReq[productVariantResultItem.SKU]
+            const attributes = objectVariantAttributesReq[productVariantResultItem.SKU as string]
 
             return prisma.productVariantAttribute.createMany({
               data: attributes.map((attributeReq) => {
@@ -88,7 +88,6 @@ class ProductService {
         description: input.description,
         price: input.price,
         quantity: input.quantity,
-        SKU: input.SKU,
         slug: input.slug,
         thumbnail: input.thumbnail,
         categoryId: input.categoryId,
@@ -236,7 +235,6 @@ class ProductService {
         description: input.description,
         price: input.price,
         quantity: input.quantity,
-        SKU: input.SKU,
         slug: input.slug,
         thumbnail: input.thumbnail,
         categoryId: input.categoryId,

@@ -1,5 +1,6 @@
 import AuthProvider from "@/components/auth-provider/auth-provider"
 import TrpcProvider from "@/components/trpc-provider"
+import ConfirmDialogProvider from "@/components/ui/confirm-dialog/confirm-dialog-provider"
 import PreferredBody from "@/components/ui/theme/preferred-body"
 import PreferredHTML from "@/components/ui/theme/preferred-html"
 import PreferredThemeProvider from "@/components/ui/theme/preferred-theme-provider"
@@ -77,7 +78,9 @@ export default async function RootLayout({ children, params: { locale } }: RootL
         <PreferredThemeProvider>
           <TrpcProvider>
             <NextIntlClientProvider locale={locale} messages={directories}>
-              <AuthProvider>{children}</AuthProvider>
+              <ConfirmDialogProvider>
+                <AuthProvider>{children}</AuthProvider>
+              </ConfirmDialogProvider>
               <Toaster />
             </NextIntlClientProvider>
           </TrpcProvider>

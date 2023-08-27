@@ -4,6 +4,7 @@ import { Link } from "@/components/assistant-router"
 import Gate from "@/components/gates/gate"
 import SectionView from "@/components/sections/section-view"
 import StatusPoint from "@/components/status-point"
+import { useConfirm } from "@/components/ui/confirm-dialog/use-confirm"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { DataTable, useDataTableManualOffsetPagination } from "@/components/ui/data-table"
@@ -29,6 +30,7 @@ export interface ProductListProps {}
 const ProductList = (props: ProductListProps) => {
   const t = useToast()
   const router = useRouter()
+  const confirm = useConfirm()
   const trpcUtils = trpc.useContext()
 
   const { page, pageSize, setPage, setPageSize } = useDataTableManualOffsetPagination({
@@ -144,7 +146,15 @@ const ProductList = (props: ProductListProps) => {
               <DropdownMenuItem asChild>
                 <Link href={ADMIN_URL.PRODUCT.EDIT.replace(/{id}/g, product.id)}>Edit product</Link>
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handlePermanentlyDelete(product.id)}>
+              <DropdownMenuItem
+                onClick={() =>
+                  confirm().then((isConfirm) => {
+                    if (isConfirm) {
+                      handlePermanentlyDelete(product.id)
+                    }
+                  })
+                }
+              >
                 Delete product
               </DropdownMenuItem>
             </DropdownMenuContent>
