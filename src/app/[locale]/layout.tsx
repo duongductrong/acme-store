@@ -5,10 +5,10 @@ import PreferredBody from "@/components/ui/theme/preferred-body"
 import PreferredHTML from "@/components/ui/theme/preferred-html"
 import PreferredThemeProvider from "@/components/ui/theme/preferred-theme-provider"
 import { Toaster } from "@/components/ui/toaster"
+import { inter } from "@/lib/fonts"
 import { cn } from "@/lib/utils"
 import { Metadata } from "next"
 import { NextIntlClientProvider, createTranslator } from "next-intl"
-import { Inter } from "next/font/google"
 import { notFound } from "next/navigation"
 import { ReactNode } from "react"
 import "../globals.css"
@@ -18,11 +18,9 @@ export interface RootLayoutProps {
   params: { locale: string }
 }
 
-const inter = Inter({ subsets: ["latin"] })
-
 async function getDirectories(locale: string) {
   try {
-    return (await import(`../../../directories/${locale}.json`)).default
+    return (await import(`../../dictionaries/${locale}.ts`)).default
   } catch (error) {
     notFound()
   }

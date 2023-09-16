@@ -1,8 +1,13 @@
 import { cn } from "@/lib/utils"
-import { AsComponentGenericType, AsComponentProps, AsProps } from "@/types/as-component-generic"
+import type * as Polymorphic from "@/types/react-polymorphic"
 import { VariantProps, cva } from "class-variance-authority"
-import { LucideIcon, LucideProps } from "lucide-react"
-import { ForwardRefExoticComponent, HTMLAttributes, RefAttributes, SVGAttributes } from "react"
+import {
+  ForwardRefExoticComponent,
+  HTMLAttributes,
+  RefAttributes,
+  SVGAttributes,
+  forwardRef,
+} from "react"
 
 const listItemVariants = cva(
   cn("relative justify-start h-10 px-4", "flex items-center text-sm", "rounded-lg font-medium"),
@@ -23,31 +28,28 @@ const listItemVariants = cva(
   }
 )
 
-export interface ListItemProps<T extends AsComponentGenericType>
+export interface ListItemProps
   extends HTMLAttributes<HTMLElement>,
-    VariantProps<typeof listItemVariants>,
-    AsProps<T> {
+    VariantProps<typeof listItemVariants> {
   prefixIcon?: ForwardRefExoticComponent<
     SVGAttributes<SVGSVGElement> & RefAttributes<SVGSVGElement>
   >
 }
 
-const ListItem = <T extends AsComponentGenericType = "div">({
-  active,
-  children,
-  className,
-  asChild,
-  hover,
-  as: AsComponent = "div",
-  prefixIcon: PrefixIcon,
-  ...props
-}: AsComponentProps<T, ListItemProps<T>>) => {
-  return (
-    <AsComponent {...props} className={cn(listItemVariants({ className, active, hover }))}>
-      {PrefixIcon ? <PrefixIcon className="w-4 h-4 mr-base" /> : null}
-      {children}
-    </AsComponent>
-  )
-}
+const ListItem = forwardRef(
+  (
+    { active, children, className, hover, as: Comp = "div", prefixIcon: PrefixIcon, ...props },
+    ref
+  ) => {
+    return (
+      <Comp {...props} className={cn(listItemVariants({ className, active, hover }))}>
+        {PrefixIcon ? <PrefixIcon className="w-4 h-4 mr-base" /> : null}
+        {children}
+      </Comp>
+    )
+  }
+) as Polymorphic.ForwardRefComponent<"div", ListItemProps>
+
+ListItem.displayName = "ListItem"
 
 export default ListItem

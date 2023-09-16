@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils"
-import { AsComponentGenericType, AsComponentProps, AsProps } from "@/types/as-component-generic"
 import { VariantProps, cva } from "class-variance-authority"
-import { HTMLAttributes } from "react"
+import { HTMLAttributes, forwardRef } from "react"
+import type * as Polymorphic from "@/types/react-polymorphic"
 
 export const listSubItemVariants = cva(
   cn("flex items-center justify-start", "h-10 hover:bg-transparent ml-6 px-0 text-[13px]"),
@@ -18,24 +18,20 @@ export const listSubItemVariants = cva(
   }
 )
 
-export interface ListSubItemProps<T extends AsComponentGenericType>
-  extends AsProps<T, HTMLAttributes<HTMLElement> & VariantProps<typeof listSubItemVariants>> {
+export interface ListSubItemProps extends VariantProps<typeof listSubItemVariants> {
   asChild?: boolean
 }
 
-const ListSubItem = <T extends AsComponentGenericType = "div">({
-  children,
-  className,
-  active,
-  asChild,
-  as: AsComponent = "div",
-  ...props
-}: AsComponentProps<T, ListSubItemProps<T>>) => {
-  return (
-    <AsComponent {...props} className={cn(listSubItemVariants({ className, active }))}>
-      {children}
-    </AsComponent>
-  )
-}
+const ListSubItem = forwardRef(
+  ({ children, className, active, asChild, as: AsComponent = "div", ...props }, ref) => {
+    return (
+      <AsComponent {...props} className={cn(listSubItemVariants({ className, active }))}>
+        {children}
+      </AsComponent>
+    )
+  }
+) as Polymorphic.ForwardRefComponent<"div", ListSubItemProps>
+
+ListSubItem.displayName = "ListSubItem"
 
 export default ListSubItem
