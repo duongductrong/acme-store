@@ -16,7 +16,7 @@ const ConfigurationCard = ({ name, description, icon: Icon, to }: ConfigurationC
     <div
       className={cn(
         "relative",
-        "bg-white dark:bg-black w-full h-fit rounded-lg border border-zinc-200 dark:border-zinc-800 p-base",
+        "bg-white dark:bg-neutral-900/50 w-full h-fit rounded-lg border border-zinc-200 dark:border-zinc-800 p-base",
         "flex items-center gap-base cursor-pointer"
       )}
     >
