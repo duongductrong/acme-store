@@ -14,17 +14,16 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { cn } from "@/lib/utils"
 import {
-  FC,
   forwardRef,
   memo,
   useEffect,
   useImperativeHandle,
   useMemo,
   useRef,
-  useState,
+  useState
 } from "react"
-import { FixedSizeList, ListChildComponentProps, areEqual } from "react-window"
-import { ScrollArea } from "./scroll-area"
+import { ListChildComponentProps, areEqual } from "react-window"
+import { VList } from "virtua"
 
 export interface ComboboxOption<TValue = any> {
   label: string
@@ -215,17 +214,28 @@ export const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
             <CommandInput placeholder="Search..." onValueChange={handleSearchOption} />
             <CommandEmpty>{notFound ? notFound : "No option found."}</CommandEmpty>
             <CommandGroup>
-              <ScrollArea>
-                <FixedSizeList
-                  width="100%"
-                  overscanCount={1}
-                  height={itemListSize}
-                  itemCount={itemCount}
-                  itemSize={itemSize}
-                >
-                  {Row as any}
-                </FixedSizeList>
-              </ScrollArea>
+              <VList
+                style={{
+                  height: options.length <= 5 ? options.length * itemSize : 300,
+                  maxHeight: 350,
+                }}
+              >
+                {options.map((option) => (
+                  <CommandItem
+                    key={option.value}
+                    onSelect={() => handleSelectOption(option.value)}
+                    className="whitespace-nowrap flex gap-2"
+                  >
+                    <Check
+                      className={cn(
+                        "h-4 min-w-[16px] max-w-[16px] flex-1",
+                        value?.includes(option.value) ? "opacity-100" : "opacity-0"
+                      )}
+                    />
+                    {option.label}
+                  </CommandItem>
+                ))}
+              </VList>
             </CommandGroup>
           </Command>
         </PopoverContent>
