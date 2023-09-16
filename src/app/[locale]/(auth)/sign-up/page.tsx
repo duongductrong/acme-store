@@ -1,8 +1,8 @@
 import { STORE_FRONT_URL } from "@/constant/urls"
 import { useTranslations } from "next-intl"
-import Link from "next/link"
 import SignUpForm from "./_components/sign-up-form"
 import { Metadata } from "next"
+import { Link } from "@/components/router"
 
 export interface SignUpProps extends CommonLayoutProps {}
 
@@ -24,17 +24,11 @@ const SignUp = () => {
       <SignUpForm redirectTo={STORE_FRONT_URL.AUTH.SIGN_IN} />
       <p className="px-8 text-center text-sm text-muted-foreground">
         By clicking continue, you agree to our{" "}
-        <Link
-          href="/terms"
-          className="underline underline-offset-4 hover:text-primary"
-        >
+        <Link href="/terms" className="underline underline-offset-4 hover:text-primary">
           Terms of Service
         </Link>{" "}
         and{" "}
-        <Link
-          href="/privacy"
-          className="underline underline-offset-4 hover:text-primary"
-        >
+        <Link href="/privacy" className="underline underline-offset-4 hover:text-primary">
           Privacy Policy
         </Link>
         .

@@ -4,6 +4,9 @@ import { inter } from "@/lib/fonts"
 import { cn } from "@/lib/utils"
 import { Inter } from "next/font/google"
 import { ReactNode } from "react"
+import PreferredThemeProvider from "@/components/ui/theme/preferred-theme-provider"
+import TrpcProvider from "@/components/trpc-provider"
+import { RouterProvider } from "@/components/router"
 
 type Props = {
   children: ReactNode
@@ -12,7 +15,7 @@ type Props = {
 // Even though this component is just passing its children through, the presence
 // of this file fixes an issue in Next.js 13.4 where link clicks that switch
 // the locale would otherwise cause a full reload.
-export default function RootLayout({ children }: Props) {
+export default function Document({ children }: Props) {
   return (
     <PreferredHTML>
       <PreferredBody
@@ -21,7 +24,11 @@ export default function RootLayout({ children }: Props) {
         otherwise={{ className: "storefront" }}
         className={cn(inter.className)}
       >
-        {children}
+        <PreferredThemeProvider>
+          <TrpcProvider>
+            <RouterProvider>{children}</RouterProvider>
+          </TrpcProvider>
+        </PreferredThemeProvider>
       </PreferredBody>
     </PreferredHTML>
   )

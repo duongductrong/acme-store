@@ -1,9 +1,7 @@
 import AuthProvider from "@/components/auth-provider/auth-provider"
-import TrpcProvider from "@/components/trpc-provider"
 import ConfirmDialogProvider from "@/components/ui/confirm-dialog/confirm-dialog-provider"
 import PreferredBody from "@/components/ui/theme/preferred-body"
 import PreferredHTML from "@/components/ui/theme/preferred-html"
-import PreferredThemeProvider from "@/components/ui/theme/preferred-theme-provider"
 import { Toaster } from "@/components/ui/toaster"
 import { inter } from "@/lib/fonts"
 import { cn } from "@/lib/utils"
@@ -73,16 +71,12 @@ export default async function RootLayout({ children, params: { locale } }: RootL
         otherwise={{ className: "storefront" }}
         className={cn(inter.className)}
       >
-        <PreferredThemeProvider>
-          <TrpcProvider>
-            <NextIntlClientProvider locale={locale} messages={directories}>
-              <ConfirmDialogProvider>
-                <AuthProvider>{children}</AuthProvider>
-              </ConfirmDialogProvider>
-              <Toaster />
-            </NextIntlClientProvider>
-          </TrpcProvider>
-        </PreferredThemeProvider>
+        <NextIntlClientProvider locale={locale} messages={directories}>
+          <ConfirmDialogProvider>
+            <AuthProvider>{children}</AuthProvider>
+          </ConfirmDialogProvider>
+          <Toaster />
+        </NextIntlClientProvider>
       </PreferredBody>
     </PreferredHTML>
   )

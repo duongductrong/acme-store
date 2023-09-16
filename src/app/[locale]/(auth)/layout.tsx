@@ -1,16 +1,13 @@
 "use client"
 
+import { Link } from "@/components/router"
 import { buttonVariants } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { Command } from "lucide-react"
 import { useTranslations } from "next-intl"
-import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { ReactNode } from "react"
-import {
-  SIGN_IN_URL,
-  SIGN_UP_URL
-} from "./urls"
+import { SIGN_IN_URL, SIGN_UP_URL } from "./urls"
 
 export interface AuthLayoutProps extends CommonLayoutProps {
   children: ReactNode
@@ -53,9 +50,8 @@ const AuthLayout = ({ children }: AuthLayoutProps) => {
           <div className="relative z-20 mt-auto">
             <blockquote className="space-y-2">
               <p className="text-lg">
-                &ldquo;This library has saved me countless hours of work and
-                helped me deliver stunning designs to my clients faster than
-                ever before.&rdquo;
+                &ldquo;This library has saved me countless hours of work and helped me deliver
+                stunning designs to my clients faster than ever before.&rdquo;
               </p>
               <footer className="text-sm">Sofia Davis</footer>
             </blockquote>

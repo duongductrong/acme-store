@@ -1,5 +1,4 @@
 import { getGrantsFromPrivileges } from "@/components/gates/lib/accesscontrol"
-import RouterProvider from "@/components/router/providers/router-provider"
 import { STORE_FRONT_URL } from "@/constant/urls"
 import { authOptions } from "@/lib/next-auth"
 import prisma from "@/lib/prisma"
@@ -33,20 +32,18 @@ const AdminLayout = async ({ children }: AdminLayoutProps) => {
       role={currentUserRole?.id as string}
       grants={getGrantsFromPrivileges(currentUserRole?.privileges, currentUserRole?.id as string)}
     >
-      <RouterProvider>
-        <div className="flex">
-          <AdminSidebar
-            user={{
-              role: currentUserRole?.id as string,
-              privileges: currentUserRole?.privileges,
-            }}
-          />
-          <AdminMainBar>
-            <AdminNavigationBar />
-            <div className="px-6 py-8">{children}</div>
-          </AdminMainBar>
-        </div>
-      </RouterProvider>
+      <div className="flex">
+        <AdminSidebar
+          user={{
+            role: currentUserRole?.id as string,
+            privileges: currentUserRole?.privileges,
+          }}
+        />
+        <AdminMainBar>
+          <AdminNavigationBar />
+          <div className="px-6 py-8">{children}</div>
+        </AdminMainBar>
+      </div>
     </AdminProvider>
   )
 }

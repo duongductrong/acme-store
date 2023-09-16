@@ -1,7 +1,8 @@
 "use client"
 
 import NextLink, { LinkProps as NextLinkProps } from "next/link"
-import { AnchorHTMLAttributes } from "react"
+import { AnchorHTMLAttributes, MouseEvent, forwardRef } from "react"
+import type * as Polymorphic from "@/types/react-polymorphic"
 import { useRouter } from "../hooks/use-router"
 
 export interface LinkProps
@@ -11,18 +12,37 @@ export interface LinkProps
   scroll?: boolean
 }
 
-const Link = ({ href, children, dynamic = false, scroll, ...props }: LinkProps) => {
+const Link = forwardRef(({ href, children, dynamic = false, scroll, ...props }, ref) => {
   const { push, dynamicNavigate } = useRouter()
+
+  const handlePushDynamic = (event: MouseEvent<HTMLAnchorElement>) => {
+    ;(dynamicNavigate as any)(href)
+
+    if (props.onClick) {
+      props.onClick(event)
+    }
+  }
+
+  const handlePushPrimitive = (event: MouseEvent<HTMLAnchorElement>) => {
+    push(event)
+
+    if (props.onClick) {
+      props.onClick(event)
+    }
+  }
 
   return (
     <NextLink
       {...props}
+      ref={ref}
       href={href}
-      onClick={dynamic ? () => (dynamicNavigate as any)(href) : (event) => push(event)}
+      onClick={dynamic ? handlePushDynamic : handlePushPrimitive}
     >
       {children}
     </NextLink>
   )
-}
+}) as Polymorphic.ForwardRefComponent<Polymorphic.IntrinsicElement<typeof NextLink>, LinkProps>
+
+Link.displayName = "Link"
 
 export default Link
