@@ -8,6 +8,7 @@ import {
   HeaderContext,
   PaginationState,
   Row,
+  SortDirection,
   SortingState,
   VisibilityState,
   flexRender,
@@ -30,20 +31,22 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { safeParseNumber } from "@/lib/number"
+import { cn } from "@/lib/utils"
 import { isNil, omitBy } from "lodash"
 import {
   ChevronLeft,
   ChevronRight,
   ChevronsLeft,
   ChevronsRight,
+  FolderSearch,
   LucideIcon,
-  PackageSearch,
   Plus,
+  SortAsc,
+  SortDesc,
 } from "lucide-react"
 import Spin from "../loadings/spin"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../select"
 import { getCanNextPageBasedType, getCanPreviousPageBasedType } from "./utils"
-import { cn } from "@/lib/utils"
 
 export interface DataTableOffsetPagination {
   type: "offset"
@@ -69,42 +72,52 @@ export type DataTablePagination =
   | DataTableOffsetPagination
   | DataTableSelfPagination
 
-export interface DataTableProps<TData = any, TValue = any> {
+export type DataTableProps<TData = any, TValue = any> = {
   data: TData[]
+  rows?: number[]
   columns: ColumnDef<TData, TValue>[]
+
+  loading?: boolean
 
   searchable?: boolean
   searchPlaceholder?: string
-
-  rows?: number[]
 
   emptyIcon?: LucideIcon
   emptyContent?: string
 
   createNewEntryText?: string
 
+  sorting?: SortingState
   pagination?: DataTablePagination
 
   defaultRowSelection?: { [k: string]: any }
   defaultColumnVisibility?: VisibilityState
 
-  loading?: boolean
   enableCreateNewEntry?: boolean
   enableEmpty?: boolean
   enableRowSelection?: boolean
   enableRowSelectionStyle?: boolean
   enableHiding?: boolean
+  enableSorting?: boolean
 
   className?: string
 
   onCreateNewEntry?: () => void
   onRowSelection?: (data: { [k: string]: any }) => void
   onRowClicked?: (data: Row<any>) => void
+
+  setSorting?: React.Dispatch<React.SetStateAction<SortingState>>
+}
+
+const SortIcons: Record<SortDirection, LucideIcon> = {
+  asc: SortAsc,
+  desc: SortDesc,
 }
 
 export const DataTable = ({
   data,
   columns,
+  sorting,
   loading,
   className,
   searchable,
@@ -113,11 +126,12 @@ export const DataTable = ({
   defaultRowSelection,
   defaultColumnVisibility,
   rows = [10, 20, 30, 50, 100],
-  emptyIcon: EmptyIcon = PackageSearch,
+  emptyIcon: EmptyIcon = FolderSearch,
   emptyContent = "No results found.",
   createNewEntryText = "Create new entry",
 
   enableEmpty = true,
+  enableSorting = true,
   enableRowSelection = false,
   enableRowSelectionStyle = false,
   enableCreateNewEntry = true,
@@ -126,6 +140,7 @@ export const DataTable = ({
   onCreateNewEntry,
   onRowSelection,
   onRowClicked,
+  setSorting,
 }: DataTableProps) => {
   const isManualPaginationOrSorting = !!pagination?.type && pagination.type !== "self"
   const isOffsetPagination = pagination?.type === "offset"
@@ -138,7 +153,7 @@ export const DataTable = ({
     pageIndex: Number(pagination?.page || 1) - 1,
     pageSize: Number(pagination?.pageSize || 0),
   })
-  const [sorting, setSorting] = React.useState<SortingState>([])
+  const [selfSorting, setSelfSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>(
     defaultColumnVisibility ?? {}
@@ -195,7 +210,7 @@ export const DataTable = ({
 
     state: omitBy(
       {
-        sorting,
+        sorting: isCursorPagination || isOffsetPagination ? sorting : selfSorting,
         columnFilters,
         columnVisibility,
         rowSelection,
@@ -215,9 +230,10 @@ export const DataTable = ({
     manualSorting: isManualPaginationOrSorting,
 
     enableHiding,
+    enableSorting,
     enableRowSelection,
 
-    onSortingChange: setSorting,
+    onSortingChange: isOffsetPagination || isCursorPagination ? setSorting : setSelfSorting,
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
@@ -348,12 +364,28 @@ export const DataTable = ({
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
+                {headerGroup.headers.map((header, index) => {
+                  const content = header.isPlaceholder
+                    ? null
+                    : flexRender(header.column.columnDef.header, header.getContext())
+
+                  const sortedBy = header.column.getIsSorted()
+                  const SortIcon = sortedBy ? SortIcons[sortedBy] : null
+
                   return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(header.column.columnDef.header, header.getContext())}
+                    <TableHead
+                      key={header.id}
+                      onClick={header.column.getToggleSortingHandler()}
+                      className={cn(enableSorting ? "cursor-pointer" : "")}
+                    >
+                      {enableSorting ? (
+                        <div className="flex items-center gap-2">
+                          {content}
+                          {enableSorting && SortIcon ? <SortIcon className="w-4 h-4" /> : null}
+                        </div>
+                      ) : (
+                        content
+                      )}
                     </TableHead>
                   )
                 })}
@@ -426,7 +458,14 @@ export const DataTable = ({
           </Select>
         </div>
         <p className="text-sm mx-6">
-          Page {1} of {5}
+          Page{" "}
+          {pagination?.type === "offset"
+            ? pagination.page
+            : table.getState().pagination.pageIndex + 1}{" "}
+          of{" "}
+          {pagination?.type === "offset"
+            ? Math.ceil(pagination.totalRecords / pagination.pageSize)
+            : table.getPageCount()}
         </p>
         <div className="space-x-2">
           <Button

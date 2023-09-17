@@ -1,13 +1,13 @@
 "use client"
 
-import { Link } from "@/components/router"
 import Gate from "@/components/gates/gate"
+import { Link } from "@/components/router"
 import SectionView from "@/components/sections/section-view"
 import StatusPoint from "@/components/status-point"
-import { useConfirm } from "@/components/ui/confirm-dialog/use-confirm"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
-import { DataTable, useDataTableManualOffsetPagination } from "@/components/ui/data-table"
+import { useConfirm } from "@/components/ui/confirm-dialog/use-confirm"
+import { DataTable, useDataTableUtils } from "@/components/ui/data-table"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -33,15 +33,17 @@ const ProductList = (props: ProductListProps) => {
   const confirm = useConfirm()
   const trpcUtils = trpc.useContext()
 
-  const { page, pageSize, setPage, setPageSize } = useDataTableManualOffsetPagination({
+  const { page, pageSize, setPage, setPageSize, sorting, setSorting } = useDataTableUtils({
     page: 1,
     pageSize: 10,
+    sorting: [],
   })
 
   const { data, isLoading: isProductQuerying } = trpc.product.list.useQuery({
     paginationType: "offset",
     page: page,
     pageSize: pageSize,
+    sorting: sorting,
   })
 
   const products = data?.items || []
@@ -179,11 +181,12 @@ const ProductList = (props: ProductListProps) => {
       }
     >
       <DataTable
-        columns={columns}
         data={products}
-        searchPlaceholder="Search product name..."
+        columns={columns}
+        sorting={sorting}
         loading={isProductMutating || isProductQuerying}
-        onCreateNewEntry={() => router.push(ADMIN_URL.PRODUCT.NEW)}
+        searchPlaceholder="Search product name..."
+        setSorting={setSorting}
         pagination={{
           type: "offset",
           page: safeParseNumber(productPagination?.page, 1),
@@ -192,6 +195,7 @@ const ProductList = (props: ProductListProps) => {
           setPage,
           setPageSize,
         }}
+        enableSorting
         searchable
       />
     </SectionView>

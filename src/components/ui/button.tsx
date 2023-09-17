@@ -3,6 +3,7 @@ import { cva, type VariantProps } from "class-variance-authority"
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
+import { ForwardRefComponent } from "@/types/react-polymorphic"
 
 const buttonVariants = cva(
   "inline-flex items-center justify-center text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
@@ -41,9 +42,9 @@ export interface ButtonProps
   asChild?: boolean
 }
 
-const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, rounded, asChild = false, ...props }, ref) => {
-    const Comp = asChild ? Slot : "button"
+const Button = React.forwardRef(
+  ({ className, variant, size, rounded, asChild = false, as = "button", ...props }, ref) => {
+    const Comp = asChild ? Slot : as
     return (
       <Comp
         className={cn(buttonVariants({ variant, size, rounded, className }))}
@@ -52,7 +53,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       />
     )
   }
-)
+) as ForwardRefComponent<"button", ButtonProps>
 Button.displayName = "Button"
 
 export { Button, buttonVariants }

@@ -3,7 +3,7 @@
 import { Link } from "@/components/router"
 import SectionView from "@/components/sections/section-view"
 import { Button } from "@/components/ui/button"
-import { useDataTableManualOffsetPagination } from "@/components/ui/data-table"
+import { useDataTableUtils } from "@/components/ui/data-table"
 import { DataTable } from "@/components/ui/data-table/data-table"
 import { useToast } from "@/components/ui/use-toast"
 import { ADMIN_URL } from "@/constant/urls"
@@ -19,7 +19,7 @@ const RoleList = (props: RoleListProps) => {
   const trpcUtils = trpc.useContext()
 
   const { setPage, setPageSize, page, pageSize } =
-    useDataTableManualOffsetPagination({ page: 1, pageSize: 10 })
+    useDataTableUtils({ page: 1, pageSize: 10 })
   const { data, isLoading, isFetching } = trpc.role.list.useQuery({
     paginationType: "offset",
     page,

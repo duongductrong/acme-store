@@ -27,14 +27,14 @@ export const productRouter = router({
 
       const where: Prisma.ProductWhereInput | undefined = undefined
 
+      const orderBy = input?.sorting?.map((sort) => ({ [sort.id]: sort.desc ? "desc" : "asc" }))
+
       const productItems = await prisma.product.findMany({
         where,
         skip: handledPagination?.skip,
         take: handledPagination?.limit,
         cursor: handledPagination?.cursor,
-        orderBy: {
-          createdAt: "desc",
-        },
+        orderBy,
       })
 
       if (input?.paginationType === "offset") {

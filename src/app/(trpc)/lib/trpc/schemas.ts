@@ -25,6 +25,7 @@ export const inputQueryFilterSchema = z.intersection(
   unionPaginationSchema,
   z.object({
     search: z.string().nullish(),
+    sorting: z.array(z.object({ id: z.string(), desc: z.boolean() })).nullish(),
   })
 )
 
@@ -40,6 +41,4 @@ export const outputQueryFilterResultsSchema = z.object({
   totalRecords: z.number().nullish(),
 })
 
-export type OutputQueryFilterResultsSchemaType = z.infer<
-  typeof outputQueryFilterResultsSchema
->
+export type OutputQueryFilterResultsSchemaType = z.infer<typeof outputQueryFilterResultsSchema>

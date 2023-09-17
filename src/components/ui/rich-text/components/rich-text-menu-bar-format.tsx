@@ -9,12 +9,13 @@ import Heading from "@tiptap/extension-heading"
 import { useCurrentEditor } from "@tiptap/react"
 import {
   CaseSensitive,
+  ChevronsUpDown,
   Heading1,
   Heading2,
   Heading3,
   Heading4,
   Heading5,
-  Heading6,
+  Heading6
 } from "lucide-react"
 
 export interface RichTextMenuBarFormatProps {}
@@ -44,7 +45,7 @@ const RichTextMenuBarFormat = (props: RichTextMenuBarFormatProps) => {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="sm">
-          {textContent}
+          {textContent} <ChevronsUpDown className="w-4 h-4 ml-2" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
