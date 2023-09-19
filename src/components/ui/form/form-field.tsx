@@ -1,14 +1,13 @@
 "use client"
 
-import { Skeleton } from "@/components/ui/skeleton"
 import { cn } from "@/lib/utils"
 import { CheckboxProps } from "@radix-ui/react-checkbox"
 import get from "lodash/get"
 import { Asterisk } from "lucide-react"
-import dynamic from "next/dynamic"
 import { HTMLInputTypeAttribute, forwardRef } from "react"
 import { InputProps } from "../input"
 import { TextareaProps } from "../textarea"
+import { FormDatePickerProps } from "./components/form-datepicker"
 import { FormNumberProps } from "./components/form-number"
 import { FormRadioGroupProps } from "./components/form-radio-group"
 import { FormRichTextProps } from "./components/form-rich-text"
@@ -18,54 +17,22 @@ import { FormUIDProps } from "./components/form-uid"
 import { FORM_UNIFIED_VARIANT } from "./constants"
 import FormControl from "./form-control"
 import FormDescription from "./form-description"
+import {
+  FormCheckbox,
+  FormDatePicker,
+  FormInput,
+  FormNumber,
+  FormRichText,
+  FormSelect,
+  FormSelectInfinite,
+  FormTextarea,
+  FormUID,
+  RadioGroup,
+} from "./form-field-imports"
 import FormFieldInternal from "./form-field-internal"
 import FormItem from "./form-item"
 import FormLabel from "./form-label"
 import FormMessage from "./form-message"
-
-const FormInput = dynamic(() => import("./components/form-input"), {
-  ssr: true,
-  loading: () => <Skeleton className="h-[40px] w-full" />,
-})
-
-const FormTextarea = dynamic(() => import("./components/form-textarea"), {
-  ssr: true,
-  loading: () => <Skeleton className="h-[150px] w-full" />,
-})
-
-const FormCheckbox = dynamic(() => import("./components/form-checkbox"), {
-  ssr: true,
-  loading: () => <Skeleton className="h-[40px] w-full" />,
-})
-
-const RadioGroup = dynamic(() => import("./components/form-radio-group"), {
-  ssr: true,
-})
-
-const FormSelect = dynamic(() => import("./components/form-select"), {
-  ssr: true,
-  loading: () => <Skeleton className="h-[40px] w-full" />,
-})
-
-const FormSelectInfinite = dynamic(() => import("./components/form-select-infinite"), {
-  ssr: true,
-  loading: () => <Skeleton className="h-[40px] w-full" />,
-})
-
-const FormUID = dynamic(() => import("./components/form-uid"), {
-  ssr: true,
-  loading: () => <Skeleton className="h-[40px] w-full" />,
-})
-
-const FormNumber = dynamic(() => import("./components/form-number"), {
-  ssr: true,
-  loading: () => <Skeleton className="h-[40px] w-full" />,
-})
-
-const FormRichText = dynamic(() => import("./components/form-rich-text"), {
-  ssr: true,
-  loading: () => <Skeleton className="h-[200px] w-full" />,
-})
 
 export interface FormFieldTextVariantProps
   extends InputProps,
@@ -109,6 +76,10 @@ export interface FormFieldRichTextVariantProps extends FormRichTextProps {
   variant: "RICH_TEXT"
 }
 
+export type FormFieldDatePickerVariantProps = FormDatePickerProps & {
+  variant: "DATE_PICKER"
+}
+
 export type FormFieldVariantBaseProps =
   | FormFieldTextVariantProps
   | FormFieldTextareaVariantProps
@@ -119,6 +90,7 @@ export type FormFieldVariantBaseProps =
   | FormFieldSelectInfiniteVariantProps
   | FormFieldNumberVariantProps
   | FormFieldRichTextVariantProps
+  | FormFieldDatePickerVariantProps
 
 export interface FormFieldStandardBaseProps {
   type?: HTMLInputTypeAttribute
@@ -144,6 +116,7 @@ const FORM_UNIFIED_VARIANT_LOADER = {
   [FORM_UNIFIED_VARIANT.NUMBER]: FormNumber,
   [FORM_UNIFIED_VARIANT.SELECT_INFINITE]: FormSelectInfinite,
   [FORM_UNIFIED_VARIANT.RICH_TEXT]: FormRichText,
+  [FORM_UNIFIED_VARIANT.DATE_PICKER]: FormDatePicker,
 }
 
 const FormField = forwardRef<

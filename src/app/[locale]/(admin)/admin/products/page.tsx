@@ -165,7 +165,6 @@ const ProductList = (props: ProductListProps) => {
       },
     },
   ]
-
   return (
     <SectionView
       title="Products"
