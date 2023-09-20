@@ -57,7 +57,8 @@
     --card: 240 10% 3.9%;
     --card-foreground: 0 0% 98%;
 
-    --asidebar: 240 10% 7%;
+    /* --asidebar: 240 10% 7%; */
+    --asidebar: 240 10% 3.9%;
     --asidebar-foreground: 240 5% 64.9%;
 
     --border: 240 3.7% 15.9%;

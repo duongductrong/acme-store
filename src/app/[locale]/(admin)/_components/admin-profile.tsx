@@ -55,7 +55,7 @@ const AdminProfileCard = ({ className, name, email, ...props }: AdminProfileCard
           </div>
         </div>
       </PopoverTrigger>
-      <PopoverContent className="max-w-[calc(250px-32px)] bg-asidebar-background border-muted p-0">
+      <PopoverContent className="max-w-[calc(250px-32px)] bg-asidebar-background border-muted p-1">
         <Command>
           <CommandItem className="py-2">
             <User className="w-4 h-4 mr-2" />
