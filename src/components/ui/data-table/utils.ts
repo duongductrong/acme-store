@@ -1,3 +1,5 @@
+/* eslint-disable consistent-return */
+/* eslint-disable default-case */
 import { safeParseNumber } from "@/lib/number"
 import { DataTablePagination } from "./data-table"
 

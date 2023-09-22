@@ -7,7 +7,7 @@ import StatusPoint from "@/components/status-point"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { useConfirm } from "@/components/ui/confirm-dialog/use-confirm"
-import { DataTable, useDataTableUtils } from "@/components/ui/data-table"
+import { SuspenseDataTable, useDataTableUtils } from "@/components/ui/data-table"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -104,6 +104,7 @@ const ProductList = (props: ProductListProps) => {
           <span className="text-xs block">path:({row.original.slug})</span>
         </div>
       ),
+      enableSticky: true,
     },
     {
       id: "price",
@@ -179,12 +180,11 @@ const ProductList = (props: ProductListProps) => {
         </Gate>
       }
     >
-      <DataTable
+      <SuspenseDataTable
         data={products}
         columns={columns}
         sorting={sorting}
         loading={isProductMutating || isProductQuerying}
-        searchPlaceholder="Search product name..."
         setSorting={setSorting}
         pagination={{
           type: "offset",
@@ -195,7 +195,6 @@ const ProductList = (props: ProductListProps) => {
           setPageSize,
         }}
         enableSorting
-        searchable
       />
     </SectionView>
   )

@@ -1,4 +1,6 @@
+/* eslint-disable react/no-unstable-nested-components */
 /* eslint-disable react-hooks/exhaustive-deps */
+
 "use client"
 
 import {
@@ -8,7 +10,6 @@ import {
   HeaderContext,
   PaginationState,
   Row,
-  SortDirection,
   SortingState,
   VisibilityState,
   flexRender,
@@ -21,17 +22,9 @@ import {
 import * as React from "react"
 
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
-import { safeParseNumber } from "@/lib/number"
+import { TableCell, TableRow } from "@/components/ui/table"
 import { cn } from "@/lib/utils"
+import { safeParseNumber } from "@/lib/number"
 import { isNil, omitBy } from "lodash"
 import {
   ChevronLeft,
@@ -39,13 +32,16 @@ import {
   ChevronsLeft,
   ChevronsRight,
   FolderSearch,
+  Loader2,
   LucideIcon,
   Plus,
-  SortAsc,
-  SortDesc,
 } from "lucide-react"
-import Spin from "../loadings/spin"
+import { useIntersection } from "react-use"
+import { VList } from "virtua"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../select"
+import DataTableHeader from "./data-table-header"
+import DataTableProvider from "./data-table-provider"
+import { DataTableRowViewport } from "./data-table-row-viewport"
 import { getCanNextPageBasedType, getCanPreviousPageBasedType } from "./utils"
 
 export interface DataTableOffsetPagination {
@@ -79,9 +75,6 @@ export type DataTableProps<TData = any, TValue = any> = {
 
   loading?: boolean
 
-  searchable?: boolean
-  searchPlaceholder?: string
-
   emptyIcon?: LucideIcon
   emptyContent?: string
 
@@ -100,7 +93,21 @@ export type DataTableProps<TData = any, TValue = any> = {
   enableHiding?: boolean
   enableSorting?: boolean
 
+  noBordered?: boolean
+
   className?: string
+  classNames?: {
+    tableContainerClassName?: string
+    tableClassName?: string
+
+    tableHeaderClassName?: string
+    tableHeaderTrClassName?: string
+    tableHeaderThClassName?: string
+
+    tableBodyClassName?: string
+    tableBodyTrClassName?: string
+    tableBodyTdClassName?: string
+  }
 
   onCreateNewEntry?: () => void
   onRowSelection?: (data: { [k: string]: any }) => void
@@ -109,20 +116,14 @@ export type DataTableProps<TData = any, TValue = any> = {
   setSorting?: React.Dispatch<React.SetStateAction<SortingState>>
 }
 
-const SortIcons: Record<SortDirection, LucideIcon> = {
-  asc: SortAsc,
-  desc: SortDesc,
-}
-
 export const DataTable = ({
   data,
   columns,
   sorting,
   loading,
   className,
-  searchable,
+  classNames,
   pagination,
-  searchPlaceholder,
   defaultRowSelection,
   defaultColumnVisibility,
   rows = [10, 20, 30, 50, 100],
@@ -136,6 +137,8 @@ export const DataTable = ({
   enableRowSelectionStyle = false,
   enableCreateNewEntry = true,
   enableHiding = true,
+
+  noBordered = false,
 
   onCreateNewEntry,
   onRowSelection,
@@ -160,6 +163,8 @@ export const DataTable = ({
   )
   const [rowSelection, setRowSelection] = React.useState(defaultRowSelection)
 
+  const wrapperRef = React.useRef<HTMLDivElement>(null)
+
   const manualOffsetPagination =
     pagination?.type === "offset"
       ? {
@@ -177,9 +182,10 @@ export const DataTable = ({
         }
       : undefined
 
-  const ROW_SELECTION_DATA = {
+  const ROW_SELECTION_DATA: { columns: ColumnDef<any> } = {
     columns: {
       accessorKey: `select-${cid}`,
+      maxSize: 50,
       header: ({ table }: HeaderContext<unknown, any>) => (
         <input
           type="checkbox"
@@ -343,71 +349,74 @@ export const DataTable = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(Object.keys(defaultRowSelection ?? {}))])
 
+  const wrapperIntersection = useIntersection(wrapperRef, { threshold: 1 })
+  const wrapperRect = wrapperIntersection?.boundingClientRect
+  const tableBodyVListSize = safeParseNumber(wrapperRect?.height, 1) - 48 - 68
+
   return (
-    <div className={cn("w-full", className)}>
-      {searchable && (
-        <div className="flex items-center py-4">
-          {searchable ? (
-            <Input
-              placeholder={searchPlaceholder}
-              // value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-              // onChange={(event) =>
-              //   table.getColumn("name")?.setFilterValue(event.target.value)
-              // }
-              className="max-w-sm"
-            />
-          ) : null}
-        </div>
-      )}
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header, index) => {
-                  const content = header.isPlaceholder
-                    ? null
-                    : flexRender(header.column.columnDef.header, header.getContext())
+    <DataTableProvider>
+      <div ref={wrapperRef} className={cn("flex flex-col w-full h-full min-h-[500px]", className)}>
+        <div className="rounded-md border border-muted overflow-hidden">
+          <DataTableHeader
+            table={table}
+            classNames={classNames}
+            noBordered={noBordered}
+            enableSorting={enableSorting}
+            enableRowSelection={enableRowSelection}
+          />
 
-                  const sortedBy = header.column.getIsSorted()
-                  const SortIcon = sortedBy ? SortIcons[sortedBy] : null
-
+          <div className={cn(classNames?.tableBodyClassName)}>
+            {table.getRowModel().rows?.length ? (
+              <VList
+                components={{
+                  Item: "div",
+                  Root: DataTableRowViewport,
+                }}
+                style={{ height: tableBodyVListSize }}
+              >
+                {table.getRowModel().rows.map((row) => {
+                  let cellStickyOffset = 0
                   return (
-                    <TableHead
-                      key={header.id}
-                      onClick={header.column.getToggleSortingHandler()}
-                      className={cn(enableSorting ? "cursor-pointer" : "")}
+                    <TableRow
+                      key={row.id}
+                      enableSelectedStyle={enableRowSelectionStyle}
+                      data-state={row.getIsSelected() && "selected"}
+                      className={cn("table-fixed table w-full", classNames?.tableBodyTrClassName)}
+                      onClick={() => onRowClicked && onRowClicked(row)}
                     >
-                      {enableSorting ? (
-                        <div className="flex items-center gap-2">
-                          {content}
-                          {enableSorting && SortIcon ? <SortIcon className="w-4 h-4" /> : null}
-                        </div>
-                      ) : (
-                        content
-                      )}
-                    </TableHead>
+                      {row.getVisibleCells().map((cell) => {
+                        const cellColumnDef = cell.column.columnDef as ColumnDef<any>
+                        const cellSize =
+                          Number(cellColumnDef.size) > Number(cellColumnDef.maxSize)
+                            ? cellColumnDef.maxSize
+                            : cellColumnDef.size
+
+                        const isCellEnableSticky = cellColumnDef.enableSticky
+
+                        const cellCssWidth = Number(cellSize)
+                        const cellCssOffsetLeft = cellStickyOffset
+
+                        if (cellColumnDef.enableSticky) {
+                          cellStickyOffset += cellCssWidth
+                        }
+
+                        return (
+                          <TableCell
+                            key={cell.id}
+                            style={{ width: cellCssWidth, left: cellCssOffsetLeft }}
+                            className={cn(
+                              [isCellEnableSticky ? "sticky" : ""],
+                              classNames?.tableBodyTdClassName
+                            )}
+                          >
+                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                          </TableCell>
+                        )
+                      })}
+                    </TableRow>
                   )
                 })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody className="relative">
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  enableSelectedStyle={enableRowSelectionStyle}
-                  data-state={row.getIsSelected() && "selected"}
-                  onClick={() => onRowClicked && onRowClicked(row)}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
+              </VList>
             ) : enableEmpty ? (
               <TableRow>
                 <TableCell colSpan={columns.length + 999} className="h-24 text-center py-10">
@@ -430,83 +439,84 @@ export const DataTable = ({
             {loading && (
               <TableRow className="absolute top-0 left-0 w-full h-full bg-zinc-100/50 dark:bg-zinc-900/50">
                 <TableCell colSpan={999} className="h-full w-full flex items-center justify-center">
-                  <Spin className="w-5 h-5 mx-auto" />
+                  <Loader2 className="w-5 h-5 mx-auto" />
                 </TableCell>
               </TableRow>
             )}
-          </TableBody>
-        </Table>
-      </div>
-      <div className="flex items-center justify-end gap-4 py-4">
-        <div className="flex-1 text-sm text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} of{" "}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          <p className="text-sm">Rows per page</p>
-          <Select defaultValue={rows[0].toString()} onValueChange={handleRowsPerPageChange}>
-            <SelectTrigger className="w-[70px] h-8">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {rows?.map((row) => (
-                <SelectItem key={`${cid}dt-rpp-${row}`} value={row.toString()}>
-                  {row}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        <p className="text-sm mx-6">
-          Page{" "}
-          {pagination?.type === "offset"
-            ? pagination.page
-            : table.getState().pagination.pageIndex + 1}{" "}
-          of{" "}
-          {pagination?.type === "offset"
-            ? Math.ceil(pagination.totalRecords / pagination.pageSize)
-            : table.getPageCount()}
-        </p>
-        <div className="space-x-2">
-          <Button
-            type="button"
-            variant="outline"
-            size="icon"
-            onClick={handleGotoFirstPage}
-            disabled={!getCanPreviousPage}
-          >
-            <ChevronsLeft className="w-4 h-4" />
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            size="icon"
-            onClick={handlePreviousPage}
-            disabled={!getCanPreviousPage}
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </Button>
 
-          <Button
-            type="button"
-            variant="outline"
-            size="icon"
-            onClick={handleNextPage}
-            disabled={!getCanNextPage}
-          >
-            <ChevronRight className="w-4 h-4" />
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            size="icon"
-            onClick={handleGotoLatestPage}
-            disabled={!getCanNextPage}
-          >
-            <ChevronsRight className="w-4 h-4" />
-          </Button>
+        <div className="flex items-center justify-end gap-4 py-4 mt-auto p-3">
+          <div className="flex-1 text-sm text-muted-foreground">
+            {table.getFilteredSelectedRowModel().rows.length} of{" "}
+            {table.getFilteredRowModel().rows.length} row(s) selected.
+          </div>
+          <div className="flex items-center gap-2">
+            <p className="text-sm">Rows per page</p>
+            <Select defaultValue={rows[0].toString()} onValueChange={handleRowsPerPageChange}>
+              <SelectTrigger className="w-[70px] h-8">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {rows?.map((row) => (
+                  <SelectItem key={`${cid}dt-rpp-${row}`} value={row.toString()}>
+                    {row}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <p className="text-sm mx-6">
+            Page{" "}
+            {pagination?.type === "offset"
+              ? pagination.page
+              : table.getState().pagination.pageIndex + 1}{" "}
+            of{" "}
+            {pagination?.type === "offset"
+              ? Math.ceil(pagination.totalRecords / pagination.pageSize)
+              : table.getPageCount()}
+          </p>
+          <div className="space-x-2">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={handleGotoFirstPage}
+              disabled={!getCanPreviousPage}
+            >
+              <ChevronsLeft className="w-4 h-4" />
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={handlePreviousPage}
+              disabled={!getCanPreviousPage}
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </Button>
+
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={handleNextPage}
+              disabled={!getCanNextPage}
+            >
+              <ChevronRight className="w-4 h-4" />
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={handleGotoLatestPage}
+              disabled={!getCanNextPage}
+            >
+              <ChevronsRight className="w-4 h-4" />
+            </Button>
+          </div>
         </div>
       </div>
-    </div>
+    </DataTableProvider>
   )
 }
