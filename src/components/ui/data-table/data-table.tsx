@@ -365,7 +365,7 @@ export const DataTable = ({
             enableRowSelection={enableRowSelection}
           />
 
-          <div className={cn(classNames?.tableBodyClassName)}>
+          <div className={cn("flex items-center justify-center", classNames?.tableBodyClassName)}>
             {table.getRowModel().rows?.length ? (
               <VList
                 components={{
@@ -418,7 +418,7 @@ export const DataTable = ({
                 })}
               </VList>
             ) : enableEmpty ? (
-              <TableRow>
+              <TableRow className="hover:bg-transparent">
                 <TableCell colSpan={columns.length + 999} className="h-24 text-center py-10">
                   {loading ? null : (
                     <>

@@ -18,7 +18,7 @@ const Table = React.forwardRef<HTMLTableElement, TableProps>(
       style={wrapperStyle}
       className={cn("w-full overflow-auto", wrapperClassName)}
     >
-      <table ref={ref} className={cn("w-full caption-bottom text-sm", className)} {...props} />
+      <table ref={ref} className={cn("w-full caption-bottom text-sm border-collapse", className)} {...props} />
     </div>
   )
 )

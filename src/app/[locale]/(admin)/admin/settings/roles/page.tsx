@@ -3,8 +3,7 @@
 import { Link } from "@/components/router"
 import SectionView from "@/components/sections/section-view"
 import { Button } from "@/components/ui/button"
-import { useDataTableUtils } from "@/components/ui/data-table"
-import { DataTable } from "@/components/ui/data-table/data-table"
+import { SuspenseDataTable, useDataTableUtils } from "@/components/ui/data-table"
 import { useToast } from "@/components/ui/use-toast"
 import { ADMIN_URL } from "@/constant/urls"
 import trpc from "@/lib/trpc-client"
@@ -18,8 +17,7 @@ const RoleList = (props: RoleListProps) => {
   const t = useToast()
   const trpcUtils = trpc.useContext()
 
-  const { setPage, setPageSize, page, pageSize } =
-    useDataTableUtils({ page: 1, pageSize: 10 })
+  const { setPage, setPageSize, page, pageSize } = useDataTableUtils({ page: 1, pageSize: 10 })
   const { data, isLoading, isFetching } = trpc.role.list.useQuery({
     paginationType: "offset",
     page,
@@ -97,7 +95,7 @@ const RoleList = (props: RoleListProps) => {
         </>
       }
     >
-      <DataTable
+      <SuspenseDataTable
         data={roles}
         columns={columns}
         loading={isLoading || isFetching}
@@ -109,8 +107,6 @@ const RoleList = (props: RoleListProps) => {
           setPageSize,
           totalRecords: totalRoles,
         }}
-        searchPlaceholder="Search roles..."
-        searchable
       />
     </SectionView>
   )

@@ -1,7 +1,7 @@
 "use client"
 
 import SectionView from "@/components/sections/section-view"
-import { DataTable } from "@/components/ui/data-table/data-table"
+import { SuspenseDataTable } from "@/components/ui/data-table"
 import trpc from "@/lib/trpc-client"
 import { Order } from "@prisma/client"
 import { ColumnDef } from "@tanstack/react-table"
@@ -39,7 +39,7 @@ const OrderList = (props: OrderListProps) => {
 
   return (
     <SectionView title="Orders">
-      <DataTable columns={[]} data={orders} />
+      <SuspenseDataTable columns={[]} data={orders} />
     </SectionView>
   )
 }

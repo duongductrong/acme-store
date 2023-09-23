@@ -1,3 +1,4 @@
+"use client"
 import { SortingState } from "@tanstack/react-table"
 import { useState } from "react"
 

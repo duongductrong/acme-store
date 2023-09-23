@@ -4,6 +4,7 @@ import { Link } from "@/components/router"
 import SectionView from "@/components/sections/section-view"
 import { Button } from "@/components/ui/button"
 import { useConfirm } from "@/components/ui/confirm-dialog/use-confirm"
+import { SuspenseDataTable } from "@/components/ui/data-table"
 import { DataTable } from "@/components/ui/data-table/data-table"
 import {
   DropdownMenu,
@@ -118,13 +119,11 @@ const CollectionList = (props: CollectionListProps) => {
         </>
       }
     >
-      <DataTable
+      <SuspenseDataTable
         columns={columns}
         data={collections}
         loading={isLoading || isFetching}
-        searchPlaceholder="Search collections..."
         onCreateNewEntry={() => router.push(ADMIN_URL.COLLECTION.NEW)}
-        searchable
       />
     </SectionView>
   )

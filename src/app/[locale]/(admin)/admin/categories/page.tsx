@@ -5,7 +5,7 @@ import SectionView from "@/components/sections/section-view"
 import StatusPoint from "@/components/status-point"
 import { Button } from "@/components/ui/button"
 import { useConfirm } from "@/components/ui/confirm-dialog/use-confirm"
-import { DataTable } from "@/components/ui/data-table/data-table"
+import { SuspenseDataTable } from "@/components/ui/data-table"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -125,13 +125,11 @@ function CategoryList({}: CategoryListProps) {
         </>
       }
     >
-      <DataTable
+      <SuspenseDataTable
         columns={columns}
         data={categories ?? []}
         loading={isLoading || isFetching}
-        searchPlaceholder="Search category..."
         onCreateNewEntry={() => router.push(ADMIN_URL.CATEGORY.NEW)}
-        searchable
       />
     </SectionView>
   )

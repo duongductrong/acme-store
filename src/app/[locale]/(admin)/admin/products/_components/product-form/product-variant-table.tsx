@@ -2,7 +2,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { DataTable, DataTableProps } from "@/components/ui/data-table"
+import { DataTableProps, SuspenseDataTable } from "@/components/ui/data-table"
 import { FormField } from "@/components/ui/form"
 import { ProductSchemaType } from "@/schemas/product"
 import { ColumnDef } from "@tanstack/react-table"
@@ -159,7 +159,7 @@ const ProductVariantTable = (props: ProductVariantTableProps) => {
   )
 
   return (
-    <DataTable
+    <SuspenseDataTable
       columns={columns}
       data={productVariants}
       enableCreateNewEntry={false}
