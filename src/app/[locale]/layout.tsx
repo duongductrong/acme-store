@@ -9,7 +9,7 @@ import { Metadata } from "next"
 import { NextIntlClientProvider, createTranslator } from "next-intl"
 import { notFound } from "next/navigation"
 import { ReactNode } from "react"
-import "../globals.css"
+import "../../styles/globals.scss"
 
 export interface RootLayoutProps {
   children: ReactNode

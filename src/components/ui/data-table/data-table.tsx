@@ -376,7 +376,10 @@ export const DataTable = ({
 
   return (
     <DataTableProvider>
-      <div ref={wrapperRef} className={cn("flex flex-col w-full h-full min-h-[400px]", className)}>
+      <div
+        ref={wrapperRef}
+        className={cn("data-table flex flex-col w-full h-full min-h-[400px]", className)}
+      >
         <div className="rounded-md border border-muted overflow-hidden">
           <DataTableHeader
             table={table}
@@ -386,7 +389,12 @@ export const DataTable = ({
             enableRowSelection={enableRowSelection}
           />
 
-          <div className={cn("flex items-center justify-center", classNames?.tableBodyClassName)}>
+          <div
+            className={cn(
+              "data-table__body flex items-center justify-center",
+              classNames?.tableBodyClassName
+            )}
+          >
             {table.getRowModel().rows?.length ? (
               <VList
                 components={{

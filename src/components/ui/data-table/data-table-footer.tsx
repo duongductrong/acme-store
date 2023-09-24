@@ -45,7 +45,7 @@ const DataTableFooter = forwardRef<HTMLDivElement, DataTableFooterProps>(
     const cid = useId()
 
     return (
-      <div ref={ref} className="flex items-center justify-end gap-4 py-4 mt-auto">
+      <div ref={ref} className="data-table__footer flex items-center justify-end gap-4 py-4 mt-auto">
         <div className="flex-1 text-sm text-muted-foreground">
           {table.getFilteredSelectedRowModel().rows.length} of{" "}
           {table.getFilteredRowModel().rows.length} row(s) selected.
@@ -84,7 +84,7 @@ const DataTableFooter = forwardRef<HTMLDivElement, DataTableFooterProps>(
           <Button
             type="button"
             variant="outline"
-            size="sm"
+            size="icon"
             onClick={onGotoFirstPage}
             disabled={!canPreviousPage}
           >
@@ -93,7 +93,7 @@ const DataTableFooter = forwardRef<HTMLDivElement, DataTableFooterProps>(
           <Button
             type="button"
             variant="outline"
-            size="sm"
+            size="icon"
             onClick={onPreviousPage}
             disabled={!canPreviousPage}
           >
@@ -103,7 +103,7 @@ const DataTableFooter = forwardRef<HTMLDivElement, DataTableFooterProps>(
           <Button
             type="button"
             variant="outline"
-            size="sm"
+            size="icon"
             onClick={onNextPage}
             disabled={!canNextPage}
           >
@@ -112,7 +112,7 @@ const DataTableFooter = forwardRef<HTMLDivElement, DataTableFooterProps>(
           <Button
             type="button"
             variant="outline"
-            size="sm"
+            size="icon"
             onClick={onGotoLatestPage}
             disabled={!canNextPage}
           >

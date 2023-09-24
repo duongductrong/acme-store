@@ -5,15 +5,16 @@ import {
   Table as TanStackTablePrimitive,
   flexRender,
 } from "@tanstack/react-table"
-import { ChevronsUpDown, LucideIcon, SortAsc, SortDesc } from "lucide-react"
+import { ArrowDown, ArrowUp, ChevronsUpDown, LucideIcon } from "lucide-react"
+import { forwardRef } from "react"
 import { DataTableProps } from "."
+import { Button } from "../button"
 import { Table, TableHead, TableHeader, TableRow } from "../table"
 import { useBaseDataTable } from "./use-base-data-table"
-import { forwardRef } from "react"
 
 const SortIcons: Record<SortDirection, LucideIcon> = {
-  asc: SortAsc,
-  desc: SortDesc,
+  asc: ArrowUp,
+  desc: ArrowDown,
 }
 
 export interface DataTableHeaderProps {
@@ -34,7 +35,8 @@ const DataTableHeader = forwardRef<HTMLDivElement, DataTableHeaderProps>(
         wrapperRef={ref}
         wrapperId={headerId}
         wrapperClassName={cn(
-          "overflow-y-scroll",
+          "data-table-header",
+          "overflow-y-hidden last:[&_table_thead_tr_th]:pr-[calc(16px+10px)]",
           "!overflow-x-hidden",
           classNames?.tableContainerClassName
         )}
@@ -83,16 +85,21 @@ const DataTableHeader = forwardRef<HTMLDivElement, DataTableHeaderProps>(
                         [isEnableStickyColumn ? "sticky" : null],
                         classNames?.tableHeaderThClassName
                       )}
-                      onClick={header.column.getToggleSortingHandler()}
                     >
                       {enableSorting && !isSelectionColumn ? (
                         <div className="flex items-center gap-2">
                           {headerContent}
-                          {enableSorting && SortIcon ? (
-                            <SortIcon className="w-4 h-4" />
-                          ) : (
-                            <ChevronsUpDown className="w-4 h-4" />
-                          )}
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={header.column.getToggleSortingHandler()}
+                          >
+                            {enableSorting && SortIcon ? (
+                              <SortIcon className="w-4 h-4" />
+                            ) : (
+                              <ChevronsUpDown className="w-3 h-3" />
+                            )}
+                          </Button>
                         </div>
                       ) : (
                         headerContent
