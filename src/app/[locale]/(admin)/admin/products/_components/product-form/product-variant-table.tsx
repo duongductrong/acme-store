@@ -64,12 +64,13 @@ const ProductVariantTable = (props: ProductVariantTableProps) => {
     })
   }
 
-  const columns: ColumnDef<ProductVariantCustom>[] = useMemo(
+  const columns = useMemo<ColumnDef<ProductVariantCustom>[]>(
     () => [
       {
         accessorKey: "photo",
         header: () => "Photo",
         cell: () => <div className="w-[35px] h-[35px] rounded-lg bg-neutral-500"></div>,
+        size: 50,
       },
       {
         accessorKey: "attributes",
@@ -88,6 +89,7 @@ const ProductVariantTable = (props: ProductVariantTableProps) => {
             </div>
           )
         },
+        size: 300,
       },
       {
         accessorKey: "SKU",

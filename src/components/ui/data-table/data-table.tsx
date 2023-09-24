@@ -23,22 +23,13 @@ import * as React from "react"
 
 import { Button } from "@/components/ui/button"
 import { TableCell, TableRow } from "@/components/ui/table"
-import { cn } from "@/lib/utils"
 import { safeParseNumber } from "@/lib/number"
+import { cn } from "@/lib/utils"
 import { isNil, omitBy } from "lodash"
-import {
-  ChevronLeft,
-  ChevronRight,
-  ChevronsLeft,
-  ChevronsRight,
-  FolderSearch,
-  Loader2,
-  LucideIcon,
-  Plus,
-} from "lucide-react"
+import { FolderSearch, Loader2, LucideIcon, Plus } from "lucide-react"
 import { useIntersection } from "react-use"
 import { VList } from "virtua"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../select"
+import DataTableFooter, { DataTableFooterProps } from "./data-table-footer"
 import DataTableHeader from "./data-table-header"
 import DataTableProvider from "./data-table-provider"
 import { DataTableRowViewport } from "./data-table-row-viewport"
@@ -70,7 +61,7 @@ export type DataTablePagination =
 
 export type DataTableProps<TData = any, TValue = any> = {
   data: TData[]
-  rows?: number[]
+  pageSizes?: number[]
   columns: ColumnDef<TData, TValue>[]
 
   loading?: boolean
@@ -109,6 +100,10 @@ export type DataTableProps<TData = any, TValue = any> = {
     tableBodyTdClassName?: string
   }
 
+  components?: {
+    Footer?: React.ForwardRefExoticComponent<DataTableFooterProps>
+  }
+
   onCreateNewEntry?: () => void
   onRowSelection?: (data: { [k: string]: any }) => void
   onRowClicked?: (data: Row<any>) => void
@@ -123,10 +118,11 @@ export const DataTable = ({
   loading,
   className,
   classNames,
+  components,
   pagination,
   defaultRowSelection,
   defaultColumnVisibility,
-  rows = [10, 20, 30, 50, 100],
+  pageSizes = [10, 20, 30, 50, 100],
   emptyIcon: EmptyIcon = FolderSearch,
   emptyContent = "No results found.",
   createNewEntryText = "Create new entry",
@@ -164,6 +160,8 @@ export const DataTable = ({
   const [rowSelection, setRowSelection] = React.useState(defaultRowSelection)
 
   const wrapperRef = React.useRef<HTMLDivElement>(null)
+  const headerRef = React.useRef<HTMLDivElement>(null)
+  const footerRef = React.useRef<HTMLDivElement>(null)
 
   const manualOffsetPagination =
     pagination?.type === "offset"
@@ -311,7 +309,7 @@ export const DataTable = ({
     table.previousPage()
   }
 
-  const handleRowsPerPageChange = (val: string) => {
+  const handleRowsPerPageChange = (val: string | number) => {
     if (isManualPaginationOrSorting) {
       if (isOffsetPagination) {
         pagination.setPageSize(safeParseNumber(val, 10))
@@ -321,6 +319,18 @@ export const DataTable = ({
     }
 
     table.setPageSize(safeParseNumber(val, 10))
+  }
+
+  const handleGotoPage = (val: number | string) => {
+    if (isManualPaginationOrSorting) {
+      if (isOffsetPagination) {
+        pagination.setPage(safeParseNumber(val, 1))
+      }
+
+      return
+    }
+
+    table.setPageIndex(safeParseNumber(val, 1))
   }
 
   const selfPaginationDependencies =
@@ -350,17 +360,28 @@ export const DataTable = ({
   }, [JSON.stringify(Object.keys(defaultRowSelection ?? {}))])
 
   const wrapperIntersection = useIntersection(wrapperRef, { threshold: 1 })
+  const headerIntersection = useIntersection(headerRef, { threshold: 1 })
+  const footerIntersection = useIntersection(footerRef, { threshold: 1 })
+
   const wrapperRect = wrapperIntersection?.boundingClientRect
-  const tableBodyVListSize = safeParseNumber(wrapperRect?.height, 1) - 48 - 68
+  const headerRect = headerIntersection?.boundingClientRect
+  const footerRect = footerIntersection?.boundingClientRect
+
+  const bodyVListSize =
+    safeParseNumber(wrapperRect?.height, 0) -
+    safeParseNumber(headerRect?.height, 0) -
+    safeParseNumber(footerRect?.height, 0)
+
+  const DataTableComponentFooter = components?.Footer || DataTableFooter
 
   return (
     <DataTableProvider>
-      <div ref={wrapperRef} className={cn("flex flex-col w-full h-full min-h-[500px]", className)}>
+      <div ref={wrapperRef} className={cn("flex flex-col w-full h-full min-h-[400px]", className)}>
         <div className="rounded-md border border-muted overflow-hidden">
           <DataTableHeader
             table={table}
+            ref={headerRef}
             classNames={classNames}
-            noBordered={noBordered}
             enableSorting={enableSorting}
             enableRowSelection={enableRowSelection}
           />
@@ -372,7 +393,7 @@ export const DataTable = ({
                   Item: "div",
                   Root: DataTableRowViewport,
                 }}
-                style={{ height: tableBodyVListSize }}
+                style={{ height: bodyVListSize }}
               >
                 {table.getRowModel().rows.map((row) => {
                   let cellStickyOffset = 0
@@ -446,76 +467,21 @@ export const DataTable = ({
           </div>
         </div>
 
-        <div className="flex items-center justify-end gap-4 py-4 mt-auto p-3">
-          <div className="flex-1 text-sm text-muted-foreground">
-            {table.getFilteredSelectedRowModel().rows.length} of{" "}
-            {table.getFilteredRowModel().rows.length} row(s) selected.
-          </div>
-          <div className="flex items-center gap-2">
-            <p className="text-sm">Rows per page</p>
-            <Select defaultValue={rows[0].toString()} onValueChange={handleRowsPerPageChange}>
-              <SelectTrigger className="w-[70px] h-8">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {rows?.map((row) => (
-                  <SelectItem key={`${cid}dt-rpp-${row}`} value={row.toString()}>
-                    {row}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <p className="text-sm mx-6">
-            Page{" "}
-            {pagination?.type === "offset"
-              ? pagination.page
-              : table.getState().pagination.pageIndex + 1}{" "}
-            of{" "}
-            {pagination?.type === "offset"
-              ? Math.ceil(pagination.totalRecords / pagination.pageSize)
-              : table.getPageCount()}
-          </p>
-          <div className="space-x-2">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={handleGotoFirstPage}
-              disabled={!getCanPreviousPage}
-            >
-              <ChevronsLeft className="w-4 h-4" />
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={handlePreviousPage}
-              disabled={!getCanPreviousPage}
-            >
-              <ChevronLeft className="w-4 h-4" />
-            </Button>
-
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={handleNextPage}
-              disabled={!getCanNextPage}
-            >
-              <ChevronRight className="w-4 h-4" />
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={handleGotoLatestPage}
-              disabled={!getCanNextPage}
-            >
-              <ChevronsRight className="w-4 h-4" />
-            </Button>
-          </div>
-        </div>
+        <DataTableComponentFooter
+          table={table}
+          ref={footerRef}
+          pageSizes={pageSizes}
+          pageSize={pageSizes[0]}
+          pagination={pagination}
+          canNextPage={getCanNextPage}
+          canPreviousPage={getCanPreviousPage}
+          onGotoPage={handleGotoPage}
+          onNextPage={handleNextPage}
+          onPreviousPage={handlePreviousPage}
+          onGotoFirstPage={handleGotoFirstPage}
+          onGotoLatestPage={handleGotoLatestPage}
+          onPageSizeChange={handleRowsPerPageChange}
+        />
       </div>
     </DataTableProvider>
   )

@@ -13,15 +13,7 @@ import {
 } from "@/components/ui/command"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { cn } from "@/lib/utils"
-import {
-  forwardRef,
-  memo,
-  useEffect,
-  useImperativeHandle,
-  useMemo,
-  useRef,
-  useState
-} from "react"
+import { forwardRef, memo, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react"
 import { ListChildComponentProps, areEqual } from "react-window"
 import { VList } from "virtua"
 
@@ -36,7 +28,7 @@ export interface ComboboxProps {
   notFound?: string
   defaultValue?: any
   placeholder?: string
-  onChange?: (value: string | string[] | null) => void
+  onChange?: (value: string | string[] | null | number | number[]) => void
   options: ComboboxOption[]
 
   className?: string
@@ -73,9 +65,9 @@ export const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
     const comboboxTriggerRef = useRef<HTMLButtonElement>(null)
 
     const [open, setOpen] = useState(false)
-    const [value, setValue] = useState<string[]>(() => {
-      return typeof _value === "string" ? [_value] : _value || []
-    })
+    const [value, setValue] = useState<any[]>(() =>
+      Array.isArray(_value) ? _value || [] : [_value]
+    )
     const [filterOptions, setFilterOptions] = useState(options)
     const [comboboxContentWidth, setComboboxContentWidth] = useState(0)
 
@@ -220,21 +212,24 @@ export const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
                   maxHeight: 350,
                 }}
               >
-                {options.map((option) => (
-                  <CommandItem
-                    key={option.value}
-                    onSelect={() => handleSelectOption(option.value)}
-                    className="whitespace-nowrap flex gap-2"
-                  >
-                    <Check
-                      className={cn(
-                        "h-4 min-w-[16px] max-w-[16px] flex-1",
-                        value?.includes(option.value) ? "opacity-100" : "opacity-0"
-                      )}
-                    />
-                    {option.label}
-                  </CommandItem>
-                ))}
+                {options.map((option) => {
+                  const isSelected = value === option.value
+                  return (
+                    <CommandItem
+                      key={option.value}
+                      onSelect={() => handleSelectOption(option.value)}
+                      className="whitespace-nowrap flex gap-2"
+                    >
+                      <Check
+                        className={cn(
+                          "h-4 min-w-[16px] max-w-[16px] flex-1",
+                          isSelected ? "opacity-100" : "opacity-0"
+                        )}
+                      />
+                      {option.label}
+                    </CommandItem>
+                  )
+                })}
               </VList>
             </CommandGroup>
           </Command>

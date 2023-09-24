@@ -5,7 +5,6 @@ import SectionView from "@/components/sections/section-view"
 import { Button } from "@/components/ui/button"
 import { useConfirm } from "@/components/ui/confirm-dialog/use-confirm"
 import { SuspenseDataTable } from "@/components/ui/data-table"
-import { DataTable } from "@/components/ui/data-table/data-table"
 import {
   DropdownMenu,
   DropdownMenuContent,
